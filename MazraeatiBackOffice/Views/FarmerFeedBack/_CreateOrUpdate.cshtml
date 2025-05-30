@@ -1,0 +1,65 @@
+﻿@model FarmerFeedbackModel
+<style>
+    .form-group {
+        font-size: 13px;
+    }
+
+    .textboxWidth {
+        width: 120px;
+    }
+</style>
+@Html.HiddenFor(a => a.Id)
+@Html.HiddenFor(a => a.FarmerId)
+@Html.HiddenFor(a => a.CreatedDate)
+<div class="container-fluid">
+    <div class="row clearfix">
+        <div class="col-lg-12 col-md-12 col-sm-12">
+            <div class="card">
+                <div class="header">
+                    <h2><strong>معالجة </strong> السجل</h2>
+                    <ul class="header-dropdown">
+                    </ul>
+                </div>
+                <div class="body">
+                    <div class="row clearfix">
+                        <div class="col-sm-6">
+                            @Html.DisplayNameFor(a => a.FeedbackId)
+                            <select class="form-control" name="FeedbackId">
+                                <option selected="selected" disabled="disabled">--الرجاء اختيار نوع التقييم--</option>
+                                @foreach (var item in Model.LookupValues)
+                                {
+                                    <option selected="@(item.Id  == Model.FeedbackId)" value="@item.Id">@item.ValueAr</option>
+                                }
+                            </select>
+                            @Html.ValidationMessageFor(a => a.FeedbackId, "", new { @style = "color:red;font-size:10px" })
+                        </div>
+
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.Note)
+                                @Html.TextAreaFor(a => a.Note, new { @class = "form-control", @autocomplete = "off", @maxlength = 250 })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.IsSolved)
+                                <br />
+                                @Html.CheckBoxFor(a => a.IsSolved, new { @class = "form-control", @style = "margin-top: 10px;" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12" style="margin-bottom:20px">
+                            &nbsp;
+                        </div>
+
+                        <div class="col-sm-12">
+                            <button type="submit" class="btn btn-primary btn-round">حفظ</button>
+                            <button type="button" onclick="window.location.href='@Url.Content("~/FarmerFeedBack/index?farmerId=")@Model.FarmerId'" class="btn btn-default btn-round btn-simple">رجوع</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,127 @@
+﻿@model FarmerPriceModel
+
+<style>
+    .form-group {
+        font-size: 13px;
+    }
+
+    .textboxWidth {
+        width: 120px;
+    }
+</style>
+<div class="col-md-12">
+    <div class="card patients-list">
+        <div class="header">
+            <h2>@ViewBag.activePage - <strong>@ViewBag.farmerName</strong> </h2>
+            <ul class="header-dropdown">
+            </ul>
+        </div>
+        <div class="body">
+            @using (Html.BeginForm("FarmerPriceList", "FarmersSyria", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                @Html.HiddenFor(a => Model.FarmerId)
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.DisplayNameFor(a => a.Person)
+                        @Html.TextBoxFor(a => a.Person, new { @class = "form-control", @autocomplete = "off", @type = "number", @max = "9999" })
+                        @Html.ValidationMessageFor(a => a.Person, "", new { @style = "color:red;font-size:10px" })
+                    </div>
+                </div>
+
+                
+                    <div class="tab-pane table-responsive active" id="All" style="width:100% !important">
+                        <table class="table m-b-0 table-hover">
+                            <thead>
+                                <tr>
+                                    <th style="width:10%">سعر الفتره الصباحية</th>
+                                    <th style="width:10%">سعر الفتره المسائية</th>
+                                    <th style="width:10%">سعر يوم كامل</th>
+                                    <th style="width:10%">سعر عرض الفتره الصباحية</th>
+                                    <th style="width:10%">سعر عرض الفتره المسائية</th>
+                                    <th style="width:10%">سعر عرض يوم كامل</th>
+                                    <th style="width:10%">الفترة الصباحية</th>
+                                    <th style="width:10%">الفترة المسائية</th>
+                                    <th style="width:10%">الفترة يوم كامل</th>
+                                </tr>
+                            </thead>
+                            @for (int i = 0; i < Model.PriceList.Count; i++)
+                            {
+                                <tbody>
+                                    <tr>
+                                        <td colspan="9">
+                                            @switch (Model.PriceList[i].Day)
+                                            {
+                                                case 1:
+                                                    @Html.Label("(الاحد)");
+                                                    break;
+                                                case 2:
+                                                    @Html.Label("(الاثنين)");
+                                                    break;
+                                                case 3:
+                                                    @Html.Label("(الثلاثاء)");
+                                                    break;
+                                                case 4:
+                                                    @Html.Label("(الاربعاء)");
+                                                    break;
+                                                case 5:
+                                                    @Html.Label("(الخميس)");
+                                                    break;
+                                                case 6:
+                                                    @Html.Label("(الجمعه)");
+                                                    break;
+                                                case 7:
+                                                    @Html.Label("(السبت)");
+                                                    break;
+                                            }
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        @Html.HiddenFor(a => a.PriceList[i].Id)
+                                        @Html.HiddenFor(a => a.PriceList[i].Day)
+                                        @Html.HiddenFor(a => a.PriceList[i].FarmerId)
+
+                                        <td style="width:10%">
+                                            @Html.TextBoxFor(a => a.PriceList[i].MorningPrice, new { @placeholder = "سعر الفتره الصباحية", @max = 999, @type = "number", @required = "required", @class = "textboxWidth" })
+                                        </td>
+                                        <td style="width:10%">
+                                            @Html.TextBoxFor(a => a.PriceList[i].EveningPrice, new { @placeholder = "سعر الفتره المسائية", @max = 999, @type = "number", @required = "required", @class = "textboxWidth" })
+                                        </td>
+                                        <td style="width:10%">
+                                            @Html.TextBoxFor(a => a.PriceList[i].FullDayPrice, new { @placeholder = "سعر يوم كامل", @max = 999, @type = "number", @required = "required", @class = "textboxWidth" })
+                                        </td>
+                                        <td style="width:10%">
+                                            @Html.TextBoxFor(a => a.PriceList[i].OfferPrice, new { @placeholder = "سعر عرض الفترة الصباحية ان اوجد", @max = 999, @type = "number", @class = "textboxWidth" })
+                                        </td>
+                                        <td style="width:10%">
+                                            @Html.TextBoxFor(a => a.PriceList[i].OfferEveningPrice, new { @placeholder = "سعر عرض الفترة المسائية ان اوجد", @max = 999, @type = "number", @class = "textboxWidth" })
+                                        </td>
+                                        <td style="width:10%">
+                                            @Html.TextBoxFor(a => a.PriceList[i].OfferFullDayPrice, new { @placeholder = "سعر عرض يوم كامل ان اوجد", @max = 999, @type = "number", @class = "textboxWidth" })
+                                        </td>
+                                        <td style="width:10%">
+                                            @Html.TextBoxFor(a => a.PriceList[i].MorningPeriodText, new { @placeholder = " الفتره الصباحية", @maxlength = 25, @type = "text", @required = "required", @class = "textboxWidth" })
+                                        </td>
+                                        <td style="width:10%">
+                                            @Html.TextBoxFor(a => a.PriceList[i].EveningPeriodText, new { @placeholder = " الفتره المسائية", @maxlength = 25, @type = "text", @required = "required", @class = "textboxWidth" })
+                                        </td>
+                                        <td style="width:10%">
+                                            @Html.TextBoxFor(a => a.PriceList[i].FullDayPeriodText, new { @placeholder = "يوم كامل", @maxlength = 25, @type = "text", @required = "required", @class = "textboxWidth" })
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            }
+                        </table>
+                    </div>
+                
+
+                <div class="col-sm-12">
+                    <button type="submit" class="btn btn-primary btn-round">حفظ</button>
+                    <button type="button" onclick="window.location.href='@Url.Content("~/FarmersSyria/Edit/")@Model.FarmerId'" class="btn btn-default btn-round btn-simple">رجوع</button>
+                </div>
+
+            }
+
+        </div>
+       
+    </div>
+</div>

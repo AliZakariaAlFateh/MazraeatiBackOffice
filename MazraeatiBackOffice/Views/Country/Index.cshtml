@@ -1,0 +1,45 @@
+﻿@model IEnumerable<CountryModel>
+<div class="col-md-12">
+    <div class="card patients-list">
+        <div class="header">
+            <h2><strong>قائمة</strong> الدول</h2>
+            <ul class="header-dropdown">
+            </ul>
+        </div>
+        <div class="body">
+            <!-- Nav tabs -->
+            @Html.Partial("_search")
+            <!-- Tab panes -->
+            <div class="tab-content m-t-10">
+                <div class="tab-pane table-responsive active" id="All">
+                    <table class="table m-b-0 table-hover">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>@Html.DisplayNameFor(a => a.Code)</th>
+                                <th>@Html.DisplayNameFor(a => a.DescAr)</th>
+                                <th>@Html.DisplayNameFor(a => a.DescEn)</th>
+                                <th>@Html.DisplayNameFor(a => a.Active)</th>
+                                <th>تفاصيل</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.Id</td>
+                                    <td>@item.Code</td>
+                                    <td>@item.DescAr</td>
+                                    <td>@item.DescEn</td>
+                                    <td><span class="badge badge-@(item.Active ? "success" : "danger")">@(item.Active ? "فعال" : "غير فعال")</span></td>
+                                    <td><a href="@Url.Content("~/country/edit/")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

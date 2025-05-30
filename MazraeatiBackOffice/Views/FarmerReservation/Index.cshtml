@@ -1,0 +1,116 @@
+﻿@model IEnumerable<FarmerReservationModel>
+<div class="col-md-12">
+    <div class="card patients-list">
+        <div class="header">
+            <h2><strong>قائمة</strong> حجوزات - @ViewBag.FarmerName</h2>
+            <ul class="header-dropdown">
+            </ul>
+        </div>
+        <div class="body">
+
+            <!-- Nav tabs -->
+            <form action="@Url.Action("Index")" method="post">
+                @Html.Hidden("farmerId", (int)ViewBag.FarmerId)
+                <div class="row clearfix">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <input type="text" name="search" value="@ViewBag.search" placeholder="الكلمة المفتاحية" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3" style="margin-top:1px">
+                        اختيار الشهر
+                        <select class="form-control" name="MonthId">
+                            <option selected="@(ViewBag.MonthId == 1)" value="1">1</option>
+                            <option selected="@(ViewBag.MonthId == 2)" value="2">2</option>
+                            <option selected="@(ViewBag.MonthId == 3)" value="3">3</option>
+                            <option selected="@(ViewBag.MonthId == 4)" value="4">4</option>
+                            <option selected="@(ViewBag.MonthId == 5)" value="5">5</option>
+                            <option selected="@(ViewBag.MonthId == 6)" value="6">6</option>
+                            <option selected="@(ViewBag.MonthId == 7)" value="7">7</option>
+                            <option selected="@(ViewBag.MonthId == 8)" value="8">8</option>
+                            <option selected="@(ViewBag.MonthId == 9)" value="9">9</option>
+                            <option selected="@(ViewBag.MonthId == 10)" value="10">10</option>
+                            <option selected="@(ViewBag.MonthId == 11)" value="11">11</option>
+                            <option selected="@(ViewBag.MonthId == 12)" value="12">12</option>
+                        </select>
+                    </div>
+
+                    <div class="col-sm-3" style="margin-top:1px">
+                        اختيار السنة
+                        <select class="form-control" name="YearId">
+                            <option selected="@(ViewBag.YearId == 2023)" value="2023">2023</option>
+                        </select>
+                    </div>
+
+                    <div class="col-sm-2">
+                        <div class="form-group" style="margin-top: -10px;">
+                            <button type="submit" class="btn btn-primary btn-round">بحث</button>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-2" style="pointer-events:none">
+                        <div class="form-group" style="margin-top: -10px;">
+                            <label class="btn btn-primary btn-round" style="color:white"> العدد الاجمالي :  @Model.Count()</label>
+                        </div>
+                    </div>
+
+
+
+                </div>
+
+            </form>
+
+            <div class="col-sm-2">
+                <div class="form-group" style="margin-top: -10px;">
+                    <a href="@Url.Content("~/FarmerReservation/Create?farmerId=")@ViewBag.FarmerId" class="btn btn-primary btn-round">اضافة سجل جديد</a>
+                </div>
+            </div>
+
+            <div class="col-sm-2">
+                <button type="button" onclick="window.location.href='@Url.Content("~/Farmers/index")'" class="btn btn-default btn-round btn-simple">رجوع</button>
+            </div>
+
+            <div class="tab-content m-t-10">
+                <div class="tab-pane table-responsive active" id="All">
+                    <table class="table m-b-0 table-hover">
+                        <thead>
+                            <tr>
+                                <th>@Html.DisplayNameFor(a => a.ReservationTypeId)</th>
+                                <th>@Html.DisplayNameFor(a => a.ReservationDate)</th>
+                                <th>@Html.DisplayNameFor(a => a.CustMobNum)</th>
+                                <th>@Html.DisplayNameFor(a => a.CustomerName)</th>
+                                <th>@Html.DisplayNameFor(a => a.AutomaticallyNote)</th>
+                                <th>@Html.DisplayNameFor(a => a.IsReciveCommission)</th>
+                                <th>تفاصيل</th>
+                                <th>حذف</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                            <tr>
+                                <td>@item.ReservationTypeDesc</td>
+                                <td>@item.ReservationDate.ToShortDateString()</td>
+                                <td>@item.CustMobNum</td>
+                                <td>@item.CustomerName</td>
+                                <td>@(string.IsNullOrEmpty(item.AutomaticallyNote) ? "" : item.AutomaticallyNote)</td>
+                                <td>@(item.IsReciveCommission == true ? "نعم" : "لا" )</td>
+                                <td><a href="@Url.Content("~/FarmerReservation/edit/")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
+                                <td>
+                                    <a href="javascript:DeleteFarmerReservationWithParampter('FarmerReservation',@item.Id,'Delete','Index',@item.FarmerId)" class="btn btn-danger btn-sm">حذف</a>
+                                </td>
+                            </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+</div>
+

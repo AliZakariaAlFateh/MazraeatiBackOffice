@@ -1,0 +1,49 @@
+﻿@model IEnumerable<TripSectionModel>
+<div class="col-md-12">
+    <div class="card patients-list">
+        <div class="header">
+            <h2><strong>قائمة</strong> انواع الخدمات الاخرى</h2>
+            <ul class="header-dropdown">
+            </ul>
+        </div>
+        <div class="body">
+            <!-- Nav tabs -->
+            @Html.Partial("_search")
+            <!-- Tab panes -->
+            <div class="tab-content m-t-10">
+                <div class="tab-pane table-responsive active" id="All">
+                    <table class="table m-b-0 table-hover">
+                        <thead>
+                            <tr>
+                                <th>ترتيب الظهور</th>
+                                <th>@Html.DisplayNameFor(a => a.CountryDesc)</th>
+                                <th>@Html.DisplayNameFor(a => a.Title)</th>
+                                <th>@Html.DisplayNameFor(a=>a.MainImage)</th>
+                                <th>@Html.DisplayNameFor(a => a.ExtraText)</th>
+                                <th>@Html.DisplayNameFor(a => a.Active)</th>
+                                <th>تفاصيل</th>
+                                <th>خدمات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                            <tr>
+                                <td>@item.OrderId</td>
+                                <td>@item.CountryDesc</td>
+                                <td>@item.Title</td>
+                                <td><a href="@Url.Content("~/images/")@item.MainImage" style="color:black" target="_blank"><i class="zmdi zmdi-eye"></i></a></td>
+                                <td>@item.ExtraText</td>
+                                <td>@(item.Active == true ? "فعال" : "غير فعال" )</td>
+                                <td><a href="@Url.Content("~/TripSection/Edit/")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
+                                <td><a href="@Url.Content("~/Trip/Index?tripSectionId=")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
+                            </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,100 @@
+﻿@model FarmerReservationModel
+<style>
+    .form-group {
+        font-size: 13px;
+    }
+
+    .textboxWidth {
+        width: 120px;
+    }
+</style>
+@Html.HiddenFor(a => a.Id)
+@Html.HiddenFor(a => a.FarmerId)
+@Html.HiddenFor(a => a.CreatedDate)
+@Html.HiddenFor(a => a.AutomaticallyNote)
+<div class="container-fluid">
+    <div class="row clearfix">
+        <div class="col-lg-12 col-md-12 col-sm-12">
+            <div class="card">
+                <div class="header">
+                    <h2><strong>معالجة </strong> السجل</h2>
+                    <ul class="header-dropdown">
+                    </ul>
+                </div>
+                <div class="body">
+                    <div class="row clearfix">
+                        <div class="col-sm-6">
+                            @Html.DisplayNameFor(a => a.ReservationTypeId)
+                            <select class="form-control" name="ReservationTypeId">
+                                <option selected="selected" disabled="disabled">--الرجاء اختيار نوع الحجز--</option>
+                                @foreach (var item in Model.LookupValues)
+                                {
+                                    <option selected="@(item.Id  == Model.ReservationTypeId)" value="@item.Id">@item.ValueAr</option>
+                                }
+                            </select>
+                            @Html.ValidationMessageFor(a => a.ReservationTypeId, "", new { @style = "color:red;font-size:10px" })
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.ReservationDate)
+                                @Html.EditorFor(a => a.ReservationDate, new { @class = "form-control", @id = "datepicker" })
+                                @Html.ValidationMessageFor(a => a.ReservationDate, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.CustMobNum)
+                                @Html.TextBoxFor(a => a.CustMobNum, new { @class = "form-control", @autocomplete = "off", @placeholder = "962xxxxxxxxx", @maxlength = 12 })
+                                @Html.ValidationMessageFor(a => a.CustMobNum, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.CustomerName)
+                                @Html.TextBoxFor(a => a.CustomerName, new { @class = "form-control", @autocomplete = "off", @maxlength = 50 })
+                                @Html.ValidationMessageFor(a => a.CustomerName, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.Note)
+                                @Html.TextAreaFor(a => a.Note, new { @class = "form-control", @autocomplete = "off", @maxlength = 250 })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.IsReciveCommission)
+                                <br />
+                                @Html.CheckBoxFor(a => a.IsReciveCommission, new { @class = "form-control", @style = "margin-top: 10px;" })
+                            </div>
+                        </div>
+
+                        @if (Model.Id > 0)
+                        {
+                            <div class="col-sm-12">
+                                <div class="form-group" style="pointer-events:none">
+                                    @Html.DisplayNameFor(a => a.AutomaticallyNote)
+                                    @Html.TextAreaFor(a => a.AutomaticallyNote, new { @class = "form-control", @autocomplete = "off", @maxlength = 250 })
+                                </div>
+                            </div>
+                        }
+
+                        <div class="col-sm-12" style="margin-bottom:20px">
+                            &nbsp;
+                        </div>
+
+                        <div class="col-sm-12">
+                            <button type="submit" class="btn btn-primary btn-round">حفظ</button>
+                            <button type="button" onclick="window.location.href='@Url.Content("~/FarmerReservation/index?farmerId=")@Model.FarmerId'" class="btn btn-default btn-round btn-simple">رجوع</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

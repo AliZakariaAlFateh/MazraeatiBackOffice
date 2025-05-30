@@ -1,0 +1,136 @@
+﻿@{  Layout = null;}
+@model MazraeatiBackOffice.Models.AccountModel
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Favicon icon -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <title>لوحة تحكم - محجوز </title>
+    <!-- page css -->
+    <link href="@Url.Content("~/login/css/login-register-lock.css")" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="@Url.Content("~/login/css/style.min.css")" rel="stylesheet">
+    <link href="@Url.Content("~/login/css/fonts.css")" rel="stylesheet">
+    <style>
+        .btn-primary, .btn-primary:hover, .btn-primary:active {
+            color: #ffffff !important;
+            background-color: #9F9F9F !important;
+            border-color: #9F9F9F !important;
+        }
+
+        .form-material .form-control, .form-material .form-control.focus, .form-material .form-control:focus {
+            background-image: linear-gradient(#9F9F9F,#9F9F9F),linear-gradient(#e9ecef,#e9ecef);
+        }
+
+        .text-rainbow-animation {
+            font-family:arial black;
+            font-size:70px;
+            background-image:
+            linear-gradient(to right, red,orange,yellow,green,blue,indigo,violet, red);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: rainbow-animation 80s linear infinite;
+        }
+
+        @@keyframes rainbow-animation {
+            to {
+                background-position: 4500vh;
+            }
+        }
+
+        .bg {
+            background-image: url(@Url.Content("~/1.jpg"));
+            height: 100%;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        .colorText {
+            color: white !important;
+        }
+
+        input::placeholder {
+            color: white !important;
+        }
+
+    </style>
+</head>
+
+<body class="skin-default card-no-border bg">
+    <!-- ============================================================== -->
+    <!-- Main wrapper - style you can find in pages.scss -->
+    <!-- ============================================================== -->
+    <!-------- image fixed position ------->
+    <img src="@Url.Content("~/logo_icon.jpg")" width="150" height="120" style="position:fixed;top:15px;left:10px" />
+    <!-------- image fixed position ------->
+    <section id="wrapper">
+        <div class="login-register">
+            <div class="login-box card">
+                <div class="card-body">
+                    <form class="form-horizontal form-material" id="loginform" method="post" action="@Url.Action("Login","Account")">
+                        <h3 class="text-center m-b-20">تسجيل الدخول للنظام</h3>
+                        <div class="form-group" style="margin-top:30px;">
+                            <div class="col-xs-12">
+                                <input class="form-control colorText" name="UserName" value="@Model.UserName" 
+                                        autocomplete="off" type="text" required="required" placeholder="رمز المستخدم">
+                            </div>
+                        </div>
+                        <div class="form-group" style="margin-top:30px;">
+                            <div class="col-xs-12">
+                                <input class="form-control colorText" name="Password" value="@Model.Password" 
+                                       autocomplete="off" type="password" required="required" placeholder="كلمة المرور">
+                            </div>
+                        </div>
+                        <div class="form-group text-center" style="margin-top:50px;">
+                            <div class="col-xs-12 p-b-20">
+                                <button class="btn btn-block btn-lg btn-primary btn-rounded" type="submit" 
+                                        style="background-color:#53DE24 !important;font-size:13pt;font-weight:bold">دخول</button>
+                            </div>
+                        </div>
+                        <div class="form-group text-center" style="color:red">
+                            @Model.ErrorMessage
+                            @*@Html.Partial("_notification")*@
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================== -->
+    <!-- End Wrapper -->
+    <!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- All Jquery -->
+    <!-- ============================================================== -->
+    <script src="~/login/js/jquery-3.2.1.min.js"></script>
+    <!-- Bootstrap tether Core JavaScript -->
+    <script src="~/login/js/popper.min.js"></script>
+    <script src="~/login/js/bootstrap.min.js"></script>
+    <!--Custom JavaScript -->
+    <script type="text/javascript">
+        $(function () {
+            $(".preloader").fadeOut();
+        });
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        });
+        // ==============================================================
+        // Login and Recover Password
+        // ==============================================================
+        $('#to-recover').on("click", function () {
+            $("#loginform").slideUp();
+            $("#recoverform").fadeIn();
+        });
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,128 @@
+﻿@model IEnumerable<FarmerModel>
+<div class="col-md-12">
+    <div class="card patients-list">
+        <div class="header">
+            <h2><strong>قائمة</strong> المزارع</h2>
+            <ul class="header-dropdown">
+            </ul>
+        </div>
+        <div class="body">
+            <!-- Nav tabs -->
+            <form action="@Url.Action("Index")" method="post">
+
+                <div class="row clearfix">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <input type="text" name="search" value="@ViewBag.search" placeholder="الكلمة المفتاحية" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3" style="margin-top:1px">
+                        <select class="form-control" name="CityBy">
+                            <option selected="selected" value="0">--الرجاء اختيار  المدينة--</option>
+                            @foreach (var item in ViewBag.cities)
+                            {
+                                <option selected="@(item.Id == ViewBag.CityBy)" value="@item.Id">@item.DescAr</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            فلتر عن تاريخ الحجز
+                            <input class="text-box single-line" data-val="true" data-val-required="يرجى تعبئه الحقل" id="@ViewBag.ReservationDate" name="ReservationDate" type="datetime-local" value="@ViewBag.DefaultDate">
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="form-group" style="margin-top: -10px;">
+                            <button type="submit" class="btn btn-primary btn-round">بحث</button>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-2">
+                        <div class="form-group" style="margin-top: -10px;">
+                            <button type="button" onclick="window.location.href='@Url.Content("~/FarmersSyria/FarmerExcel'")" class="btn btn-primary btn-round">تصدير جميع البيانات</button>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-2" style="pointer-events:none">
+                        <div class="form-group" style="margin-top: -10px;">
+                            <label class="btn btn-primary btn-round" style="color:white"> العدد الاجمالي :  @Model.Count()</label>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="form-group" style="margin-top: -10px;">
+                            <a href="@Url.Action("Create")" class="btn btn-primary btn-round">اضافة سجل جديد</a>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="form-group" style="margin-top: -10px;">
+                            <a href="@Url.Action("Index")" class="btn btn-primary btn-round">تفضية الحقول</a>
+                        </div>
+                    </div>
+
+                </div>
+
+            </form>
+            <!-- Tab panes -->
+            <div class="tab-content m-t-10">
+                <div class="tab-pane table-responsive active" id="All">
+                    <table class="table m-b-0 table-hover">
+                        <thead>
+                            <tr>
+                                <th>@Html.DisplayNameFor(a => a.CountryDesc)</th>
+                                <th>@Html.DisplayNameFor(a => a.CityDesc)</th>
+                                <th>@Html.DisplayNameFor(a => a.MobileNumber)</th>
+                                <th>@Html.DisplayNameFor(a => a.Name)</th>
+                                <th>@Html.DisplayNameFor(a => a.Number)</th>
+                                <th>@Html.DisplayNameFor(a => a.IsTrust)</th>
+                                <th>@Html.DisplayNameFor(a => a.IsVIP)</th>
+                                <th>@Html.DisplayNameFor(a => a.IsApprove)</th>
+                                <th>تفاصيل</th>
+                                <th>حجوزات المزارع</th>
+                                <th>ملاحظات المزارع</th>
+                                <th>تعديل الصور</th>
+                                <th>تعديل الفيدوهات</th>
+                                <th>حذف</th>
+                                <th>معلومات الادمن</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                            <tr>
+                                <td>@item.CountryDesc</td>
+                                <td>@item.CityDesc</td>
+                                <td>@item.MobileNumber</td>
+                                <td>
+                                    @(item.Name)
+                                    <span style="color:red"> @(item.ReservationCount > 0 ?  "( "+ item.ReservationCount + " ) حجز " : "")  </span> 
+                                    <span style="color:red"> @(item.FeedbackCount > 0 ? " - ( " + item.FeedbackCount + " ) تقييمات " : "")  </span>
+                                </td>
+                                <td>@item.Number</td>
+                                <td>@(item.IsTrust == true ? "نعم" : "لا" )</td>
+                                <td>@(item.IsVIP == true ? "نعم" : "لا" )</td>
+                                <td>@(item.IsApprove == true ? "نعم" : "لا" )</td>
+                                <td><a href="@Url.Content("~/FarmersSyria/edit/")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
+                                <td><a href="@Url.Content("~/FarmerReservation/index?farmerId=")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
+                                <td><a href="@Url.Content("~/FarmerFeedBack/index?farmerId=")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
+                                <td><a href="@Url.Content("~/FarmersSyria/farmerImages/")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
+                                <td><a href="@Url.Content("~/FarmersSyria/FarmerVideos/")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
+                                <td>
+                                    <a href="javascript:Delete('Farmers',@item.Id,'Delete','Index')" class="btn btn-danger btn-sm">حذف</a>
+                                </td>
+                                <td><a href="@Url.Content("~/FarmersSyria/FarmerUser?farmerId=")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
+                            </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

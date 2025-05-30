@@ -1,0 +1,5 @@
+﻿@model TripSectionModel
+@using (Html.BeginForm("Edit", "TripSection", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.Partial("_CreateOrUpdate", Model)
+}

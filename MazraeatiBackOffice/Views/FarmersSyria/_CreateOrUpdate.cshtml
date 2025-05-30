@@ -1,0 +1,521 @@
+﻿@model FarmerModel
+<style>
+    .form-group {
+        font-size: 13px;
+    }
+    .textboxWidth {
+        width: 120px;
+    }
+
+</style>
+<script src="~/assets/js/jquery-3.2.1.min.js"></script>
+<script>
+     function DeletePriceList(farmerId, personNumber) {
+            if (confirm("هل انت متأكد من انك تريد الغاء هذا السجل")) {
+                $.post('@Url.Content("~/FarmersSyria/DeletePriceList")', { person: personNumber , farmerId: farmerId}, function (result) {
+                    if (result == 1) {
+                        alert(" تم حذف الفترة ");
+                        window.location.reload();
+                    } else {
+                        alert(" لم يتم حذف الفترة ");
+                    }
+                });
+            }
+        }
+</script>
+@Html.HiddenFor(a => a.Id)
+@Html.HiddenFor(a => a.Number)
+@Html.HiddenFor(a => a.IssueDate)
+@Html.HiddenFor(a => a.ExpiryDate)
+@Html.HiddenFor(a => a.Countries)
+@Html.HiddenFor(a => a.Cities)
+<div class="container-fluid">
+    <div class="row clearfix">
+        <div class="col-lg-12 col-md-12 col-sm-12">
+            <div class="card">
+                <div class="header">
+                    <h2><strong>معالجة </strong> السجل</h2>
+                    <ul class="header-dropdown">
+                    </ul>
+                </div>
+                <div class="body">
+                    <div class="row clearfix">
+
+                        <div class="col-sm-12">
+                            <h5 style="text-decoration:underline">معلومات الدولة والمدينة</h5>
+                        </div>
+
+                        <div class="col-sm-6">
+                            @Html.DisplayNameFor(a => a.CountryDesc)
+                            <select class="form-control" name="CountryId">
+                                <option selected="selected" disabled="disabled">--الرجاء اختيار الدوله--</option>
+                                @foreach (var item in Model.Countries)
+                                {
+                                    <option selected="@(item.Id  == Model.CountryId)" value="@item.Id">@item.DescAr</option>
+                                }
+                            </select>
+                            @Html.ValidationMessageFor(a => a.CountryId, "", new { @style = "color:red;font-size:10px" })
+                        </div>
+                        <div class="col-sm-6">
+                            @Html.DisplayNameFor(a => a.CityDesc)
+                            <select class="form-control" name="CityId">
+                                <option selected="selected" disabled="disabled">--الرجاء اختيار المدينة--</option>
+                                @foreach (var item in Model.Cities)
+                                {
+                                    <option selected="@(item.Id  == Model.CityId)" value="@item.Id">@item.DescAr</option>
+                                }
+                            </select>
+                            @Html.ValidationMessageFor(a => a.CityId, "", new { @style = "color:red;font-size:10px" })
+                        </div>
+                        <div class="col-sm-12" style="margin-bottom:20px">
+                            &nbsp;
+                        </div>
+
+                        <div class="col-sm-12">
+                            <h5 style="text-decoration:underline">معلومات عن المزرعة</h5>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.MobileNumber)
+                                @Html.TextBoxFor(a => a.MobileNumber, new { @class = "form-control", @autocomplete = "off", @placeholder = "962xxxxxxxxx", @maxlength = 12 })
+                                @Html.ValidationMessageFor(a => a.MobileNumber, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+
+                        @*@if (Model.Id > 0)
+        {
+        <div class="col-sm-6">
+            <div class="form-group">
+                @Html.DisplayNameFor(a => a.Number)
+                @Html.TextBoxFor(a => a.Number, new { @class = "form-control", @autocomplete = "off" })
+                @Html.ValidationMessageFor(a => a.Number, "", new { @style = "color:red;font-size:10px" })
+            </div>
+        </div>
+        }*@
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.Name)
+                                @Html.TextBoxFor(a => a.Name, new { @class = "form-control", @autocomplete = "off", @maxlength = 50 })
+                                @Html.ValidationMessageFor(a => a.Name, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.LocationDesc)
+                                @Html.TextBoxFor(a => a.LocationDesc, new { @class = "form-control", @autocomplete = "off", @maxlength = 20 })
+                                @Html.ValidationMessageFor(a => a.LocationDesc, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            @Html.DisplayNameFor(a => a.Owner)
+                            <select class="form-control" name="Owner">
+                                <option selected="selected" disabled="disabled">--الرجاء اختيار نوع المالك--</option>
+                                <option selected="@(Model.Owner.Trim() == "من المالك")" value="من المالك">من المالك</option>
+                                <option selected="@(Model.Owner.Trim() == "من المسوق")" value="من المسوق">من المسوق</option>
+                            </select>
+                            @Html.ValidationMessageFor(a => a.Owner, "", new { @style = "color:red;font-size:10px" })
+                        </div>
+
+
+                        <div class="col-sm-12" style="margin-bottom:20px">
+                            &nbsp;
+                        </div>
+
+                        <div class="col-sm-12">
+                            <h5 style="text-decoration:underline">تفاصيل العقار</h5>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.EStateArea)
+                                @Html.TextBoxFor(a => a.EStateArea, new { @class = "form-control", @autocomplete = "off", @type = "number", @max = "99999" })
+                                @Html.ValidationMessageFor(a => a.EStateArea, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.Room)
+                                @Html.TextBoxFor(a => a.Room, new { @class = "form-control", @autocomplete = "off", @type = "number", @max = "99" })
+                                @Html.ValidationMessageFor(a => a.Room, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.RoomDetails)
+                                @Html.TextAreaFor(a => a.RoomDetails, new { @class = "form-control", @autocomplete = "off", @maxlength = 500 })
+                                @Html.ValidationMessageFor(a => a.RoomDetails, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.Bathroom)
+                                @Html.TextBoxFor(a => a.Bathroom, new { @class = "form-control", @autocomplete = "off", @type = "number", @max = "99" })
+                                @Html.ValidationMessageFor(a => a.Bathroom, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.BathroomDetails)
+                                @Html.TextBoxFor(a => a.BathroomDetails, new { @class = "form-control", @autocomplete = "off", @maxlength = 500 })
+                                @Html.ValidationMessageFor(a => a.BathroomDetails, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.Floor)
+                                @Html.TextBoxFor(a => a.Floor, new { @class = "form-control", @autocomplete = "off", @type = "number", @max = "99" })
+                                @Html.ValidationMessageFor(a => a.Floor, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.InDoor)
+                                @Html.TextBoxFor(a => a.InDoor, new { @class = "form-control", @autocomplete = "off", @type = "number", @max = "99" })
+                                @Html.ValidationMessageFor(a => a.InDoor, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.InDoorDescription)
+                                @Html.TextAreaFor(a => a.InDoorDescription, new { @class = "form-control", @autocomplete = "off", @maxlength = 500 })
+                                @Html.ValidationMessageFor(a => a.InDoorDescription, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.OutDoor)
+                                @Html.TextBoxFor(a => a.OutDoor, new { @class = "form-control", @autocomplete = "off", @type = "number", @max = "99" })
+                                @Html.ValidationMessageFor(a => a.OutDoor, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.OutDoorDescription)
+                                @Html.TextAreaFor(a => a.OutDoorDescription, new { @class = "form-control", @autocomplete = "off", @maxlength = 500 })
+                                @Html.ValidationMessageFor(a => a.OutDoorDescription, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.kitchens)
+                                @Html.TextBoxFor(a => a.kitchens, new { @class = "form-control", @autocomplete = "off", @type = "number", @max = "99" })
+                                @Html.ValidationMessageFor(a => a.kitchens, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.kitchensDescription)
+                                @Html.TextAreaFor(a => a.kitchensDescription, new { @class = "form-control", @autocomplete = "off", @maxlength = 500 })
+                                @Html.ValidationMessageFor(a => a.kitchensDescription, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.ExtraDetails)
+                                @Html.TextAreaFor(a => a.ExtraDetails, new { @class = "form-control", @autocomplete = "off", @maxlength = 500 })
+                                @Html.ValidationMessageFor(a => a.ExtraDetails, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.ReservationDetails)
+                                @Html.TextAreaFor(a => a.ReservationDetails, new { @class = "form-control", @autocomplete = "off", @maxlength = 500 })
+                                @Html.ValidationMessageFor(a => a.ReservationDetails, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            @Html.DisplayNameFor(a => a.Family)
+                            <select class="form-control" name="Family">
+                                <option selected="selected" value="عائلات وشباب">عائلات وشباب</option>
+                                <option value="عائلات فقط">عائلات فقط</option>
+                            </select>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.Location)
+                                @Html.TextBoxFor(a => a.Location, new { @class = "form-control", @autocomplete = "off", @maxlength = 50 })
+                                @*@Html.ValidationMessageFor(a => a.Location, "", new { @style = "color:red;font-size:10px" })*@
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12" style="margin-bottom:20px">
+                            &nbsp;
+                        </div>
+
+                        <div class="col-sm-12">
+                            <h5 style="text-decoration:underline">تفاصيل الحجز</h5>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.InsuranceAmt)
+                                @Html.TextBoxFor(a => a.InsuranceAmt, new { @class = "form-control", @autocomplete = "off", @type = "number", @max = "9999" })
+                                @Html.ValidationMessageFor(a => a.InsuranceAmt, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.DepositAmt)
+                                @Html.TextBoxFor(a => a.DepositAmt, new { @class = "form-control", @autocomplete = "off", @type = "number", @max = "9999" })
+                                @Html.ValidationMessageFor(a => a.DepositAmt, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.MaxPerson)
+                                @Html.TextBoxFor(a => a.MaxPerson, new { @class = "form-control", @autocomplete = "off", @type = "number", @max = "9999" })
+                                @Html.ValidationMessageFor(a => a.MaxPerson, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12" style="margin-bottom:20px">
+                            &nbsp;
+                        </div>
+
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.IsTrust)
+                                <br />
+                                @Html.CheckBoxFor(a => a.IsTrust, new { @class = "form-control", @style = "margin-top: 10px;" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.IsVIP)
+                                <br />
+                                @Html.CheckBoxFor(a => a.IsVIP, new { @class = "form-control", @style = "margin-top: 10px;" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.IsOffer)
+                                <br />
+                                @Html.CheckBoxFor(a => a.IsOffer, new { @class = "form-control", @style = "margin-top: 10px;" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.IsWinter)
+                                <br />
+                                @Html.CheckBoxFor(a => a.IsWinter, new { @class = "form-control", @style = "margin-top: 10px;" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.IsApprove)
+                                <br />
+                                @Html.CheckBoxFor(a => a.IsApprove, new { @class = "form-control", @style = "margin-top: 10px;" })
+                            </div>
+                        </div>
+
+
+                        <div class="col-sm-12">
+                            <h5 style="text-decoration:underline">الاسعار</h5>
+                        </div>
+                        <button type="button" onclick="window.location.href='@Url.Content("~/FarmersSyria/FarmerPriceList?farmerId=")@Model.Id'" class="btn btn-primary btn-round">اضافة اسعار جديدة</button>
+                        <div style="margin:0 10px">
+                            <div class="row clearfix">
+                                @for (int i = 0; i < Model.PriceList.OrderBy(c => c.Person).ThenBy(n => n.Day).Count(); i++)
+                                {
+                                    <div class="tab-pane table-responsive active" id="All" style="width:99% !important">
+                                        <table class="table m-b-0 table-hover">
+                                            <thead>
+                                                @if (i > 0 && Model.PriceList[i].Person != Model.PriceList[i - 1].Person)
+                                                {
+                                                    <tr>
+                                                        <th colspan="9">@Model.PriceList[i].Person عدد الاشخاص المسموح بهم</th>
+                                                        <th>
+                                                            <button type="button" id="btnDeletePriceList" onclick="DeletePriceList(@Model.PriceList[i].FarmerId,@Model.PriceList[i].Person);" class="btn btn-danger btn-round">حذف</button>
+                                                        </th>
+                                                    </tr>
+                                                }
+                                               
+
+                                                @if (i == 0)
+                                                {
+                                                    <tr>
+                                                        <th>سعر الفتره الصباحية</th>
+                                                        <th>سعر الفتره المسائية</th>
+                                                        <th>سعر يوم كامل</th>
+                                                        <th>سعر عرض الفتره الصباحية</th>
+                                                        <th>سعر عرض الفتره المسائية</th>
+                                                        <th>سعر عرض يوم كامل</th>
+                                                        <th>الفترة الصباحية</th>
+                                                        <th>الفترة المسائية</th>
+                                                        <th>الفترة يوم كامل</th>
+                                                        <th>حذف الفترة</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th colspan="9">@Model.PriceList[i].Person عدد الاشخاص المسموح بهم</th>
+                                                        <th>
+                                                            <button type="button" id="btnDeletePriceList" onclick="DeletePriceList(@Model.PriceList[i].FarmerId,@Model.PriceList[i].Person);" class="btn btn-danger btn-round">حذف</button>
+                                                        </th>
+                                                    </tr>
+                                                }
+
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td colspan="10">
+                                                        @switch (Model.PriceList[i].Day)
+                                                        {
+                                                            case 1:
+                                                                @Html.Label("(الاحد)");
+                                                                break;
+                                                            case 2:
+                                                                @Html.Label("(الاثنين)");
+                                                                break;
+                                                            case 3:
+                                                                @Html.Label("(الثلاثاء)");
+                                                                break;
+                                                            case 4:
+                                                                @Html.Label("(الاربعاء)");
+                                                                break;
+                                                            case 5:
+                                                                @Html.Label("(الخميس)");
+                                                                break;
+                                                            case 6:
+                                                                @Html.Label("(الجمعه)");
+                                                                break;
+                                                            case 7:
+                                                                @Html.Label("(السبت)");
+                                                                break;
+                                                        }
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    @Html.HiddenFor(a => Model.PriceList[i].Id)
+                                                    @Html.HiddenFor(a => Model.PriceList[i].Day)
+                                                    @Html.HiddenFor(a => Model.PriceList[i].FarmerId)
+                                                    @Html.HiddenFor(a => Model.PriceList[i].Person)
+                                                    <td style="width:10%">
+                                                        @Html.TextBoxFor(a => Model.PriceList[i].MorningPrice, new { @placeholder = "سعر الفتره الصباحية", @max = 999, @type = "number", @required = "required", @class = "textboxWidth" })
+                                                    </td>
+                                                    <td style="width:10%">
+                                                        @Html.TextBoxFor(a => Model.PriceList[i].EveningPrice, new { @placeholder = "سعر الفتره المسائية", @max = 999, @type = "number", @required = "required", @class = "textboxWidth" })
+                                                    </td>
+                                                    <td style="width:10%">
+                                                        @Html.TextBoxFor(a => Model.PriceList[i].FullDayPrice, new { @placeholder = "سعر يوم كامل", @max = 999, @type = "number", @required = "required", @class = "textboxWidth" })
+                                                    </td>
+                                                    <td style="width:10%">
+                                                        @Html.TextBoxFor(a => Model.PriceList[i].OfferPrice, new { @placeholder = "سعر عرض الفترة الصباحية ان اوجد", @max = 999, @type = "number", @class = "textboxWidth" })
+                                                    </td>
+                                                    <td style="width:10%">
+                                                        @Html.TextBoxFor(a => Model.PriceList[i].OfferEveningPrice, new { @placeholder = "سعر عرض الفترة المسائية ان اوجد", @max = 999, @type = "number", @class = "textboxWidth" })
+                                                    </td>
+                                                    <td style="width:10%">
+                                                        @Html.TextBoxFor(a => Model.PriceList[i].OfferFullDayPrice, new { @placeholder = "سعر عرض يوم كامل ان اوجد", @max = 999, @type = "number", @class = "textboxWidth" })
+                                                    </td>
+                                                    <td style="width:10%">
+                                                        @Html.TextBoxFor(a => Model.PriceList[i].MorningPeriodText, new { @placeholder = " الفتره الصباحية", @maxlength = 25, @type = "text", @required = "required", @class = "textboxWidth" })
+                                                    </td>
+                                                    <td style="width:10%">
+                                                        @Html.TextBoxFor(a => Model.PriceList[i].EveningPeriodText, new { @placeholder = " الفتره المسائية", @maxlength = 25, @type = "text", @required = "required", @class = "textboxWidth" })
+                                                    </td>
+                                                    <td style="width:10%">
+                                                        @Html.TextBoxFor(a => Model.PriceList[i].FullDayPeriodText, new { @placeholder = "يوم كامل", @maxlength = 25, @type = "text", @class = "textboxWidth" })
+                                                    </td>
+                                                    <td style="width:10%">
+
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        
+
+                        <div class="col-sm-12" style="margin-bottom:20px">
+                            &nbsp;
+                        </div>
+
+                        <div class="col-sm-12">
+                            <h5 style="text-decoration:underline">المرافق العامة</h5>
+                        </div>
+                        <div class="row clearfix">
+                            @for (int i = 0; i < Model.ExtraFeature.Count; i++)
+                            {
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        @Html.HiddenFor(a => a.ExtraFeature[i].Id)
+                                        @Html.HiddenFor(a => a.ExtraFeature[i].TypeId)
+                                        @Html.DisplayFor(a => a.ExtraFeature[i].DescAr)
+                                        <br />
+                                        @Html.CheckBoxFor(a => a.ExtraFeature[i].IsCheck, new { @class = "form-control", @style = "margin-top: 10px;" })
+                                        @Html.TextBoxFor(a => a.ExtraFeature[i].ExtraText, new { @class = "form-control", @maxlength = 10 })
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="col-sm-12">
+                            <h5 style="text-decoration:underline">اضافه صور</h5>
+                        </div>
+
+                        <div class="col-sm-12" style="margin-bottom:20px">
+                            &nbsp;
+                        </div>
+
+                        <div class="col-sm-12">
+                            @Html.TextBoxFor(model => model.Images, new { type = "file", multiple = "" })
+                            @Html.ValidationMessageFor(model => model.Images, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-sm-12" style="margin-bottom:20px">
+                            &nbsp;
+                        </div>
+
+                        <div class="col-sm-12">
+                            <h5 style="text-decoration:underline">اضافه فيدوهات</h5>
+                        </div>
+
+                        <div class="col-sm-12" style="margin-bottom:20px">
+                            &nbsp;
+                        </div>
+
+                        <div class="col-sm-12">
+                            @Html.TextBoxFor(model => model.Videos, new { type = "file", multiple = "" })
+                            @Html.ValidationMessageFor(model => model.Videos, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-sm-12" style="margin-bottom:20px">
+                            &nbsp;
+                        </div>
+
+                        <div class="col-sm-12">
+                            <button type="submit" class="btn btn-primary btn-round">حفظ</button>
+                            <button type="button" onclick="window.location.href='@Url.Content("~/FarmersSyria/index/")'" class="btn btn-default btn-round btn-simple">رجوع</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

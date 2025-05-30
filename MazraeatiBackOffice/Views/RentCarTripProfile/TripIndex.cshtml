@@ -1,0 +1,69 @@
+﻿@model IEnumerable<TripModel>
+<div class="col-md-12">
+    <div class="card patients-list">
+        <div class="header">
+            <h2><strong>قائمة</strong> الانشطة شركات تاجير السيارات</h2>
+            <ul class="header-dropdown">
+            </ul>
+        </div>
+        <div class="body">
+            <!-- Nav tabs -->
+            <form action="@Url.Action("TripIndex",new { id = ViewBag.profileId })" method="post">
+                <div class="row clearfix">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <input type="text" name="search" value="@ViewBag.search" placeholder="الكلمة المفتاحية" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group" style="margin-top: -10px;">
+                            <button type="submit" class="btn btn-primary btn-round">بحث</button>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group" style="margin-top: -10px;">
+                            <a href="@Url.Action("TripCreate", new { id = ViewBag.profileId })" class="btn btn-primary btn-round">اضافة سجل جديد</a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Tab panes -->
+            <div class="tab-content m-t-10">
+                <div class="tab-pane table-responsive active" id="All">
+                    <table class="table m-b-0 table-hover">
+                        <thead>
+                            <tr>
+                                <th>@Html.DisplayNameFor(a => a.CountryDesc)</th>
+                                <th>@Html.DisplayNameFor(a => a.TypeDesc)</th>
+                                <th>@Html.DisplayNameFor(a => a.MobileNumber)</th>
+                                <th>@Html.DisplayNameFor(a => a.Name)</th>
+                                <th>@Html.DisplayNameFor(a => a.Description)</th>
+                                <th>تفاصيل</th>
+                                <th>تعديل الصور</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.CountryDesc</td>
+                                    <td>
+                                        شركات تاجير السيارات
+                                    </td>
+                                    <td>@item.MobileNumber</td>
+                                    <td>@item.Name</td>
+                                    <td>@(item.Description.Length > 50 ? item.Description.Substring(0,49) + "...." : item.Description)</td>
+                                    <td><a href="@Url.Content("~/RentCarTripProfile/TripEdit/")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
+                                    <td><a href="@Url.Content("~/RentCarTripProfile/TripImages/")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <button type="button" onclick="window.location.href='@Url.Content("~/RentCarTripProfile/Index/")'" class="btn btn-default btn-round btn-simple">رجوع</button>
+        </div>
+    </div>
+</div>

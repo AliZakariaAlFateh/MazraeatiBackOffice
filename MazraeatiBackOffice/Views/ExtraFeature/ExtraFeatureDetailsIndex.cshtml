@@ -1,0 +1,63 @@
+﻿@model IEnumerable<LookupValueModel>
+<div class="col-md-12">
+    <div class="card patients-list">
+        <div class="header">
+            <h2><strong>قائمة</strong> معلومات اضافية تفاصيل</h2>
+            <ul class="header-dropdown">
+            </ul>
+        </div>
+        <div class="body">
+            <!-- Nav tabs -->
+            <form action="@Url.Action("ExtraFeatureDetailsIndex",new { lookupId = ViewBag.lookupId })" method="post">
+                <div class="row clearfix">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <input type="text" name="search" value="@ViewBag.search" placeholder="الكلمة المفتاحية" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group" style="margin-top: -10px;">
+                            <button type="submit" class="btn btn-primary btn-round">بحث</button>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group" style="margin-top: -10px;">
+                            <a href="@Url.Action("Create",new { lookupId = ViewBag.lookupId  })" class="btn btn-primary btn-round">اضافة سجل جديد</a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <!-- Tab panes -->
+            <div class="tab-content m-t-10">
+                <div class="tab-pane table-responsive active" id="All">
+                    <table class="table m-b-0 table-hover">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>@Html.DisplayNameFor(a => a.LookupId)</th>
+                                <th>@Html.DisplayNameFor(a => a.Code)</th>
+                                <th>@Html.DisplayNameFor(a => a.ValueEn)</th>
+                                <th>@Html.DisplayNameFor(a => a.ValueAr)</th>
+                                <th>تعديل</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.Id</td>
+                                    <td>@item.LookupDesc</td>
+                                    <td>@item.Code</td>
+                                    <td>@item.ValueEn</td>
+                                    <td>@item.ValueAr</td>
+                                    <td><a href="@Url.Content("~/ExtraFeature/Edit/")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

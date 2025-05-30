@@ -1,0 +1,82 @@
+﻿@model TripImagesModel
+
+<script src="~/assets/js/jquery-3.2.1.min.js"></script>
+<script>
+
+    var tripImageCheckbox = new Array();
+
+    $(document).ready(function () {
+        $(".tripImageCheckbox").on("change", function () {
+            if (this.checked) {
+                tripImageCheckbox.push(this.id);
+            }
+            else {
+                var i = tripImageCheckbox.indexOf(this.id);
+                tripImageCheckbox.slice(i, 1);
+            }
+        });
+
+       
+        $("#btnDeleteImage").on("click", function () {
+            if (tripImageCheckbox.length == 0)
+                return alert("الرجاء اختيار صور");
+            $.post('@Url.Content("~/Trip/DeleteImage")', { Ids: tripImageCheckbox.toString() }, function (result) {
+                if (result == 1) {
+                    alert("تم الحذف بنجاح");
+                    window.location.reload();
+                } else {
+                    alert(result);
+                }
+            });
+        });
+
+    })
+
+</script>
+
+<div class="col-md-12">
+    <div class="card patients-list">
+        <div class="header">
+            <h2>صور المسابح  - <strong>@Model.TripName</strong> </h2>
+            <ul class="header-dropdown">
+            </ul>
+        </div>
+        <div class="body">
+            <!-- Tab panes -->
+            <div class="tab-content m-t-10">
+                <div class="tab-pane table-responsive active" id="All">
+                    <div class="col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="form-group" style="margin-top: -10px;">
+                                    <button type="button" id="btnDeleteImage" class="btn btn-primary btn-round">
+                                        تحديد الصور التي تريد حذفها
+                                    </button>
+                                </div>
+                            </div>
+                            <table class="table m-b-0 table-hover">
+                                <thead style="background-color:#FD9C4E;color:white">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>صور</th>
+                                        <th> تحديد </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.Images)
+                                    {
+                                    <tr>
+                                        <td>@item.Id</td>
+                                        <td><a href="@Url.Content("~/images/")@item.Url" style="color:black" target="_blank"><i class="zmdi zmdi-eye"></i></a></td>
+                                        <td><input class="tripImageCheckbox" type="checkbox" id="@item.Id" /></td>
+                                    </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

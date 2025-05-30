@@ -1,0 +1,71 @@
+﻿@model TripPriceModel
+
+<style>
+    .form-group {
+        font-size: 13px;
+    }
+
+    .textboxWidth {
+        width: 120px;
+    }
+</style>
+<div class="col-md-12">
+    <div class="card patients-list">
+        <div class="header">
+            <h2>@ViewBag.activePage - <strong>@ViewBag.tripName</strong> </h2>
+            <ul class="header-dropdown">
+            </ul>
+        </div>
+        <div class="body">
+            @using (Html.BeginForm("TripPriceList", "Trip", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                @Html.HiddenFor(a => Model.TripId)
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.DisplayNameFor(a => a.Person)
+                        @Html.TextBoxFor(a => a.Person, new { @class = "form-control", @autocomplete = "off", @type = "number", @max = "9999" })
+                        @Html.ValidationMessageFor(a => a.Person, "", new { @style = "color:red;font-size:10px" })
+                    </div>
+                </div>
+
+                
+                    <div class="tab-pane table-responsive active" id="All" style="width:100% !important">
+                        <table class="table m-b-0 table-hover">
+                            <thead>
+                                <tr>
+                                    <th style="width:10%">السعر</th>
+                                    <th style="width:10%">سعر العرض ن اوجد</th>
+                                </tr>
+                            </thead>
+                            @for (int i = 0; i < Model.PriceList.Count; i++)
+                            {
+                                <tbody>
+                                    <tr>
+                                        @Html.HiddenFor(a => a.PriceList[i].Id)
+                                        @Html.HiddenFor(a => a.PriceList[i].TripId)
+
+                                        <td style="width:10%">
+                                            @Html.TextBoxFor(a => a.PriceList[i].Price, new { @placeholder = "السعر", @max = 999, @type = "number", @required = "required", @class = "textboxWidth" })
+                                        </td>
+                                        <td style="width:10%">
+                                            @Html.TextBoxFor(a => a.PriceList[i].OfferPrice, new { @placeholder = "سعر العرض", @max = 999, @type = "number", @required = "required", @class = "textboxWidth" })
+                                        </td>
+                                       
+                                    </tr>
+                                </tbody>
+                            }
+                        </table>
+                    </div>
+                
+
+                <div class="col-sm-12">
+                    <button type="submit" class="btn btn-primary btn-round">حفظ</button>
+                    <button type="button" onclick="window.location.href='@Url.Content("~/Trip/Edit/")@Model.TripId'" class="btn btn-default btn-round btn-simple">رجوع</button>
+                </div>
+
+            }
+
+        </div>
+       
+    </div>
+</div>

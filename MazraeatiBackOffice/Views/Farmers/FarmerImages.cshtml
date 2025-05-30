@@ -1,0 +1,153 @@
+﻿@model FarmerImagesModel
+
+<script src="~/assets/js/jquery-3.2.1.min.js"></script>
+<script>
+
+    var farmerImageCheckbox = new Array();
+
+    $(document).ready(function () {
+        $(".farmerImageCheckbox").on("change", function () {
+            if (this.checked) {
+                farmerImageCheckbox.push(this.id);
+            }
+            else {
+                var i = farmerImageCheckbox.indexOf(this.id);
+                farmerImageCheckbox.slice(i, 1);
+            }
+        });
+
+        $("#btnVipImage").on("click", function () {
+            if (farmerImageCheckbox.length == 0)
+                return alert("الرجاء اختيار صور");
+            $.post('@Url.Content("~/Farmers/EditFarmsVIPImage")', { Ids: farmerImageCheckbox.toString() }, function (result) {
+                if (result == 1) {
+                    alert("تم التحديث بنجاح");
+                    window.location.reload();
+                } else {
+                    alert(result);
+                }
+            });
+        });
+
+        $("#btnDeleteImage").on("click", function () {
+            if (farmerImageCheckbox.length == 0)
+                return alert("الرجاء اختيار صور");
+            $.post('@Url.Content("~/Farmers/DeleteFarmsImage")', { Ids: farmerImageCheckbox.toString() }, function (result) {
+                if (result == 1) {
+                    alert("تم الحذف بنجاح");
+                    window.location.reload();
+                } else {
+                    alert(result);
+                }
+            });
+        });
+
+        $("#btnActiveOrNotImage").on("click", function () {
+            if (farmerImageCheckbox.length == 0)
+                return alert("الرجاء اختيار صور");
+            $.post('@Url.Content("~/Farmers/EditActiveOrNotImage")', { Ids: farmerImageCheckbox.toString() }, function (result) {
+                if (result == 1) {
+                    alert("تم التحديث بنجاح");
+                    window.location.reload();
+                } else {
+                    alert(result);
+                }
+            });
+        });
+
+        $("#btnDownloadImg").on("click", function () {
+            $.post('@Url.Content("~/Farmers/SaveFarmerImage")', { farmerId: @Model.FarmerId }, function (result) {
+                if (result == 1) {
+                    alert("تم تنزيل الصور بنجاح ");
+                    window.location.reload();
+                } else {
+                    alert(result);
+                }
+            });
+        });
+
+        $("#btnSelectAll").on("click", function () {
+            farmerImageCheckbox = new Array(); 
+            var elem = document.getElementsByClassName('farmerImageCheckbox');
+            for (var index = 0; index < elem.length; index++) {
+                if (elem[index].checked) {
+                    elem[index].checked = false;
+                }
+                else {
+                    elem[index].checked = true;
+                    farmerImageCheckbox.push(elem[index].id);
+                }
+                   
+            }
+        });
+
+    })
+
+</script>
+
+<div class="col-md-12">
+    <div class="card patients-list">
+        <div class="header">
+            <h2>صور المزارع  - <strong>@Model.FarmerName</strong> </h2>
+            <ul class="header-dropdown">
+            </ul>
+        </div>
+        <div class="body">
+            <!-- Tab panes -->
+            <div class="tab-content m-t-10">
+                <div class="tab-pane table-responsive active" id="All">
+                    <div class="col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="form-group" style="margin-top: -10px;">
+                                    <button type="button" id="btnVipImage" class="btn btn-primary btn-round">
+                                        تحديد الصور التي تظهر فقط على معلومات المزرعة
+                                    </button>
+                                    <button type="button" id="btnDeleteImage" class="btn btn-primary btn-round">
+                                        تحديد الصور التي تريد حذفها
+                                    </button>
+                                    <button type="button" id="btnActiveOrNotImage" class="btn btn-primary btn-round">
+                                        تحديد الصور التي الموافقه عليها او لا
+                                    </button>
+                                    <button type="button" id="btnDownloadImg" class="btn btn-primary btn-round">
+                                        تنزيل الصور
+                                    </button>
+                                    <button type="button" id="btnSelectAll" class="btn btn-primary btn-round">
+                                       تحديد الكل
+                                    </button>
+                                </div>
+                            </div>
+                            <table class="table m-b-0 table-hover">
+                                <thead style="background-color:#FD9C4E;color:white">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>صور</th>
+                                        <th>فعال او لا</th>
+                                        <th>صور VIP</th>
+                                        <th> تحديد </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.Images)
+                                    {
+                                    <tr>
+                                        <td>@item.Id</td>
+                                        <td>
+                                            <a href="@Url.Content("~/images/")@item.Url" target="_blank">
+                                                <img width="120" height="120" src="@Url.Content("~/images/")@item.Url" />
+                                            </a>
+                                        </td>
+                                        <td> <span class="badge badge-@(item.Active ? "success" : "danger")">@(item.Active ? "موافق عليها" : "غير موافق عليها")</span></td>
+                                        <td> <span class="badge badge-@(item.Vip ? "success" : "danger")">@(item.Vip ? "VIP" : "Not VIP")</span></td>
+                                        <td><input class="farmerImageCheckbox" type="checkbox" id="@item.Id" /></td>
+                                    </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

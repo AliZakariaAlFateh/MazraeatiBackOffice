@@ -1,0 +1,5 @@
+﻿@model FarmerModel
+@using (Html.BeginForm("Create", "Farmers", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.Partial("_CreateOrUpdate",Model)
+}

@@ -1,0 +1,57 @@
+﻿@model IEnumerable<SettingModel>
+<div class="col-md-12">
+    <div class="card patients-list">
+        <div class="header">
+            <h2><strong>قائمة</strong> متغيرات النظام</h2>
+            <ul class="header-dropdown">
+            </ul>
+        </div>
+        <div class="body">
+            <!-- Nav tabs -->
+            <form action="@Url.Action("Index")" method="post">
+                <div class="row clearfix">
+                    <div class="col-sm-9">
+                        <div class="form-group">
+                            <input type="text" name="search" value="@ViewBag.search" placeholder="الكلمة المفتاحية" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group" style="margin-top: -10px;">
+                            <button type="submit" class="btn btn-primary btn-round">بحث</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+
+
+            <!-- Tab panes -->
+            <div class="tab-content m-t-10">
+                <div class="tab-pane table-responsive active" id="All">
+                    <table class="table m-b-0 table-hover">
+                        <thead style="background-color:#FD9C4E;color:white">
+                            <tr>
+                                <th>#</th>
+                                <th>@Html.DisplayNameFor(a => a.DisplayName)</th>
+                                <th>@Html.DisplayNameFor(a => a.Value)</th>
+                                <th>الاجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.Id</td>
+                                    <td>@item.DisplayName</td>
+                                    <td>@(item.Value.Length > 70 ? item.Value.Substring(0,69)+"..":item.Value)</td>
+                                    <td><a href="@Url.Content("~/setting/edit/")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

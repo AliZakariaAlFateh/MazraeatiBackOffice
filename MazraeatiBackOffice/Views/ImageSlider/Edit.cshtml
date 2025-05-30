@@ -1,0 +1,5 @@
+﻿@model ImageSliderModel
+@using (Html.BeginForm("Edit", "ImageSlider", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.Partial("_CreateOrUpdate", Model)
+}

@@ -1,0 +1,5 @@
+﻿@model CountryModel
+@using (Html.BeginForm("Edit", "Country", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.Partial("_CreateOrUpdate", Model)
+}

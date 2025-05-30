@@ -1,0 +1,48 @@
+﻿@model IEnumerable<OnboardingModel>
+<div class="col-md-12">
+    <div class="card patients-list">
+        <div class="header">
+            <h2><strong>قائمة</strong>  onBoarding </h2>
+            <ul class="header-dropdown">
+            </ul>
+        </div>
+        <div class="body">
+            <!-- Nav tabs -->
+            @Html.Partial("_search")
+            <!-- Tab panes -->
+            <div class="tab-content m-t-10">
+                <div class="tab-pane table-responsive active" id="All">
+                    <table class="table m-b-0 table-hover">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>@Html.DisplayNameFor(a => a.CountryId)</th>
+                                <th>@Html.DisplayNameFor(a => a.Url)</th>
+                                <th>@Html.DisplayNameFor(a => a.ExtraText)</th>
+                                <th>@Html.DisplayNameFor(a => a.ExpiryDate)</th>
+                                <th>تفاصيل</th>
+                                <th>حذف</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                            <tr>
+                                <td>@item.Id</td>
+                                <td>@item.CountryDesc</td>
+                                <td><a href="@Url.Content("~/images/")@item.Url" style="color:black" target="_blank"><i class="zmdi zmdi-eye"></i></a></td>
+                                <td>@item.ExtraText</td>
+                                <td>@item.ExpiryDate</td>
+                                <td><a href="@Url.Content("~/Onboarding/Edit/")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
+                                <td><a href="javascript:Delete('Onboarding',@item.Id)" style="height: 25px;" class="btn btn-danger btn-round"><i class="zmdi zmdi-delete" style="color: white;margin-top: -10px;"></i></a></td>
+
+                            </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
