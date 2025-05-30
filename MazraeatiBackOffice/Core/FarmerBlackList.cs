@@ -14,5 +14,6 @@ namespace MazraeatiBackOffice.Core
         public string Reason { get; set; }
         public string ImageUrl { get; set; }
         public bool IsApprove { get; set; }
+        public int? FarmerId { get; set; }
     }
 }

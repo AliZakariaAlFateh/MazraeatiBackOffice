@@ -38,10 +38,10 @@ namespace MazraeatiBackOffice.Controllers
         private readonly IWebHostEnvironment webHostEnvironment;
         private IConfiguration _configuration;
 
-        public FarmersController(IRepository<City> cityRepository, IRepository<Country> countryRepository, IRepository<Farmer> FarmerRepository, 
+        public FarmersController(IRepository<City> cityRepository, IRepository<Country> countryRepository, IRepository<Farmer> FarmerRepository,
             IRepository<LookupValue> LookupValueRepository, IRepository<FarmerExtraFeatureType> FarmerExtraFeatureType,
             IRepository<FarmerPriceList> FarmerPriceList, IRepository<FarmerImage> FarmerImage, IRepository<FarmerVideo> FarmerVideo,
-            IRepository<FarmerUser> FarmerUserRepository, IRepository<FarmerReservation> FarmerReservation , IRepository<FarmerFeedback> FarmerFeedback , IUnitOfWork UnitOfWork, IWebHostEnvironment hostEnvironment, IConfiguration configuration)
+            IRepository<FarmerUser> FarmerUserRepository, IRepository<FarmerReservation> FarmerReservation, IRepository<FarmerFeedback> FarmerFeedback, IUnitOfWork UnitOfWork, IWebHostEnvironment hostEnvironment, IConfiguration configuration)
         {
             _FarmerRepository = FarmerRepository;
             _cityRepository = cityRepository;
@@ -59,7 +59,7 @@ namespace MazraeatiBackOffice.Controllers
             _configuration = configuration;
         }
 
-        
+
         public FarmerModel NewFillModel(FarmerModel model)
         {
             model.Owner = "من المالك";
@@ -70,10 +70,10 @@ namespace MazraeatiBackOffice.Controllers
             {
                 model.ExtraFeature.Add(new FarmerExtraFeatureTypeDto()
                 {
-                    FarmerId = 0 ,
+                    FarmerId = 0,
                     TypeId = Value.Id,
-                    DescAr = Value.ValueAr,
-                    ExtraText = "",
+                    ExtraText = Value.ValueAr,
+                    ExtraTextDescription = "",
                     IsCheck = false
 
                 });
@@ -107,8 +107,8 @@ namespace MazraeatiBackOffice.Controllers
                         Id = farmerExtraFeatureTypes.FirstOrDefault(f => f.TypeId == Value.Id).Id,
                         FarmerId = model.Id,
                         TypeId = Value.Id,
-                        DescAr = Value.ValueAr,
-                        ExtraText = "",
+                        ExtraText = Value.ValueAr,
+                        ExtraTextDescription = farmerExtraFeatureTypes.Where(f => f.TypeId == Value.Id).FirstOrDefault().ExtraTextDescription,
                         IsCheck = farmerExtraFeatureTypes.Count(f => f.TypeId == Value.Id) > 0 ? true : false
                     });
                 }
@@ -118,13 +118,13 @@ namespace MazraeatiBackOffice.Controllers
                     {
                         FarmerId = model.Id,
                         TypeId = Value.Id,
-                        DescAr = Value.ValueAr,
-                        ExtraText = "",
+                        ExtraText = Value.ValueAr,//lable
+                        ExtraTextDescription = "",
                         IsCheck = farmerExtraFeatureTypes.Count(f => f.TypeId == Value.Id) > 0 ? true : false
 
                     });
                 }
-                
+
             }
             model.PriceList = _FarmerPriceList.Table.Where(f => f.FarmerId == model.Id).OrderBy(f => f.Person).ThenBy(f => f.Day).ToList();
             return model;
@@ -142,7 +142,11 @@ namespace MazraeatiBackOffice.Controllers
             var Cities = _cityRepository.Table.Where(f => f.CountryId == 2).ToList();
             var Reservation = _FarmerReservation.Table.ToList();
             var FarmerFeedback = _FarmerFeedback.Table.ToList();
-            var model = _FarmerRepository.Table.Where(f => f.CountryId == 2).OrderByDescending(a => a.Id).Select(c => c.ToModel(Countries, Cities, Reservation, FarmerFeedback));
+            var farmerBlackListIds = _UnitOfWork.FarmerBlackListRepository.Table.Where(a => a.FarmerId != null)
+                                     .Select(a => a.FarmerId).ToList();
+            var model = _FarmerRepository.Table.Where(f => f.CountryId == 2 && !farmerBlackListIds.Contains(f.Id)).OrderByDescending(a => a.Id)
+                .Select(c => c.ToModel(Countries, Cities, Reservation, FarmerFeedback));
+
             ViewBag.activePage = "المزارع";
             ViewBag.cities = Cities.Where(c => c.CountryId == 2);
             ViewBag.DefaultDate = DateTime.Now;
@@ -182,7 +186,7 @@ namespace MazraeatiBackOffice.Controllers
                                                                                                        a.CountryId == 2
                                                                                    ).Select(c => c.ToModel(Countries, Cities, Reservation, FarmerFeedback));
             }
-            
+
             ViewBag.activePage = "المزارع";
             ViewBag.search = search;
             ViewBag.cities = Cities.Where(c => c.CountryId == 2);
@@ -196,6 +200,7 @@ namespace MazraeatiBackOffice.Controllers
         {
             var Countries = _countryRepository.Table.Where(f => f.Id == 2).ToList();
             var Cities = _cityRepository.Table.Where(f => f.CountryId == 2).ToList();
+
             var Reservation = _FarmerReservation.Table.ToList();
             var FarmerFeedback = _FarmerFeedback.Table.ToList();
             var model = _FarmerRepository.Table.Where(f => f.CountryId == 6 && f.IsApprove == false).OrderByDescending(a => a.Id).Select(c => c.ToModel(Countries, Cities, Reservation, FarmerFeedback));
@@ -226,7 +231,7 @@ namespace MazraeatiBackOffice.Controllers
                 model = _FarmerRepository.Table.OrderByDescending(a => a.Id).Where(a => (a.Name.Contains(search) ||
                                                                                         a.MobileNumber.Contains(search) ||
                                                                                         a.Number.ToString().Contains(search)) && (CityBy == 0 || (CityBy > 0 && a.CityId == CityBy)) &&
-                                                                                        (Reservation.Select(r => r.FarmerId).Contains(a.Id)) && a.CountryId == 2 
+                                                                                        (Reservation.Select(r => r.FarmerId).Contains(a.Id)) && a.CountryId == 2
                                                                                    ).Select(c => c.ToModel(Countries, Cities, Reservation, FarmerFeedback));
             }
             else
@@ -331,12 +336,13 @@ namespace MazraeatiBackOffice.Controllers
                     int nFarmsId = _FarmerRepository.Table.FirstOrDefault(f => f.Number == (nMaxNumber + 1)).Id;
 
                     // add extra feature
-                    foreach (FarmerExtraFeatureTypeDto extra in model.ExtraFeature.Where(e=>e.IsCheck == true))
+                    foreach (FarmerExtraFeatureTypeDto extra in model.ExtraFeature.Where(e => e.IsCheck == true))
                     {
                         FarmerExtraFeatureType farmerExtraFeatureType = new FarmerExtraFeatureType();
                         farmerExtraFeatureType.FarmerId = nFarmsId;
                         farmerExtraFeatureType.TypeId = extra.TypeId;
                         farmerExtraFeatureType.ExtraText = extra.ExtraText;
+                        farmerExtraFeatureType.ExtraTextDescription = extra.ExtraTextDescription;
 
                         _UnitOfWork.FarmerExtraFeatureTypeRepository.Insert(farmerExtraFeatureType);
 
@@ -383,7 +389,7 @@ namespace MazraeatiBackOffice.Controllers
                             nSortImage++;
                         }
                     }
-                   
+
 
                     // add videos
                     int nSortVideo = 1;
@@ -424,6 +430,7 @@ namespace MazraeatiBackOffice.Controllers
         public IActionResult Edit(int id)
         {
             Farmer farmer = _UnitOfWork.FarmerRepository.GetById(id);
+            var farmerExtraFeature = _UnitOfWork.FarmerExtraFeatureTypeRepository.Table.Where(a=>a.FarmerId==farmer.Id).ToList();
             if (farmer == null)
                 return RedirectToAction("Index");
 
@@ -467,6 +474,7 @@ namespace MazraeatiBackOffice.Controllers
                             farmerExtraFeatureType.Id = extra.Id;
                             farmerExtraFeatureType.FarmerId = model.Id;
                             farmerExtraFeatureType.ExtraText = extra.ExtraText;
+                            farmerExtraFeatureType.ExtraTextDescription = extra.ExtraTextDescription;
                             farmerExtraFeatureType.TypeId = extra.TypeId;
 
                             if (extra.Id > 0)
@@ -510,7 +518,7 @@ namespace MazraeatiBackOffice.Controllers
                             nSortImage++;
                         }
                     }
-                    
+
 
                     // add new video
                     int nSortVideo = maxOrderIdVideo + 1;
@@ -801,11 +809,11 @@ namespace MazraeatiBackOffice.Controllers
 
 
             #endregion
-           
+
 
             ViewBag.activePage = "معلومات الدخول للتطبيق الادمن";
             ViewBag.farmerName = farmer.Name;
-            
+
             return View(farmerUserModel);
         }
 
@@ -831,7 +839,7 @@ namespace MazraeatiBackOffice.Controllers
 
                     #endregion
 
-                    if(model.Id == 0)
+                    if (model.Id == 0)
                     {
                         model.Id = 0;
                         model.CreatedDate = DateTime.Now;
@@ -844,7 +852,7 @@ namespace MazraeatiBackOffice.Controllers
                         _UnitOfWork.FarmerUserRepository.Update(model.ToEntity());
                     }
 
-                  
+
                     _UnitOfWork.Save();
                     SuccessNotification("تم اضافة / تعديل  السجل بنجاح");
                     return RedirectToAction("Index");
@@ -852,7 +860,7 @@ namespace MazraeatiBackOffice.Controllers
             }
             catch (Exception e)
             {
-               
+
             }
             return View(NewFillFarmerUserModel(new FarmerUserModel()));
         }
@@ -914,7 +922,7 @@ namespace MazraeatiBackOffice.Controllers
                         item.Person = model.Person;
                         _UnitOfWork.FarmerPriceListRepository.Insert(item);
                     }
-                    
+
                     _UnitOfWork.Save();
                     SuccessNotification("تم اضافة / تعديل  السجل بنجاح");
                     return RedirectToAction("Index");
@@ -985,7 +993,7 @@ namespace MazraeatiBackOffice.Controllers
                 worksheet.Cell(currentRow, 4).Value = "المدينة";
                 worksheet.Cell(currentRow, 5).Value = "عدد الحجوزات خلال الشهر";
                 worksheet.Cell(currentRow, 6).Value = "رقم التلفون";
-               
+
 
                 foreach (var model in farms)
                 {
@@ -1014,7 +1022,7 @@ namespace MazraeatiBackOffice.Controllers
         #endregion
 
 
-       
+
 
     }
 }

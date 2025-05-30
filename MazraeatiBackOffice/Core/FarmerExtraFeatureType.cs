@@ -12,5 +12,7 @@ namespace MazraeatiBackOffice.Core
         public int FarmerId { get; set; }
         public int TypeId { get; set; }
         public string ExtraText { get; set; }
+        public string ExtraTextDescription { get; set; }
+
     }
 }

@@ -20,7 +20,17 @@
                 </div>
                 <div class="body">
                     <div class="row clearfix">
-
+                        <div class="col-sm-6">
+                            @Html.DisplayNameFor(a => a.FarmerName)
+                            <select class="form-control" name="FarmerId">
+                                <option selected="selected" disabled="disabled">--الرجاء اختيار المزرعة--</option>
+                                @foreach (var item in Model.Farmers)
+                                {
+                                    <option selected="@(item.Id  == Model.FarmerId)" value="@item.Id">@item.Name</option>
+                                }
+                            </select>
+                            @Html.ValidationMessageFor(a => a.FarmerId, "", new { @style = "color:red;font-size:10px" })
+                        </div>
                         <div class="col-sm-6">
                             <div class="form-group">
                                 @Html.DisplayNameFor(a => a.FarmerMobNum)

@@ -13,6 +13,7 @@ namespace MazraeatiBackOffice.Core
         public int TypeId { get; set; }
         public string DescAr { get; set; }
         public string ExtraText { get; set; }
+        public string ExtraTextDescription { get; set; }
         public bool IsCheck { get; set; }
     }
 }

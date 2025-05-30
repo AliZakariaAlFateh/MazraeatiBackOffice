@@ -31,7 +31,7 @@ namespace MazraeatiBackOffice.Controllers
             _configuration = configuration;
         }
 
-        
+
         public FarmerBlackListModel NewFillModel(FarmerBlackListModel model)
         {
             return model;
@@ -56,7 +56,8 @@ namespace MazraeatiBackOffice.Controllers
                 return RedirectToAction("Index");
 
             search = string.IsNullOrEmpty(search) ? "" : search;
-            var model = _FarmerBlackListRepository.Table.Where(t => (t.Reason.Contains(search) || t.FarmerMobNum.Contains(search) || t.FarmerName.Contains(search))).Select(c => c.ToModel());
+            var model = _FarmerBlackListRepository.Table.Where(t => (t.Reason.Contains(search) || t.FarmerMobNum.Contains(search) || t.FarmerName.Contains(search)))
+                .OrderByDescending(a=>a.Id).Select(c => c.ToModel());
 
             ViewBag.activePage = "قائمة المزارع المحظوريين";
             ViewBag.search = search;
@@ -65,8 +66,13 @@ namespace MazraeatiBackOffice.Controllers
 
         public IActionResult Create()
         {
+            var farmerBlackListIds = _UnitOfWork.FarmerBlackListRepository.Table.Where(a => a.FarmerId != null)
+                      .Select(a => a.FarmerId).ToList();
             ViewBag.activePage = "قائمة المزارع المحظوريين";
-            return View(NewFillModel(new FarmerBlackListModel()));
+            return View(NewFillModel(new FarmerBlackListModel()
+            {
+                Farmers = _UnitOfWork.FarmerRepository.Table.Where(a => a.CountryId == 2 && !farmerBlackListIds.Contains(a.Id)).ToList()
+            }));
         }
 
         [HttpPost]
@@ -91,18 +97,27 @@ namespace MazraeatiBackOffice.Controllers
             {
                 ErrorNotification("error while saving , please contact to administrator");
             }
-            return View(NewFillModel(new FarmerBlackListModel()));
+            var farmerBlackListIds = _UnitOfWork.FarmerBlackListRepository.Table.Where(a => a.FarmerId != null)
+                      .Select(a => a.FarmerId).ToList();
+            return View(NewFillModel(new FarmerBlackListModel()
+            {
+                Farmers = _UnitOfWork.FarmerRepository.Table.Where(a => a.CountryId == 2 && !farmerBlackListIds.Contains(a.Id)).ToList()
+            }));
         }
 
         public IActionResult Edit(int id)
         {
             FarmerBlackList farmerBlackList = _UnitOfWork.FarmerBlackListRepository.GetById(id);
             if (farmerBlackList == null)
-                return RedirectToAction("Index",new { farmerId = 0 });
+                return RedirectToAction("Index", new { farmerId = 0 });
 
 
             ViewBag.activePage = "قائمة المزارع المحظوريين";
-            return View(EditFillModel(farmerBlackList.ToModel()));
+            var res = farmerBlackList.ToModel();
+            var farmerBlackListIds = _UnitOfWork.FarmerBlackListRepository.Table.Where(a => a.FarmerId != null)
+                      .Select(a => a.FarmerId).ToList();
+            res.Farmers = _UnitOfWork.FarmerRepository.Table.Where(a => a.CountryId == 2 && !farmerBlackListIds.Contains(a.Id)).ToList();
+            return View(EditFillModel(res));
         }
 
         [HttpPost]
@@ -125,6 +140,11 @@ namespace MazraeatiBackOffice.Controllers
             {
                 ErrorNotification("error while saving  , please contact to administrator");
             }
+            var farmerBlackListIds = _UnitOfWork.FarmerBlackListRepository.Table.Where(a => a.FarmerId != null)
+                      .Select(a => a.FarmerId).ToList();
+
+            model.Farmers = _UnitOfWork.FarmerRepository.Table.Where(a => a.CountryId == 2 && !farmerBlackListIds.Contains(a.Id)).ToList();
+
             return View(model);
         }
 

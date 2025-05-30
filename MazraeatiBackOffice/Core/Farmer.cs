@@ -39,6 +39,8 @@ namespace MazraeatiBackOffice.Core
         public decimal InsuranceAmt { get; set; }
         public decimal DepositAmt { get; set; }
         public int MaxPerson { get; set; }
+        public string ConfidentialMessageEn { get; set; }
+        public string ConfidentialMessageAr { get; set; }
         public bool IsTrust { get; set; }
         public bool IsVIP { get; set; }
         public bool IsOffer { get; set; }

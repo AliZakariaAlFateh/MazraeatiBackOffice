@@ -26,6 +26,9 @@ namespace MazraeatiBackOffice.Models
         public string ImageUrl { get; set; }
 
         [DisplayName("هل  موافق عليها")]
-        public bool IsApprove { get; set; } 
+        public bool IsApprove { get; set; }
+        public int? FarmerId { get; set; }
+
+        public List<Farmer> Farmers { get; set; }
     }
 }

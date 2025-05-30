@@ -59,7 +59,7 @@ namespace MazraeatiBackOffice.Extenstion
         #endregion
 
         #region Farmer
-        public static FarmerModel ToModel(this Farmer entity, List<Country> countries = null, List<City> cities = null, List<FarmerReservation> farmerReservations = null,List<FarmerFeedback> farmerFeedbacks = null)
+        public static FarmerModel ToModel(this Farmer entity, List<Country> countries = null, List<City> cities = null, List<FarmerReservation> farmerReservations = null, List<FarmerFeedback> farmerFeedbacks = null)
         {
             FarmerModel model = new FarmerModel();
             model.Id = entity.Id;
@@ -95,12 +95,15 @@ namespace MazraeatiBackOffice.Extenstion
             model.InsuranceAmt = entity.InsuranceAmt;
             model.DepositAmt = entity.DepositAmt;
             model.MaxPerson = entity.MaxPerson;
+            model.ConfidentialMessageEn = entity.ConfidentialMessageEn;
+            model.ConfidentialMessageAr = entity.ConfidentialMessageAr;
             model.IsTrust = entity.IsTrust;
             model.IsVIP = entity.IsVIP;
             model.IsOffer = entity.IsOffer;
             model.IsApprove = entity.IsApprove;
             model.ReservationCount = farmerReservations != null ? farmerReservations.Count(f => f.FarmerId == model.Id) : 0;
             model.FeedbackCount = farmerFeedbacks != null ? farmerFeedbacks.Count(f => f.FarmerId == model.Id) : 0;
+
             return model;
         }
         public static Farmer ToEntity(this FarmerModel model)
@@ -137,6 +140,9 @@ namespace MazraeatiBackOffice.Extenstion
             entity.InsuranceAmt = model.InsuranceAmt;
             entity.DepositAmt = model.DepositAmt;
             entity.MaxPerson = model.MaxPerson;
+            entity.ConfidentialMessageEn = model.ConfidentialMessageEn;
+            entity.ConfidentialMessageAr = model.ConfidentialMessageAr;
+
             entity.IsTrust = model.IsTrust;
             entity.IsVIP = model.IsVIP;
             entity.IsOffer = model.IsOffer;
@@ -432,7 +438,29 @@ namespace MazraeatiBackOffice.Extenstion
             return entity;
         }
         #endregion
+        #region  
+        public static FarmerExtraFeatureTypeDto ToModel(this FarmerExtraFeatureType entity)
+        {
+            FarmerExtraFeatureTypeDto model = new FarmerExtraFeatureTypeDto();
+            model.Id = entity.Id;
+            model.FarmerId = entity.FarmerId;
+            model.ExtraText = entity.ExtraText;
+            model.TypeId = entity.TypeId;
+            model.DescAr = entity.ExtraText;
 
+            return model;
+        }
+        public static FarmerExtraFeatureType ToEntity(this FarmerExtraFeatureTypeDto model)
+        {
+            FarmerExtraFeatureType entity = new FarmerExtraFeatureType();
+            entity.Id = model.Id;
+            entity.FarmerId = model.FarmerId;
+            entity.ExtraText = model.ExtraText;
+            entity.TypeId = model.TypeId;
+
+            return entity;
+        }
+        #endregion
         #region Farmer BlackList
         public static FarmerBlackListModel ToModel(this FarmerBlackList entity)
         {
@@ -443,6 +471,7 @@ namespace MazraeatiBackOffice.Extenstion
             model.Reason = entity.Reason;
             model.ImageUrl = entity.ImageUrl;
             model.IsApprove = entity.IsApprove;
+            model.FarmerId = entity.FarmerId;
             return model;
         }
         public static FarmerBlackList ToEntity(this FarmerBlackListModel model)
@@ -454,6 +483,9 @@ namespace MazraeatiBackOffice.Extenstion
             entity.Reason = model.Reason;
             entity.ImageUrl = model.ImageUrl;
             entity.IsApprove = model.IsApprove;
+            entity.FarmerId = model.FarmerId;
+
+
             return entity;
         }
         #endregion
@@ -477,7 +509,7 @@ namespace MazraeatiBackOffice.Extenstion
         #endregion
 
         #region Lookup Value
-        public static LookupValueModel ToModel(this LookupValue entity,string lookupCode)
+        public static LookupValueModel ToModel(this LookupValue entity, string lookupCode)
         {
             LookupValueModel model = new LookupValueModel();
             model.Id = entity.Id;
