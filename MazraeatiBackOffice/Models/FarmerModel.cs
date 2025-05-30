@@ -125,6 +125,12 @@ namespace MazraeatiBackOffice.Models
         [DisplayName("الحد الاقصى للاشخاص")]
         [Required(ErrorMessage = "برجاء تعبئة الحقل")]
         public int MaxPerson { get; set; }
+        [DisplayName("رسالة التوثيق بالعربي")]
+
+        public string ConfidentialMessageAr { get; set; }
+        [DisplayName("رسالة التوثيق بالانجليزي")]
+
+        public string ConfidentialMessageEn{ get; set; }
 
         [DisplayName("هل الاعلان موثوق")]
         public bool IsTrust { get; set; }

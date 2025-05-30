@@ -288,6 +288,20 @@
                                 @Html.ValidationMessageFor(a => a.MaxPerson, "", new { @style = "color:red;font-size:10px" })
                             </div>
                         </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.ConfidentialMessageAr)
+                                @Html.TextBoxFor(a => a.ConfidentialMessageAr, new { @class = "form-control", @autocomplete = "off", @maxlength = 500 })
+                                @Html.ValidationMessageFor(a => a.ConfidentialMessageAr, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.ConfidentialMessageEn)
+                                @Html.TextBoxFor(a => a.ConfidentialMessageEn, new { @class = "form-control", @autocomplete = "off", @maxlength = 500 })
+                                @Html.ValidationMessageFor(a => a.ConfidentialMessageAr, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
 
                         <div class="col-sm-12" style="margin-bottom:20px">
                             &nbsp;
@@ -466,10 +480,11 @@
                                     <div class="form-group">
                                         @Html.HiddenFor(a => a.ExtraFeature[i].Id)
                                         @Html.HiddenFor(a => a.ExtraFeature[i].TypeId)
-                                        @Html.DisplayFor(a => a.ExtraFeature[i].DescAr)
+                                        @Html.HiddenFor(a => a.ExtraFeature[i].ExtraText)
+                                        @Html.DisplayFor(a => a.ExtraFeature[i].ExtraText)
                                         <br />
                                         @Html.CheckBoxFor(a => a.ExtraFeature[i].IsCheck, new { @class = "form-control", @style = "margin-top: 10px;" })
-                                        @Html.TextBoxFor(a => a.ExtraFeature[i].ExtraText, new { @class = "form-control", @maxlength = 100 })
+                                        @Html.TextBoxFor(a => a.ExtraFeature[i].ExtraTextDescription, new { @class = "form-control", @maxlength = 100 })
                                     </div>
                                 </div>
                             }
