@@ -184,5 +184,7 @@ namespace MazraeatiBackOffice.Models
         public List<IFormFile> Videos { get; set; }
         public List<FarmerPriceList> PriceList { get; set; }
         public List<FarmerFeedback> FarmerFeedback { get; set; }
+        public List<FarmerImage> FarmerImages { get; set; }
+        public List<FarmerVideo> FarmerVideos { get; set; } 
     }
 }

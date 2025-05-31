@@ -1,9 +1,18 @@
-﻿@model ImageSliderModel
+﻿@* @model ImageSliderModel
 <style>
     .form-group {
         font-size: 13px;
     }
 </style>
+
+<script>
+
+</script>
+
+
+
+
+
 @Html.HiddenFor(a => a.Id)
 @Html.HiddenFor(a => a.Image)
 <div class="container-fluid">
@@ -125,6 +134,321 @@
                         </div>
                     </div>
 
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+ *@
+
+
+
+ @model ImageSliderModel
+<style>
+    .form-group {
+        font-size: 13px;
+    }
+    /* Add these styles for the image preview and frame */
+    .image-preview-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 5px; /* Adjust margin inside the frame */
+        margin-bottom: 5px; /* Adjust margin inside the frame */
+        /* Removed border and padding here, moved to fieldset for the "frame" */
+        min-height: 100px; /* Ensure space even if no image */
+        align-items: center;
+        justify-content: center;
+        color: #888;
+    }
+
+    /* Styles for individual image/video previews */
+    .preview-item {
+        position: relative;
+        border: 1px solid #ddd; /* Border for the image itself */
+        padding: 5px;
+        border-radius: 5px;
+        overflow: hidden;
+        max-width: 180px; /* Max width for preview */
+        max-height: 120px; /* Max height for preview */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .preview-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain; /* Contain the image within the bounds */
+        display: block;
+    }
+
+    .remove-preview-btn {
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        background-color: rgba(255, 0, 0, 0.7);
+        color: white;
+        border: none;
+        border-radius: 0 5px 0 5px;
+        cursor: pointer;
+        font-size: 14px;
+        padding: 2px 6px;
+        z-index: 10;
+    }
+    .file-input-label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    /* Style for the "frame" itself (using fieldset) */
+    fieldset.image-frame {
+        border: 1px solid #ccc; /* Border for the frame */
+        padding: 15px; /* Padding inside the frame */
+        border-radius: 8px; /* Rounded corners for the frame */
+        margin-top: 10px; /* Space above the frame */
+        position: relative; /* For legend positioning */
+        background-color: #f9f9f9; /* Light background for the frame */
+    }
+
+    fieldset.image-frame legend {
+        width: auto; /* Shrink to fit content */
+        padding: 0 10px; /* Padding around legend text */
+        font-size: 1em; /* Adjust font size */
+        font-weight: bold;
+        color: #555;
+        margin-left: 10px; /* Adjust legend position */
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="~/assets/js/jquery-3.2.1.min.js"></script>
+
+
+<script>
+    // Helper function for SweetAlerts (from previous discussions)
+    function showSweetAlert(icon, title, text) {
+        Swal.fire({
+            icon: icon,
+            title: title,
+            text: text,
+            customClass: {
+                confirmButton: 'btn btn-primary'
+            },
+            buttonsStyling: false
+        });
+    }
+
+    $(document).ready(function () {
+        const $imageInput = $('#formFile'); // Your file input field
+        const $imagePreviewArea = $('#imagePreviewArea'); // Div where preview will be shown
+        const $noImageText = $('#noImageText'); // Text to show when no image is selected
+
+        // Function to display an image in the preview area
+        function displayImagePreview(src, isExisting = false) {
+            $imagePreviewArea.empty(); // Clear existing content
+            $noImageText.hide(); // Hide "No image selected" text
+
+            const previewItem = `
+                <div class="preview-item">
+                    <img src="${src}" alt="Image Preview">
+                    <button type="button" class="remove-preview-btn" ${isExisting ? 'data-existing="true"' : ''}>X</button>
+                </div>
+            `;
+            $imagePreviewArea.append(previewItem);
+        }
+
+        // --- Initial setup for Edit View on page load ---
+        // Check if an existing image is rendered by Razor on page load
+        // This targets the div created by Razor if Model.Image exists
+        if ($imagePreviewArea.find('.existing-image-preview').length > 0) {
+            $noImageText.hide(); // Hide "No image selected" text if an existing image is present
+        } else {
+            $noImageText.show(); // Show "No image selected" if no existing image (e.g., Create view or Edit with no image)
+        }
+
+
+        // --- Event Listener for File Input Change ---
+        $imageInput.on('change', function (e) {
+            const file = e.target.files[0]; // Get the first selected file
+            if (file) {
+                // Basic validation for image type
+                if (!file.type.startsWith('image/')) {
+                    if (typeof showSweetAlert === 'function') {
+                        showSweetAlert('warning', 'نوع ملف غير مدعوم', 'الرجاء اختيار ملف صورة (مثل .jpg, .png, .gif).');
+                    } else {
+                        console.warn('Invalid file type selected. Please choose an image file.');
+                    }
+                    $imageInput.val(''); // Clear the selected file in the input
+                    $imagePreviewArea.empty(); // Clear preview area
+                    $noImageText.show(); // Show "No image selected" text
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    displayImagePreview(e.target.result); // Display the new image preview (data URL)
+                };
+                reader.readAsDataURL(file); // Read the file as a data URL for preview
+            } else {
+                // If no file is selected (e.g., user opens dialog and cancels or clears input)
+                $imagePreviewArea.empty(); // Clear current preview
+
+                // For Edit view, if there was an existing image, re-display it
+                // For Create view, or if no existing image, show "No image selected"
+                const existingImageUrl = '@(Model.Image != null ? Url.Content("~/" + Model.Image) : "")';
+                if (existingImageUrl && existingImageUrl !== '') {
+                    displayImagePreview(existingImageUrl, true);
+                } else {
+                    // For Create view, or if no original image, show "No image selected" text
+                    $noImageText.show();
+                }
+            }
+        });
+
+        // --- Event Listener for "Remove Preview" Button ---
+        // Using event delegation because the button is added dynamically
+        $(document).on('click', '.remove-preview-btn', function () {
+            const $button = $(this);
+            const isExistingImage = $button.data('existing');
+
+            $imagePreviewArea.empty(); // Clear the current preview content
+            $imageInput.val(''); // Clear the file input field (important for submission)
+
+            // If it was an existing image's preview, the hidden input will carry its path.
+            // We just ensure the UI looks correct: "no image selected"
+            $noImageText.show();
+        });
+    });
+</script>
+
+
+@Html.HiddenFor(a => a.Id)
+@Html.HiddenFor(a => a.Image) @* This hidden field will carry the original image URL if no new file is selected *@
+
+<div class="container-fluid">
+    <div class="row clearfix">
+        <div class="col-lg-12 col-md-12 col-sm-12">
+            <div class="card">
+                <div class="header">
+                    <h2><strong>معالجة </strong> السجل</h2>
+                    <ul class="header-dropdown">
+                    </ul>
+                </div>
+                <div class="body">
+                    <form asp-action="@(Model.Id > 0 ? "Edit" : "Create")" method="post" enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
+                        <div class="row clearfix">
+                            <div class="col-sm-6">
+                                @Html.DisplayNameFor(a => a.CountryId)
+                                <select class="form-control" name="CountryId">
+                                    <option selected="selected" disabled="disabled">--الرجاء اختيار الدوله--</option>
+                                    @foreach (var item in Model.Countries)
+                                    {
+                                        <option selected="@(item.Id == Model.CountryId)" value="@item.Id">@item.DescAr</option>
+                                    }
+                                </select>
+                                @Html.ValidationMessageFor(a => a.CountryId, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+
+                            <div class="col-sm-6">
+                                @Html.DisplayNameFor(a => a.PageName)
+                                <select class="form-control" name="PageName">
+                                    <option selected="selected" disabled="disabled">--الرجاء اختيار موقع البانر--</option>
+                                    <option selected="@(Model.PageName == "default")" value="default">في حالة لا يوجد بانرات </option>
+                                    <option selected="@(Model.PageName == "home")" value="home">الصفحة الرئيسية</option>
+                                    <option selected="@(Model.PageName == "section")" value="section">الاقسام</option>
+                                    <option selected="@(Model.PageName == "farms")" value="farms">تفاصيل المزرعة</option>
+                                    <option selected="@(Model.PageName == "admin")" value="admin">لوحة تحكم الادمن</option>
+                                </select>
+                                @Html.ValidationMessageFor(a => a.PageName, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+
+                            <div class="col-sm-12" style="height:20px !important;"> &nbsp; </div>
+
+                            <div class="col-sm-12">
+                                <h5 style="text-decoration:underline">تحميل الصورة</h5>
+                            </div>
+                            <div class="col-sm-12"> @* Removed col-sm-3, used col-sm-12 to encompass both input and frame *@
+                                <div class="form-group">
+                                    <label for="formFile" class="file-input-label">@Html.DisplayNameFor(a => a.Image) *</label>
+                                    <input type="file" name="formFile" style="margin-top:1px" id="formFile" accept="image/*" class="form-control">
+                                    @Html.ValidationMessageFor(a => a.Image, "", new { @style = "color:red;font-size:10px" })
+                                </div>
+
+                                <fieldset class="form-group image-frame">
+                                    <legend>عرض الصورة المختارة/الحالية</legend>
+                                    <div id="imagePreviewArea" class="image-preview-container">
+                                        <span id="noImageText">لا توجد صورة مختارة</span>
+                                        
+                                        @* Existing image will be rendered here by Razor on page load *@
+                                        @if (!string.IsNullOrEmpty(Model.Image))
+                                        {
+                                            <div class="preview-item existing-image-preview">
+                                                <img src="@Url.Content("~/Images/" + Model.Image)" alt="الصورة الحالية">
+                                                <button type="button" class="remove-preview-btn" data-existing="true">X</button>
+                                            </div>
+                                        }
+                                    </div>
+                                </fieldset>
+                            </div>
+
+
+                            <div class="col-sm-12" style="margin-bottom:20px"> &nbsp; </div>
+
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    @Html.DisplayNameFor(a => a.ExtraText)
+                                    @Html.TextBoxFor(a => a.ExtraText, new { @class = "form-control", @autocomplete = "off" })
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    @Html.DisplayNameFor(a => a.RedirectLink)
+                                    @Html.TextBoxFor(a => a.RedirectLink, new { @class = "form-control", @autocomplete = "off" })
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6">
+                                @Html.DisplayNameFor(a => a.Target)
+                                <select class="form-control" name="Target">
+                                    <option selected="selected" disabled="disabled">--الرجاء اختيار الاستهداف--</option>
+                                    <option selected="@(Model.Target == "FARMER")" value="FARMER">مزرعة </option>
+                                    <option selected="@(Model.Target == "URL")" value="URL">رابط</option>
+                                </select>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    @Html.DisplayNameFor(a => a.Value)
+                                    @Html.TextBoxFor(a => a.Value, new { @class = "form-control", @autocomplete = "off" })
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    @Html.DisplayNameFor(a => a.SortOrder)
+                                    @Html.TextBoxFor(a => a.SortOrder, new { @class = "form-control", @autocomplete = "off", @type = "number", @max = "99" })
+                                    @Html.ValidationMessageFor(a => a.SortOrder, "", new { @style = "color:red;font-size:10px" })
+                                </div>
+                            </div>
+
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.DisplayNameFor(a => a.Active)
+                                    <br />
+                                    @Html.CheckBoxFor(a => a.Active, new { @class = "form-control", @style = "margin-top: 10px;" })
+                                </div>
+                            </div>
+
+                            <div class="col-sm-12">
+                                <button type="submit" class="btn btn-primary btn-round">حفظ</button>
+                                <button type="button" onclick="window.location.href='@Url.Content("~/ImageSlider/index/")'" class="btn btn-default btn-round btn-simple">رجوع</button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

@@ -95,7 +95,9 @@ namespace MazraeatiBackOffice.Controllers
         {
             model.Countries = _countryRepository.Table.Where(a => a.Id == 2 && a.Active == true).ToList();
             model.Cities = _cityRepository.Table.Where(a => a.Active == true && a.CountryId == 2 && a.Id != 20).ToList();
-
+            //model.Images=_FarmerImage.Table.where(x=>x.)
+            model.FarmerImages = _FarmerImage.Table.Where(i => i.FarmerId == model.Id && i.Active == true).OrderBy(i => i.Sort).ToList();
+            model.FarmerVideos = _FarmerVideo.Table.Where(v => v.FarmerId == model.Id && v.Active == true).OrderBy(v => v.Sort).ToList();
             List<FarmerExtraFeatureType> farmerExtraFeatureTypes = _FarmerExtraFeatureType.Table.Where(x => x.FarmerId == model.Id).ToList();
             List<LookupValue> lookupValue = _LookupValueRepository.Table.Where(l => l.LookupId == 2).ToList();
             foreach (LookupValue Value in lookupValue)
@@ -430,7 +432,7 @@ namespace MazraeatiBackOffice.Controllers
         public IActionResult Edit(int id)
         {
             Farmer farmer = _UnitOfWork.FarmerRepository.GetById(id);
-            var farmerExtraFeature = _UnitOfWork.FarmerExtraFeatureTypeRepository.Table.Where(a=>a.FarmerId==farmer.Id).ToList();
+            var farmerExtraFeature = _UnitOfWork.FarmerExtraFeatureTypeRepository.Table.Where(a => a.FarmerId == farmer.Id).ToList();
             if (farmer == null)
                 return RedirectToAction("Index");
 
@@ -487,6 +489,10 @@ namespace MazraeatiBackOffice.Controllers
                                 {
                                     if (_FarmerExtraFeatureType.Table.Count(f => f.FarmerId == model.Id && f.TypeId == extra.TypeId) == 0)
                                         _UnitOfWork.FarmerExtraFeatureTypeRepository.Insert(farmerExtraFeatureType);
+                                    else if(_FarmerExtraFeatureType.Table.Count(f => f.FarmerId == model.Id && f.TypeId == extra.TypeId) == 1)
+                                    {
+                                        _UnitOfWork.FarmerExtraFeatureTypeRepository.Update(farmerExtraFeatureType);
+                                    }
                                 }
                             }
                             else
@@ -1022,7 +1028,83 @@ namespace MazraeatiBackOffice.Controllers
         #endregion
 
 
+        
 
+        [HttpPost]
+        public IActionResult DeleteFarmerImage(int imageId)
+        {
+            try
+            {
+                var imageToDelete = _FarmerImage.Table.FirstOrDefault(i => i.Id == imageId);
+
+                if (imageToDelete == null)
+                {
+                    Console.WriteLine($"Image with ID {imageId} not found for deletion.");
+                    return Json(new { success = false, message = "الصورة غير موجودة في قاعدة البيانات." }); // More specific message
+                }
+
+                string imagePath = Path.Combine(webHostEnvironment.WebRootPath, imageToDelete.Url.TrimStart('/'));
+
+                if (System.IO.File.Exists(imagePath))
+                {
+                    System.IO.File.Delete(imagePath);
+                    Console.WriteLine($"Physical image file deleted: {imagePath}");
+                }
+                else
+                {
+                    Console.WriteLine($"Physical image file not found at: {imagePath}. Deleting database record only.");
+                }
+
+                _FarmerImage.Delete(imageToDelete);
+                // _unitOfWork.Commit(); // Uncomment if you're using a Unit of Work pattern and configured it
+
+                // *** THIS IS THE CRUCIAL CHANGE FOR YOUR FRONTEND MESSAGE ***
+                return Json(new { success = true, message = "تم حذف الصورة بنجاح." });
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"Error deleting image (ID: {imageId}): {ex.Message}");
+                return Json(new { success = false, message = $"حدث خطأ أثناء حذف الصورة: {ex.Message}" });
+            }
+        }
+
+        [HttpPost]
+        public IActionResult DeleteFarmerVideo(int videoId)
+        {
+            try
+            {
+                var videoToDelete = _FarmerVideo.Table.FirstOrDefault(v => v.Id == videoId);
+
+                if (videoToDelete == null)
+                {
+                    Console.WriteLine($"Video with ID {videoId} not found for deletion.");
+                    return Json(new { success = false, message = "الفيديو غير موجود في قاعدة البيانات." }); // More specific message
+                }
+
+                string videoPath = Path.Combine(webHostEnvironment.WebRootPath, videoToDelete.Url.TrimStart('/'));
+
+                if (System.IO.File.Exists(videoPath))
+                {
+                    System.IO.File.Delete(videoPath);
+                    Console.WriteLine($"Physical video file deleted: {videoPath}");
+                }
+                else
+                {
+                    Console.WriteLine($"Physical video file not found at: {videoPath}. Deleting database record only.");
+                }
+
+                _FarmerVideo.Delete(videoToDelete);
+                // _unitOfWork.Commit(); // Uncomment if you're using a Unit of Work pattern and configured it
+
+                // *** THIS IS THE CRUCIAL CHANGE FOR YOUR FRONTEND MESSAGE ***
+                return Json(new { success = true, message = "تم حذف الفيديو بنجاح." });
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"Error deleting video (ID: {videoId}): {ex.Message}");
+                return Json(new { success = false, message = $"حدث خطأ أثناء حذف الفيديو: {ex.Message}" });
+            }
+        }
 
     }
 }
