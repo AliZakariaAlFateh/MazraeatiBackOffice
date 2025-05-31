@@ -29,6 +29,8 @@ namespace MazraeatiBackOffice.Configuration
         public IRepository<FarmerBlackList> FarmerBlackListRepository { get; }
         public IRepository<Lookup> LookupRepository { get; }
         public IRepository<LookupValue> LookupValueRepository { get; }
+        public IRepository<terms> TermsRepository { get; }
+
 
         public UnitOfWork(DataContext context, IRepository<Farmer> farmerRepository, 
             IRepository<FarmerExtraFeatureType> farmerExtraFeatureTypeRepository,
@@ -53,7 +55,9 @@ namespace MazraeatiBackOffice.Configuration
             IRepository<FarmerBlackList> farmerBlackListRepository,
             IRepository<Lookup> lookupRepository,
             IRepository<LookupValue> lookupValueRepository,
-            IRepository<TripPriceList> tripPriceListRepository
+            IRepository<TripPriceList> tripPriceListRepository,
+            IRepository<terms> termsRepository
+
             )
         {
             Context = context;
@@ -81,8 +85,10 @@ namespace MazraeatiBackOffice.Configuration
             LookupRepository = lookupRepository;
             LookupValueRepository = lookupValueRepository;
             TripPriceListRepository = tripPriceListRepository;
+            TermsRepository = termsRepository;
+
         }
-       
+
         public void Dispose()
         {
             Context.Dispose();

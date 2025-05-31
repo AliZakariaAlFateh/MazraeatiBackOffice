@@ -34,5 +34,8 @@ namespace MazraeatiBackOffice.Configuration
         public DbSet<FarmerFeedback> FarmerFeedback { get; set; }
         public DbSet<CustomerBlackList> CustomerBlackList { get; set; }
         public DbSet<FarmerBlackList> FarmerBlackList { get; set; }
+
+        public DbSet<terms> terms { get; set; }  
+
     }
 }

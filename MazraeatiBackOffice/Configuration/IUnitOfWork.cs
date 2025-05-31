@@ -33,6 +33,8 @@ namespace MazraeatiBackOffice.Configuration
         IRepository<FarmerBlackList> FarmerBlackListRepository { get; }
         IRepository<Lookup> LookupRepository { get; }
         IRepository<LookupValue> LookupValueRepository { get; }
+        IRepository<terms> TermsRepository { get; }
+
 
         int Save();
     }

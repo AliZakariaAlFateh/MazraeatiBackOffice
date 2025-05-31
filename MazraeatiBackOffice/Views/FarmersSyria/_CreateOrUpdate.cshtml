@@ -75,6 +75,38 @@
                             <h5 style="text-decoration:underline">معلومات عن المزرعة</h5>
                         </div>
 
+                        
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.Name)
+                                @Html.TextBoxFor(a => a.Name, new { @class = "form-control", @autocomplete = "off", @maxlength = 50 })
+                                @Html.ValidationMessageFor(a => a.Name, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.NameEn)
+                                @Html.TextBoxFor(a => a.NameEn, new { @class = "form-control", @autocomplete = "off", @maxlength = 50 })
+                                @Html.ValidationMessageFor(a => a.NameEn, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.LocationDesc)
+                                @Html.TextBoxFor(a => a.LocationDesc, new { @class = "form-control", @autocomplete = "off", @maxlength = 20 })
+                                @Html.ValidationMessageFor(a => a.LocationDesc, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.LocationDescEn)
+                                @Html.TextBoxFor(a => a.LocationDescEn, new { @class = "form-control", @autocomplete = "off", @maxlength = 20 })
+                                @Html.ValidationMessageFor(a => a.LocationDescEn, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+
                         <div class="col-sm-6">
                             <div class="form-group">
                                 @Html.DisplayNameFor(a => a.MobileNumber)
@@ -92,24 +124,7 @@
                 @Html.ValidationMessageFor(a => a.Number, "", new { @style = "color:red;font-size:10px" })
             </div>
         </div>
-        }*@
-
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                @Html.DisplayNameFor(a => a.Name)
-                                @Html.TextBoxFor(a => a.Name, new { @class = "form-control", @autocomplete = "off", @maxlength = 50 })
-                                @Html.ValidationMessageFor(a => a.Name, "", new { @style = "color:red;font-size:10px" })
-                            </div>
-                        </div>
-
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                @Html.DisplayNameFor(a => a.LocationDesc)
-                                @Html.TextBoxFor(a => a.LocationDesc, new { @class = "form-control", @autocomplete = "off", @maxlength = 20 })
-                                @Html.ValidationMessageFor(a => a.LocationDesc, "", new { @style = "color:red;font-size:10px" })
-                            </div>
-                        </div>
-
+                        }*@   
                         <div class="col-sm-6">
                             @Html.DisplayNameFor(a => a.Owner)
                             <select class="form-control" name="Owner">
@@ -119,6 +134,24 @@
                             </select>
                             @Html.ValidationMessageFor(a => a.Owner, "", new { @style = "color:red;font-size:10px" })
                         </div>
+
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.Description)
+                                @Html.TextBoxFor(a => a.Description, new { @class = "form-control", @autocomplete = "off", @maxlength = 500 })
+                                @Html.ValidationMessageFor(a => a.Description, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.DescriptionEn)
+                                @Html.TextBoxFor(a => a.DescriptionEn, new { @class = "form-control", @autocomplete = "off", @maxlength = 500 })
+                                @Html.ValidationMessageFor(a => a.DescriptionEn, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+
+                       
 
 
                         <div class="col-sm-12" style="margin-bottom:20px">
@@ -153,6 +186,14 @@
                             </div>
                         </div>
 
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.RoomDetailsEn)
+                                @Html.TextAreaFor(a => a.RoomDetailsEn, new { @class = "form-control", @autocomplete = "off", @maxlength = 500 })
+                                @Html.ValidationMessageFor(a => a.RoomDetailsEn, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+
                         <div class="col-sm-6">
                             <div class="form-group">
                                 @Html.DisplayNameFor(a => a.Bathroom)
@@ -166,6 +207,13 @@
                                 @Html.DisplayNameFor(a => a.BathroomDetails)
                                 @Html.TextBoxFor(a => a.BathroomDetails, new { @class = "form-control", @autocomplete = "off", @maxlength = 500 })
                                 @Html.ValidationMessageFor(a => a.BathroomDetails, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.BathroomDetailsEn)
+                                @Html.TextBoxFor(a => a.BathroomDetailsEn, new { @class = "form-control", @autocomplete = "off", @maxlength = 500 })
+                                @Html.ValidationMessageFor(a => a.BathroomDetailsEn, "", new { @style = "color:red;font-size:10px" })
                             </div>
                         </div>
 
@@ -192,6 +240,13 @@
                                 @Html.ValidationMessageFor(a => a.InDoorDescription, "", new { @style = "color:red;font-size:10px" })
                             </div>
                         </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.InDoorDescriptionEn)
+                                @Html.TextAreaFor(a => a.InDoorDescriptionEn, new { @class = "form-control", @autocomplete = "off", @maxlength = 500 })
+                                @Html.ValidationMessageFor(a => a.InDoorDescriptionEn, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
 
                         <div class="col-sm-6">
                             <div class="form-group">
@@ -209,6 +264,14 @@
                             </div>
                         </div>
 
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.OutDoorDescriptionEn)
+                                @Html.TextAreaFor(a => a.OutDoorDescriptionEn, new { @class = "form-control", @autocomplete = "off", @maxlength = 500 })
+                                @Html.ValidationMessageFor(a => a.OutDoorDescriptionEn, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+
 
                         <div class="col-sm-6">
                             <div class="form-group">
@@ -223,6 +286,14 @@
                                 @Html.DisplayNameFor(a => a.kitchensDescription)
                                 @Html.TextAreaFor(a => a.kitchensDescription, new { @class = "form-control", @autocomplete = "off", @maxlength = 500 })
                                 @Html.ValidationMessageFor(a => a.kitchensDescription, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.kitchensDescriptionEn)
+                                @Html.TextAreaFor(a => a.kitchensDescriptionEn, new { @class = "form-control", @autocomplete = "off", @maxlength = 500 })
+                                @Html.ValidationMessageFor(a => a.kitchensDescriptionEn, "", new { @style = "color:red;font-size:10px" })
                             </div>
                         </div>
 
