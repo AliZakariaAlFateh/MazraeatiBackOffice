@@ -82,8 +82,7 @@ namespace MazraeatiBackOffice
                 throw new ArgumentNullException("entity");
 
             Entities.Remove(entity);
-
-            //_context.SaveChanges();
+            _context.SaveChanges();
         }
 
         
