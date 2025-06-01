@@ -70,24 +70,40 @@ namespace MazraeatiBackOffice.Extenstion
             model.MobileNumber = entity.MobileNumber;
             model.Number = entity.Number;
             model.Name = entity.Name;
+            model.NameEn = entity.NameEn;
+
             model.Description = entity.Description;
+            model.DescriptionEn = entity.DescriptionEn;
+
             model.Owner = entity.Owner;
             model.LocationDesc = entity.LocationDesc;
+            model.LocationDescEn = entity.LocationDescEn;
+
             model.IssueDate = entity.IssueDate;
             model.ExpiryDate = entity.ExpiryDate;
             model.EStateArea = entity.EStateArea;
             model.Room = entity.Room;
             model.RoomDetails = entity.RoomDetails;
+            model.RoomDetailsEn = entity.RoomDetailsEn;
+
             model.Bathroom = entity.Bathroom;
             model.BathroomDetails = entity.BathroomDetails;
+            model.BathroomDetailsEn = entity.BathroomDetailsEn;
+
             model.LandArea = entity.LandArea;
             model.Floor = entity.Floor;
             model.InDoor = entity.InDoor;
             model.InDoorDescription = entity.InDoorDescription;
+            model.InDoorDescriptionEn = entity.InDoorDescriptionEn;
+
             model.OutDoor = entity.OutDoor;
             model.OutDoorDescription = entity.OutDoorDescription;
+            model.OutDoorDescriptionEn = entity.OutDoorDescriptionEn;
+
             model.kitchens = entity.kitchens;
             model.kitchensDescription = entity.kitchensDescription;
+            model.kitchensDescriptionEn = entity.kitchensDescriptionEn;
+
             model.ExtraDetails = entity.ExtraDetails;
             model.ReservationDetails = entity.ReservationDetails;
             model.Family = entity.Family;
@@ -115,24 +131,40 @@ namespace MazraeatiBackOffice.Extenstion
             entity.MobileNumber = model.MobileNumber;
             entity.Number = model.Number;
             entity.Name = model.Name;
+            entity.NameEn = model.NameEn;
+
             entity.Description = model.Description;
+            entity.DescriptionEn = model.DescriptionEn;
+
             entity.Owner = model.Owner;
             entity.LocationDesc = model.LocationDesc;
+            entity.LocationDescEn = model.LocationDescEn;
+
             entity.IssueDate = model.IssueDate;
             entity.ExpiryDate = model.ExpiryDate;
             entity.EStateArea = model.EStateArea;
             entity.Room = model.Room;
             entity.RoomDetails = model.RoomDetails;
+            entity.RoomDetailsEn = model.RoomDetailsEn;
+
             entity.Bathroom = model.Bathroom;
             entity.BathroomDetails = model.BathroomDetails;
+            entity.BathroomDetailsEn = model.BathroomDetailsEn;
+
             entity.LandArea = model.LandArea;
             entity.Floor = model.Floor;
             entity.InDoor = model.InDoor;
             entity.InDoorDescription = model.InDoorDescription;
+            entity.InDoorDescriptionEn = model.InDoorDescriptionEn;
+
             entity.OutDoor = model.OutDoor;
             entity.OutDoorDescription = model.OutDoorDescription;
+            entity.OutDoorDescriptionEn = model.OutDoorDescriptionEn;
+
             entity.kitchens = model.kitchens;
             entity.kitchensDescription = model.kitchensDescription;
+            entity.kitchensDescriptionEn = model.kitchensDescriptionEn;
+
             entity.ExtraDetails = model.ExtraDetails;
             entity.ReservationDetails = model.ReservationDetails;
             entity.Family = model.Family;
@@ -528,6 +560,26 @@ namespace MazraeatiBackOffice.Extenstion
             entity.Code = model.Code;
             entity.ValueAr = model.ValueAr;
             entity.ValueEn = model.ValueEn;
+            return entity;
+        }
+        #endregion
+
+
+        #region terms
+        public static termsModel ToModel(this terms entity)
+        {
+            termsModel model = new termsModel();
+            model.Id = entity.Id;
+            model.DescAr = entity.DescAr;
+            model.DescEn = entity.DescEn;
+            return model;
+        }
+        public static terms ToEntity(this termsModel model)
+        {
+            terms entity = new terms();
+            entity.Id = model.Id;
+            entity.DescAr = model.DescAr;
+            entity.DescEn = model.DescEn;
             return entity;
         }
         #endregion
