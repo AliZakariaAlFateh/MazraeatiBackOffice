@@ -19,6 +19,7 @@
                                 <th>@Html.DisplayNameFor(a => a.DescAr)</th>
                                 <th>@Html.DisplayNameFor(a => a.DescEn)</th>
                                 <th>تفاصيل</th>
+                                <th>حذف</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -29,6 +30,9 @@
                                     <td>@item.DescAr</td>
                                     <td>@item.DescEn</td>
                                     <td><a href="@Url.Content("~/terms/edit/")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
+                                    <td>
+                                        <a href="javascript:Delete('terms',@item.Id,'Delete','Index')" class="btn btn-danger btn-sm">حذف</a>
+                                    </td>
                                 </tr>
                             }
 

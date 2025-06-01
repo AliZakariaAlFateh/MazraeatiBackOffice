@@ -835,7 +835,8 @@
                                         @Html.DisplayFor(a => a.ExtraFeature[i].ExtraText)
                                         <br />
                                         @Html.CheckBoxFor(a => a.ExtraFeature[i].IsCheck, new { @class = "form-control", @style = "margin-top: 10px;" })
-                                        @Html.TextBoxFor(a => a.ExtraFeature[i].ExtraTextDescription, new { @class = "form-control", @maxlength = 100 })
+                                        @Html.TextBoxFor(a => a.ExtraFeature[i].ExtraTextDescriptionAr, new { @class = "form-control", @maxlength = 100 ,@placeholder="الوصف بالعربي"})
+                                        @Html.TextBoxFor(a => a.ExtraFeature[i].ExtraTextDescriptionEn, new { @class = "form-control", @maxlength = 100 ,@placeholder="الوصف بالانجليزيه"})
                                     </div>
                                 </div>
                             }

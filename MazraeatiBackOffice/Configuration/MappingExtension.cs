@@ -499,11 +499,14 @@ namespace MazraeatiBackOffice.Extenstion
             FarmerBlackListModel model = new FarmerBlackListModel();
             model.Id = entity.Id;
             model.FarmerName = entity.FarmerName;
+            model.FarmerNameEn = entity.FarmerNameEn;
             model.FarmerMobNum = entity.FarmerMobNum;
             model.Reason = entity.Reason;
+            model.ReasonEn = entity.ReasonEn;
             model.ImageUrl = entity.ImageUrl;
             model.IsApprove = entity.IsApprove;
             model.FarmerId = entity.FarmerId;
+            model.IsBlocked = entity.IsBlocked;
             return model;
         }
         public static FarmerBlackList ToEntity(this FarmerBlackListModel model)
@@ -511,11 +514,14 @@ namespace MazraeatiBackOffice.Extenstion
             FarmerBlackList entity = new FarmerBlackList();
             entity.Id = model.Id;
             entity.FarmerName = model.FarmerName;
+            entity.FarmerNameEn = model.FarmerNameEn;
             entity.FarmerMobNum = model.FarmerMobNum;
             entity.Reason = model.Reason;
+            entity.ReasonEn = model.ReasonEn;
             entity.ImageUrl = model.ImageUrl;
             entity.IsApprove = model.IsApprove;
             entity.FarmerId = model.FarmerId;
+            entity.IsBlocked = model.IsBlocked;
 
 
             return entity;

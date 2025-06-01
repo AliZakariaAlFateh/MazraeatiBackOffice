@@ -73,7 +73,7 @@ namespace MazraeatiBackOffice.Controllers
                     FarmerId = 0,
                     TypeId = Value.Id,
                     ExtraText = Value.ValueAr,
-                    ExtraTextDescription = "",
+                    ExtraTextDescriptionAr = "",
                     IsCheck = false
 
                 });
@@ -110,7 +110,8 @@ namespace MazraeatiBackOffice.Controllers
                         FarmerId = model.Id,
                         TypeId = Value.Id,
                         ExtraText = Value.ValueAr,
-                        ExtraTextDescription = farmerExtraFeatureTypes.Where(f => f.TypeId == Value.Id).FirstOrDefault().ExtraTextDescription,
+                        ExtraTextDescriptionAr = farmerExtraFeatureTypes.Where(f => f.TypeId == Value.Id).FirstOrDefault().ExtraTextDescriptionAr,
+                        ExtraTextDescriptionEn = farmerExtraFeatureTypes.Where(f => f.TypeId == Value.Id).FirstOrDefault().ExtraTextDescriptionEn,
                         IsCheck = farmerExtraFeatureTypes.Count(f => f.TypeId == Value.Id) > 0 ? true : false
                     });
                 }
@@ -121,7 +122,7 @@ namespace MazraeatiBackOffice.Controllers
                         FarmerId = model.Id,
                         TypeId = Value.Id,
                         ExtraText = Value.ValueAr,//lable
-                        ExtraTextDescription = "",
+                        ExtraTextDescriptionAr = "",
                         IsCheck = farmerExtraFeatureTypes.Count(f => f.TypeId == Value.Id) > 0 ? true : false
 
                     });
@@ -144,7 +145,7 @@ namespace MazraeatiBackOffice.Controllers
             var Cities = _cityRepository.Table.Where(f => f.CountryId == 2).ToList();
             var Reservation = _FarmerReservation.Table.ToList();
             var FarmerFeedback = _FarmerFeedback.Table.ToList();
-            var farmerBlackListIds = _UnitOfWork.FarmerBlackListRepository.Table.Where(a => a.FarmerId != null)
+            var farmerBlackListIds = _UnitOfWork.FarmerBlackListRepository.Table.Where(a => a.FarmerId != null&&a.IsBlocked==true)
                                      .Select(a => a.FarmerId).ToList();
             var model = _FarmerRepository.Table.Where(f => f.CountryId == 2 && !farmerBlackListIds.Contains(f.Id)).OrderByDescending(a => a.Id)
                 .Select(c => c.ToModel(Countries, Cities, Reservation, FarmerFeedback));
@@ -164,7 +165,8 @@ namespace MazraeatiBackOffice.Controllers
             search = string.IsNullOrEmpty(search) ? "" : search;
             //DateTime? _reservationDate = ReservationDate != null ? null : DateTime.Parse(ReservationDate);
 
-
+            var farmerBlackListIds = _UnitOfWork.FarmerBlackListRepository.Table.Where(a => a.FarmerId != null && a.IsBlocked == true)
+                                     .Select(a => a.FarmerId).ToList();
             var Countries = _countryRepository.Table.Where(f => f.Id == 2).ToList();
             var Cities = _cityRepository.Table.Where(f => f.CountryId == 2).ToList();
             var FarmerFeedback = _FarmerFeedback.Table.ToList();
@@ -174,7 +176,7 @@ namespace MazraeatiBackOffice.Controllers
             if (ReservationDate != DateTime.MinValue)
             {
                 Reservation = Reservation.Where(r => r.ReservationDate.Date == ReservationDate.Date).ToList();
-                model = _FarmerRepository.Table.OrderByDescending(a => a.Id).Where(a => (a.Name.Contains(search) ||
+                model = _FarmerRepository.Table.Where( f => f.CountryId == 2 && !farmerBlackListIds.Contains(f.Id)).OrderByDescending(a => a.Id).Where(a => (a.Name.Contains(search) ||
                                                                                         a.MobileNumber.Contains(search) ||
                                                                                         a.Number.ToString().Contains(search)) && (CityBy == 0 || (CityBy > 0 && a.CityId == CityBy)) &&
                                                                                         (!Reservation.Select(r => r.FarmerId).Contains(a.Id)) && a.CountryId == 2
@@ -182,7 +184,7 @@ namespace MazraeatiBackOffice.Controllers
             }
             else
             {
-                model = _FarmerRepository.Table.OrderByDescending(a => a.Id).Where(a => (a.Name.Contains(search) ||
+                model = _FarmerRepository.Table.Where(f => f.CountryId == 2 && !farmerBlackListIds.Contains(f.Id)).OrderByDescending(a => a.Id).Where(a => (a.Name.Contains(search) ||
                                                                                                        a.MobileNumber.Contains(search) ||
                                                                                                        a.Number.ToString().Contains(search)) && (CityBy == 0 || (CityBy > 0 && a.CityId == CityBy)) &&
                                                                                                        a.CountryId == 2
@@ -344,7 +346,9 @@ namespace MazraeatiBackOffice.Controllers
                         farmerExtraFeatureType.FarmerId = nFarmsId;
                         farmerExtraFeatureType.TypeId = extra.TypeId;
                         farmerExtraFeatureType.ExtraText = extra.ExtraText;
-                        farmerExtraFeatureType.ExtraTextDescription = extra.ExtraTextDescription;
+                        farmerExtraFeatureType.ExtraTextDescriptionAr = extra.ExtraTextDescriptionAr;
+                        farmerExtraFeatureType.ExtraTextDescriptionEn = extra.ExtraTextDescriptionEn;
+                        
 
                         _UnitOfWork.FarmerExtraFeatureTypeRepository.Insert(farmerExtraFeatureType);
 
@@ -476,7 +480,8 @@ namespace MazraeatiBackOffice.Controllers
                             farmerExtraFeatureType.Id = extra.Id;
                             farmerExtraFeatureType.FarmerId = model.Id;
                             farmerExtraFeatureType.ExtraText = extra.ExtraText;
-                            farmerExtraFeatureType.ExtraTextDescription = extra.ExtraTextDescription;
+                            farmerExtraFeatureType.ExtraTextDescriptionAr = extra.ExtraTextDescriptionAr;
+                            farmerExtraFeatureType.ExtraTextDescriptionEn = extra.ExtraTextDescriptionEn;
                             farmerExtraFeatureType.TypeId = extra.TypeId;
 
                             if (extra.Id > 0)

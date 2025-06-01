@@ -14,13 +14,19 @@ namespace MazraeatiBackOffice.Models
         [Required(ErrorMessage = "يرجى تعبئه الحقل")]
         public string FarmerMobNum { get; set; }
 
-        [DisplayName("الاسم ان اوجد")]
+        [DisplayName(" الاسم ان اوجد بالعربي")]
         [Required(ErrorMessage = "يرجى تعبئه الحقل")]
         public string FarmerName { get; set; }
+        [DisplayName(" الاسم ان اوجد بالانجليزي")]
+        [Required(ErrorMessage = "يرجى تعبئه الحقل")]
+        public string FarmerNameEn { get; set; }
 
-        [DisplayName("السبب")]
+        [DisplayName("السبب بالعربي")]
         [Required(ErrorMessage = "يرجى تعبئه الحقل")]
         public string Reason { get; set; }
+        [DisplayName("السبب بالانجليزي")]
+        [Required(ErrorMessage = "يرجى تعبئه الحقل")]
+        public string ReasonEn { get; set; }
 
         [DisplayName("رابط الصورة")]
         public string ImageUrl { get; set; }
@@ -28,6 +34,8 @@ namespace MazraeatiBackOffice.Models
         [DisplayName("هل  موافق عليها")]
         public bool IsApprove { get; set; }
         public int? FarmerId { get; set; }
+        [DisplayName("هل  موافق علي حظر هذه المزرعه")]
+        public bool IsBlocked { get; set; }
 
         public List<Farmer> Farmers { get; set; }
     }

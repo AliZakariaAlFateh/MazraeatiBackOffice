@@ -10,10 +10,13 @@ namespace MazraeatiBackOffice.Core
     public class FarmerBlackList : BaseEntity
     {
         public string FarmerName { get; set; }
+        public string FarmerNameEn { get; set; }
         public string FarmerMobNum { get; set; }
         public string Reason { get; set; }
+        public string ReasonEn { get; set; }
         public string ImageUrl { get; set; }
         public bool IsApprove { get; set; }
         public int? FarmerId { get; set; }
+        public bool IsBlocked { get; set; }
     }
 }
