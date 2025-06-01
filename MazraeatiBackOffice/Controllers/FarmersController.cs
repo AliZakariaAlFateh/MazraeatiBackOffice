@@ -73,7 +73,7 @@ namespace MazraeatiBackOffice.Controllers
                     FarmerId = 0,
                     TypeId = Value.Id,
                     ExtraText = Value.ValueAr,
-                    ExtraTextDescription = "",
+                    ExtraTextDescriptionAr = "",
                     IsCheck = false
 
                 });
@@ -108,7 +108,8 @@ namespace MazraeatiBackOffice.Controllers
                         FarmerId = model.Id,
                         TypeId = Value.Id,
                         ExtraText = Value.ValueAr,
-                        ExtraTextDescription = farmerExtraFeatureTypes.Where(f => f.TypeId == Value.Id).FirstOrDefault().ExtraTextDescription,
+                        ExtraTextDescriptionAr = farmerExtraFeatureTypes.Where(f => f.TypeId == Value.Id).FirstOrDefault().ExtraTextDescriptionAr,
+                        ExtraTextDescriptionEn = farmerExtraFeatureTypes.Where(f => f.TypeId == Value.Id).FirstOrDefault().ExtraTextDescriptionEn,
                         IsCheck = farmerExtraFeatureTypes.Count(f => f.TypeId == Value.Id) > 0 ? true : false
                     });
                 }
@@ -119,7 +120,7 @@ namespace MazraeatiBackOffice.Controllers
                         FarmerId = model.Id,
                         TypeId = Value.Id,
                         ExtraText = Value.ValueAr,//lable
-                        ExtraTextDescription = "",
+                        ExtraTextDescriptionAr = "",
                         IsCheck = farmerExtraFeatureTypes.Count(f => f.TypeId == Value.Id) > 0 ? true : false
 
                     });
@@ -342,7 +343,9 @@ namespace MazraeatiBackOffice.Controllers
                         farmerExtraFeatureType.FarmerId = nFarmsId;
                         farmerExtraFeatureType.TypeId = extra.TypeId;
                         farmerExtraFeatureType.ExtraText = extra.ExtraText;
-                        farmerExtraFeatureType.ExtraTextDescription = extra.ExtraTextDescription;
+                        farmerExtraFeatureType.ExtraTextDescriptionAr = extra.ExtraTextDescriptionAr;
+                        farmerExtraFeatureType.ExtraTextDescriptionEn = extra.ExtraTextDescriptionEn;
+                        
 
                         _UnitOfWork.FarmerExtraFeatureTypeRepository.Insert(farmerExtraFeatureType);
 
@@ -474,7 +477,8 @@ namespace MazraeatiBackOffice.Controllers
                             farmerExtraFeatureType.Id = extra.Id;
                             farmerExtraFeatureType.FarmerId = model.Id;
                             farmerExtraFeatureType.ExtraText = extra.ExtraText;
-                            farmerExtraFeatureType.ExtraTextDescription = extra.ExtraTextDescription;
+                            farmerExtraFeatureType.ExtraTextDescriptionAr = extra.ExtraTextDescriptionAr;
+                            farmerExtraFeatureType.ExtraTextDescriptionEn = extra.ExtraTextDescriptionEn;
                             farmerExtraFeatureType.TypeId = extra.TypeId;
 
                             if (extra.Id > 0)
