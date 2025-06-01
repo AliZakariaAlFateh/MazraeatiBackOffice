@@ -20,8 +20,11 @@ namespace MazraeatiBackOffice.Models
         [Required(ErrorMessage = "يرجى تعبئه الحقل")]
         public string Url { get; set; }
 
-        [DisplayName("نص اضافي فوق الصورة")]
+        [DisplayName("نص اضافي فوق الصورة بالعربى")]
         public string ExtraText { get; set; }
+
+        [DisplayName("نص اضافي فوق الصورة بالانجليزى")]
+        public string ExtraTextEn { get; set; }
 
         [DisplayName("تاريخ انتهاء الاعلان")]
         [Required(ErrorMessage = "يرجى تعبئه الحقل")]

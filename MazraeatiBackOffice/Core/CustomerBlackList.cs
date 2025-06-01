@@ -11,7 +11,11 @@ namespace MazraeatiBackOffice.Core
     {
         public string CustMobileNum { get; set; }
         public string CustName { get; set; }
+        public string CustNameEn { get; set; }
+
         public string Reason { get; set; }
+        public string ReasonEn { get; set; }
+
         public string ImageUrl { get; set; }
         public bool IsApprove { get; set; }
     }

@@ -21,8 +21,11 @@ namespace MazraeatiBackOffice.Models
         [DisplayName("رابط الصورة")]
         public string Image { get; set; }
 
-        [DisplayName("نص اضافي فوق الصورة")]
+        [DisplayName("نص اضافي فوق الصورة بالعربى")]
         public string ExtraText { get; set; }
+
+        [DisplayName("نص اضافي فوق الصورة بالانجليزى")]
+        public string ExtraTextEn { get; set; }
 
         [DisplayName("رابط خارجي ان اوجد")]
         public string RedirectLink { get; set; }

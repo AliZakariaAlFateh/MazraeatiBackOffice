@@ -13,6 +13,8 @@ namespace MazraeatiBackOffice.Core
         public int Type { get; set; }
         public string Url { get; set; }
         public string ExtraText { get; set; }
+        public string ExtraTextEn { get; set; }
+
         public DateTime ExpiryDate { get; set; }
     }
 }

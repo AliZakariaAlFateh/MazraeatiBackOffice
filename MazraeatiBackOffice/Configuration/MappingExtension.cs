@@ -219,6 +219,8 @@ namespace MazraeatiBackOffice.Extenstion
             model.CountryDesc = countries != null ? countries.FirstOrDefault(c => c.Id == entity.CountryId).DescAr : string.Empty;
             model.Image = entity.Image;
             model.ExtraText = entity.ExtraText;
+            model.ExtraTextEn = entity.ExtraTextEn;
+
             model.RedirectLink = entity.RedirectLink;
             model.Target = entity.Target;
             model.Value = entity.Value;
@@ -254,6 +256,8 @@ namespace MazraeatiBackOffice.Extenstion
             model.Type = entity.Type;
             model.Url = entity.Url;
             model.ExtraText = entity.ExtraText;
+            model.ExtraTextEn = entity.ExtraTextEn;
+
             model.ExpiryDate = entity.ExpiryDate;
             return model;
         }
@@ -265,6 +269,8 @@ namespace MazraeatiBackOffice.Extenstion
             entity.Type = model.Type;
             entity.Url = model.Url;
             entity.ExtraText = model.ExtraText;
+            entity.ExtraTextEn = model.ExtraTextEn;
+
             entity.ExpiryDate = model.ExpiryDate;
             return entity;
         }
@@ -280,6 +286,10 @@ namespace MazraeatiBackOffice.Extenstion
             model.CountryDesc = countries != null ? countries.FirstOrDefault(c => c.Id == entity.CountryId).DescAr : string.Empty;
             model.Title = entity.Title;
             model.MainImage = entity.MainImage;
+            model.ExtraText = entity.ExtraText;
+            model.ExtraTextEn = entity.ExtraTextEn;
+
+
             model.OrderId = entity.OrderId;
             model.Active = entity.Active;
             return model;
@@ -291,6 +301,9 @@ namespace MazraeatiBackOffice.Extenstion
             entity.CountryId = model.CountryId;
             entity.Title = model.Title;
             entity.MainImage = model.MainImage;
+            entity.ExtraText = model.ExtraText;
+            entity.ExtraTextEn = model.ExtraTextEn;
+
             entity.OrderId = model.OrderId;
             entity.Active = model.Active;
             return entity;
@@ -452,8 +465,12 @@ namespace MazraeatiBackOffice.Extenstion
             CustomerBlackListModel model = new CustomerBlackListModel();
             model.Id = entity.Id;
             model.CustName = entity.CustName;
+            model.CustNameEn = entity.CustNameEn;
+
             model.CustMobileNum = entity.CustMobileNum;
             model.Reason = entity.Reason;
+            model.ReasonEn = entity.ReasonEn;
+
             model.ImageUrl = entity.ImageUrl;
             model.IsApprove = entity.IsApprove;
             return model;
@@ -463,8 +480,12 @@ namespace MazraeatiBackOffice.Extenstion
             CustomerBlackList entity = new CustomerBlackList();
             entity.Id = model.Id;
             entity.CustName = model.CustName;
+            entity.CustNameEn = model.CustNameEn;
+
             entity.CustMobileNum = model.CustMobileNum;
             entity.Reason = model.Reason;
+            entity.ReasonEn = model.ReasonEn;
+
             entity.ImageUrl = model.ImageUrl;
             entity.IsApprove = model.IsApprove;
             return entity;

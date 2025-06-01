@@ -14,13 +14,21 @@ namespace MazraeatiBackOffice.Models
         [Required(ErrorMessage = "يرجى تعبئه الحقل")]
         public string CustMobileNum { get; set; }
 
-        [DisplayName("الاسم ان اوجد")]
+        [DisplayName("الاسم بالعربى ان اوجد")]
         [Required(ErrorMessage = "يرجى تعبئه الحقل")]
         public string CustName { get; set; }
 
-        [DisplayName("السبب")]
+        [DisplayName("الاسم بالانجليزى ان اوجد")]
+        [Required(ErrorMessage = "يرجى تعبئه الحقل")]
+        public string CustNameEn { get; set; }
+
+        [DisplayName("السبب بالعربى")]
         [Required(ErrorMessage = "يرجى تعبئه الحقل")]
         public string Reason { get; set; }
+
+        [DisplayName("السبب بالانجليزى")]
+        [Required(ErrorMessage = "يرجى تعبئه الحقل")]
+        public string ReasonEn { get; set; }
 
         [DisplayName("رابط الصورة")]
         public string ImageUrl { get; set; }

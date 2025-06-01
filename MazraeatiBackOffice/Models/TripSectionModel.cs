@@ -24,8 +24,11 @@ namespace MazraeatiBackOffice.Models
         [DisplayName("صورة الخدمة")]
         public string MainImage { get; set; }
 
-        [DisplayName("نص اضافي فوق الصورة")]
+        [DisplayName("نص اضافي فوق الصورة بالعربى")]
         public string ExtraText { get; set; }
+
+        [DisplayName("نص اضافي فوق الصورة بالانجليزى")]
+        public string ExtraTextEn { get; set; }
 
         [DisplayName("فعالية الاعلان")]
         public bool Active { get; set; }

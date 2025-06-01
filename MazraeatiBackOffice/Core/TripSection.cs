@@ -12,6 +12,8 @@ namespace MazraeatiBackOffice.Core
         public string Title { get; set; }
         public string MainImage { get; set; }
         public string ExtraText { get; set; }
+        public string ExtraTextEn { get; set; }
+
         public bool Active { get; set; }
         public int OrderId { get; set; }
     }

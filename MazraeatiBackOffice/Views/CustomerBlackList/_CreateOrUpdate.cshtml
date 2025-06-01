@@ -37,10 +37,24 @@
                             </div>
                         </div>
 
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.CustNameEn)
+                                @Html.TextBoxFor(a => a.CustNameEn, new { @class = "form-control", @autocomplete = "off", @maxlength = 50 })
+                                @Html.ValidationMessageFor(a => a.CustNameEn, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+
                         <div class="col-sm-12">
                             <div class="form-group">
                                 @Html.DisplayNameFor(a => a.Reason)
                                 @Html.TextAreaFor(a => a.Reason, new { @class = "form-control", @autocomplete = "off", @maxlength = 250 })
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.ReasonEn)
+                                @Html.TextAreaFor(a => a.ReasonEn, new { @class = "form-control", @autocomplete = "off", @maxlength = 250 })
                             </div>
                         </div>
 

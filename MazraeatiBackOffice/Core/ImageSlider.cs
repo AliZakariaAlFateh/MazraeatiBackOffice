@@ -13,6 +13,8 @@ namespace MazraeatiBackOffice.Core
         public string PageName { get; set; }
         public string Image { get; set; }
         public string ExtraText { get; set; }
+        public string ExtraTextEn { get; set; }
+
         public string RedirectLink { get; set; }
         public string Target { get; set; }
         public string Value { get; set; }
