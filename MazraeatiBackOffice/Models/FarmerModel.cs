@@ -35,20 +35,31 @@ namespace MazraeatiBackOffice.Models
         [Required(ErrorMessage = "برجاء تعبئة الحقل")]
         public long Number { get; set; }
 
-        [DisplayName("اسم المزرعة")]
+        [DisplayName("الاسم بالعربى المزرعة")]
         [Required(ErrorMessage = "برجاء تعبئة الحقل")]
         public string Name { get; set; }
 
-        [DisplayName("وصف المزرعة")]
+        [DisplayName("الاسم بالانجليزية المزرعة")]
+        [Required(ErrorMessage = "برجاء تعبئة الحقل")]
+        public string NameEn { get; set; }
+
+        [DisplayName("وصف المزرعة بالعربى")]
         public string Description { get; set; }
+
+        [DisplayName("وصف المزرعة بالانجليزية")]
+        public string DescriptionEn { get; set; }
 
         [DisplayName("اسم المالك")]
         [Required(ErrorMessage = "برجاء تعبئة الحقل")]
         public string Owner { get; set; }
 
-        [DisplayName("اسم المنطقة")]
+        [DisplayName("اسم المنطقة بالعربى")]
         [Required(ErrorMessage = "برجاء تعبئة الحقل")]
         public string LocationDesc { get; set; }
+
+        [DisplayName("اسم المنطقة بالانجليزيه")]
+        [Required(ErrorMessage = "برجاء تعبئة الحقل")]
+        public string LocationDescEn { get; set; }
 
         public DateTime IssueDate { get; set; }
         public DateTime ExpiryDate { get; set; }
@@ -61,15 +72,21 @@ namespace MazraeatiBackOffice.Models
         [Required(ErrorMessage = "برجاء تعبئة الحقل")]
         public int Room { get; set; }
 
-        [DisplayName("تفاصيل الغرف")]
+        [DisplayName("تفاصيل الغرف بالعربى")]
         public string RoomDetails { get; set; }
+
+        [DisplayName("تفاصيل الغرف بالانجليزيه")]
+        public string RoomDetailsEn { get; set; }
 
         [DisplayName("عدد الحمامات")]
         [Required(ErrorMessage = "برجاء تعبئة الحقل")]
         public int Bathroom { get; set; }
 
-        [DisplayName("تفاصيل  الحمامات")]
+        [DisplayName("تفاصيل  الحمامات بالعربى")]
         public string BathroomDetails { get; set; }
+
+        [DisplayName("تفاصيل  الحمامات بالانجليزيه")]
+        public string BathroomDetailsEn { get; set; }
 
         [DisplayName("مساحة العقار")]
         [Required(ErrorMessage = "برجاء تعبئة الحقل")]
@@ -83,22 +100,33 @@ namespace MazraeatiBackOffice.Models
         [Required(ErrorMessage = "برجاء تعبئة الحقل")]
         public int InDoor { get; set; }
 
-        [DisplayName("تفاصيل الجلسات الداخلية")]
+        [DisplayName("تفاصيل الجلسات الداخلية بالعربى")]
         public string InDoorDescription { get; set; }
+
+        [DisplayName("تفاصيل الجلسات الداخلية بالانجليزيه")]
+        public string InDoorDescriptionEn { get; set; }
 
         [DisplayName("عدد الجلسات الخارجية")]
         [Required(ErrorMessage = "برجاء تعبئة الحقل")]
         public int OutDoor { get; set; }
 
-        [DisplayName("تفاصيل الجلسات الخارجية")]
+        
+
+        [DisplayName("تفاصيل الجلسات الخارجية بالعربى")]
         public string OutDoorDescription { get; set; }
+
+        [DisplayName("تفاصيل الجلسات الخارجية بالانجليزيه")]
+        public string OutDoorDescriptionEn { get; set; }
 
         [DisplayName("عدد المطابخ")]
         [Required(ErrorMessage = "برجاء تعبئة الحقل")]
         public int kitchens { get; set; }
 
-        [DisplayName("تفاصيل المطبخ")]
+        [DisplayName("تفاصيل المطبخ بالعربى")]
         public string kitchensDescription { get; set; }
+
+        [DisplayName("تفاصيل المطبخ بالانجليزية")]
+        public string kitchensDescriptionEn { get; set; }
 
         [DisplayName("تفاصيل اضافية")]
         public string ExtraDetails { get; set; }

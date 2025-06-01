@@ -3,6 +3,7 @@
     .form-group {
         font-size: 13px;
     }
+
     .textboxWidth {
         width: 120px;
     }
@@ -350,28 +351,17 @@
 
                         <div class="col-sm-6">
                             <div class="form-group">
-                                @Html.DisplayNameFor(a => a.MobileNumber)
-                                @Html.TextBoxFor(a => a.MobileNumber, new { @class = "form-control", @autocomplete = "off", @placeholder = "962xxxxxxxxx", @maxlength = 12 })
-                                @Html.ValidationMessageFor(a => a.MobileNumber, "", new { @style = "color:red;font-size:10px" })
-                            </div>
-                        </div>
-
-                        @*@if (Model.Id > 0)
-        {
-        <div class="col-sm-6">
-            <div class="form-group">
-                @Html.DisplayNameFor(a => a.Number)
-                @Html.TextBoxFor(a => a.Number, new { @class = "form-control", @autocomplete = "off" })
-                @Html.ValidationMessageFor(a => a.Number, "", new { @style = "color:red;font-size:10px" })
-            </div>
-        </div>
-        }*@
-
-                        <div class="col-sm-6">
-                            <div class="form-group">
                                 @Html.DisplayNameFor(a => a.Name)
                                 @Html.TextBoxFor(a => a.Name, new { @class = "form-control", @autocomplete = "off", @maxlength = 50 })
                                 @Html.ValidationMessageFor(a => a.Name, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.NameEn)
+                                @Html.TextBoxFor(a => a.NameEn, new { @class = "form-control", @autocomplete = "off", @maxlength = 50 })
+                                @Html.ValidationMessageFor(a => a.NameEn, "", new { @style = "color:red;font-size:10px" })
                             </div>
                         </div>
 
@@ -382,7 +372,32 @@
                                 @Html.ValidationMessageFor(a => a.LocationDesc, "", new { @style = "color:red;font-size:10px" })
                             </div>
                         </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.LocationDescEn)
+                                @Html.TextBoxFor(a => a.LocationDescEn, new { @class = "form-control", @autocomplete = "off", @maxlength = 20 })
+                                @Html.ValidationMessageFor(a => a.LocationDescEn, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
 
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.MobileNumber)
+                                @Html.TextBoxFor(a => a.MobileNumber, new { @class = "form-control", @autocomplete = "off", @placeholder = "962xxxxxxxxx", @maxlength = 12 })
+                                @Html.ValidationMessageFor(a => a.MobileNumber, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+
+                        @*@if (Model.Id > 0)
+                        {
+                        <div class="col-sm-6">
+                        <div class="form-group">
+                        @Html.DisplayNameFor(a => a.Number)
+                        @Html.TextBoxFor(a => a.Number, new { @class = "form-control", @autocomplete = "off" })
+                        @Html.ValidationMessageFor(a => a.Number, "", new { @style = "color:red;font-size:10px" })
+                        </div>
+                        </div>
+                        }*@
                         <div class="col-sm-6">
                             @Html.DisplayNameFor(a => a.Owner)
                             <select class="form-control" name="Owner">
@@ -392,6 +407,24 @@
                             </select>
                             @Html.ValidationMessageFor(a => a.Owner, "", new { @style = "color:red;font-size:10px" })
                         </div>
+
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.Description)
+                                @Html.TextBoxFor(a => a.Description, new { @class = "form-control", @autocomplete = "off", @maxlength = 500 })
+                                @Html.ValidationMessageFor(a => a.Description, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.DescriptionEn)
+                                @Html.TextBoxFor(a => a.DescriptionEn, new { @class = "form-control", @autocomplete = "off", @maxlength = 500 })
+                                @Html.ValidationMessageFor(a => a.DescriptionEn, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+                       
+
 
 
                         <div class="col-sm-12" style="margin-bottom:20px">
@@ -425,6 +458,13 @@
                                 @Html.ValidationMessageFor(a => a.RoomDetails, "", new { @style = "color:red;font-size:10px" })
                             </div>
                         </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.RoomDetailsEn)
+                                @Html.TextAreaFor(a => a.RoomDetailsEn, new { @class = "form-control", @autocomplete = "off", @maxlength = 500 })
+                                @Html.ValidationMessageFor(a => a.RoomDetailsEn, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
 
                         <div class="col-sm-6">
                             <div class="form-group">
@@ -439,6 +479,14 @@
                                 @Html.DisplayNameFor(a => a.BathroomDetails)
                                 @Html.TextBoxFor(a => a.BathroomDetails, new { @class = "form-control", @autocomplete = "off", @maxlength = 500 })
                                 @Html.ValidationMessageFor(a => a.BathroomDetails, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.BathroomDetailsEn)
+                                @Html.TextBoxFor(a => a.BathroomDetailsEn, new { @class = "form-control", @autocomplete = "off", @maxlength = 500 })
+                                @Html.ValidationMessageFor(a => a.BathroomDetailsEn, "", new { @style = "color:red;font-size:10px" })
                             </div>
                         </div>
 
@@ -466,6 +514,14 @@
                             </div>
                         </div>
 
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.InDoorDescriptionEn)
+                                @Html.TextAreaFor(a => a.InDoorDescriptionEn, new { @class = "form-control", @autocomplete = "off", @maxlength = 500 })
+                                @Html.ValidationMessageFor(a => a.InDoorDescriptionEn, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+
                         <div class="col-sm-6">
                             <div class="form-group">
                                 @Html.DisplayNameFor(a => a.OutDoor)
@@ -479,6 +535,14 @@
                                 @Html.DisplayNameFor(a => a.OutDoorDescription)
                                 @Html.TextAreaFor(a => a.OutDoorDescription, new { @class = "form-control", @autocomplete = "off", @maxlength = 500 })
                                 @Html.ValidationMessageFor(a => a.OutDoorDescription, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.OutDoorDescriptionEn)
+                                @Html.TextAreaFor(a => a.OutDoorDescriptionEn, new { @class = "form-control", @autocomplete = "off", @maxlength = 500 })
+                                @Html.ValidationMessageFor(a => a.OutDoorDescriptionEn, "", new { @style = "color:red;font-size:10px" })
                             </div>
                         </div>
 
@@ -496,6 +560,14 @@
                                 @Html.DisplayNameFor(a => a.kitchensDescription)
                                 @Html.TextAreaFor(a => a.kitchensDescription, new { @class = "form-control", @autocomplete = "off", @maxlength = 500 })
                                 @Html.ValidationMessageFor(a => a.kitchensDescription, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.kitchensDescriptionEn)
+                                @Html.TextAreaFor(a => a.kitchensDescriptionEn, new { @class = "form-control", @autocomplete = "off", @maxlength = 500 })
+                                @Html.ValidationMessageFor(a => a.kitchensDescriptionEn, "", new { @style = "color:red;font-size:10px" })
                             </div>
                         </div>
 
@@ -641,7 +713,7 @@
                                                         </th>
                                                     </tr>
                                                 }
-                                               
+
 
                                                 @if (i == 0)
                                                 {
@@ -672,25 +744,32 @@
                                                         @switch (Model.PriceList[i].Day)
                                                         {
                                                             case 1:
-                                                                @Html.Label("(الاحد)");
+                                                                @Html.Label("(الاحد)")
+                                                                ;
                                                                 break;
                                                             case 2:
-                                                                @Html.Label("(الاثنين)");
+                                                                @Html.Label("(الاثنين)")
+                                                                ;
                                                                 break;
                                                             case 3:
-                                                                @Html.Label("(الثلاثاء)");
+                                                                @Html.Label("(الثلاثاء)")
+                                                                ;
                                                                 break;
                                                             case 4:
-                                                                @Html.Label("(الاربعاء)");
+                                                                @Html.Label("(الاربعاء)")
+                                                                ;
                                                                 break;
                                                             case 5:
-                                                                @Html.Label("(الخميس)");
+                                                                @Html.Label("(الخميس)")
+                                                                ;
                                                                 break;
                                                             case 6:
-                                                                @Html.Label("(الجمعه)");
+                                                                @Html.Label("(الجمعه)")
+                                                                ;
                                                                 break;
                                                             case 7:
-                                                                @Html.Label("(السبت)");
+                                                                @Html.Label("(السبت)")
+                                                                ;
                                                                 break;
                                                         }
                                                     </td>
@@ -728,7 +807,6 @@
                                                         @Html.TextBoxFor(a => Model.PriceList[i].FullDayPeriodText, new { @placeholder = "يوم كامل", @maxlength = 25, @type = "text", @class = "textboxWidth" })
                                                     </td>
                                                     <td style="width:10%">
-
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -737,7 +815,7 @@
                                 }
                             </div>
                         </div>
-                        
+
 
                         <div class="col-sm-12" style="margin-bottom:20px">
                             &nbsp;
