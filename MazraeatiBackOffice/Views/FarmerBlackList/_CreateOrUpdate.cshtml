@@ -46,11 +46,23 @@
                                 @Html.ValidationMessageFor(a => a.FarmerName, "", new { @style = "color:red;font-size:10px" })
                             </div>
                         </div>
-
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.FarmerNameEn)
+                                @Html.TextBoxFor(a => a.FarmerNameEn, new { @class = "form-control", @autocomplete = "off", @maxlength = 50 })
+                                @Html.ValidationMessageFor(a => a.FarmerNameEn, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
                         <div class="col-sm-12">
                             <div class="form-group">
                                 @Html.DisplayNameFor(a => a.Reason)
                                 @Html.TextAreaFor(a => a.Reason, new { @class = "form-control", @autocomplete = "off", @maxlength = 250 })
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.ReasonEn)
+                                @Html.TextAreaFor(a => a.ReasonEn, new { @class = "form-control", @autocomplete = "off", @maxlength = 250 })
                             </div>
                         </div>
 
@@ -87,7 +99,13 @@
                                 @Html.CheckBoxFor(a => a.IsApprove, new { @class = "form-control", @style = "margin-top: 10px;" })
                             </div>
                         </div>
-
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.IsBlocked)
+                                <br />
+                                @Html.CheckBoxFor(a => a.IsBlocked, new { @class = "form-control", @style = "margin-top: 10px;" })
+                            </div>
+                        </div>
                         <div class="col-sm-12" style="margin-bottom:20px">
                             &nbsp;
                         </div>

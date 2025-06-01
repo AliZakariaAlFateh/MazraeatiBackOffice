@@ -115,14 +115,18 @@ namespace MazraeatiBackOffice.Controllers
         [HttpPost("farmerBlackList")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult UploadFarmerBlackList([FromForm] string farmerMobNum, string farmerName, string reason, IFormFile formFile)
+        public IActionResult UploadFarmerBlackList([FromForm] string farmerMobNum, string farmerName, string farmerNameEn, string reason,string reasonEn, IFormFile formFile, bool isblocked = false)
         {
             try
             {
                 FarmerBlackList farmerBlackList = new FarmerBlackList();
                 farmerBlackList.FarmerMobNum = farmerMobNum;
-                farmerBlackList.FarmerName = farmerName;
+                farmerBlackList.FarmerName = farmerNameEn;
+                farmerBlackList.FarmerNameEn = farmerName;
                 farmerBlackList.Reason = reason;
+                farmerBlackList.ReasonEn = reasonEn;
+                farmerBlackList.IsBlocked = isblocked;
+
 
                 if (formFile.Length > 0)
                     farmerBlackList.ImageUrl = "blacklist/" + GenericFunction.UploadedFile(formFile, webHostEnvironment, "blacklist");

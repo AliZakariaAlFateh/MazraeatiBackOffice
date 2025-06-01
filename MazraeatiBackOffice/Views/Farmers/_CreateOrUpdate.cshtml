@@ -105,6 +105,23 @@
         }
     }
 
+    function DeleteFarmerVideo(videoId) {
+        if (true) { // Replaced confirm with true for Canvas environment. Use a custom modal for production.
+            console.log("Attempting to delete image with ID:", videoId);
+            $.post('@Url.Content("~/Farmers/DeleteFarmerVideo")', { videoId: videoId }, function (response) {
+                // Expecting a JSON response like { success: true, message: "..." }
+                if (response.success) {
+                    console.log("تم حذف الفيديو بنجاح:", response.message); // Replaced alert
+                    // Instead of full reload, you can remove the element directly for better UX
+                    $(`button[onclick="DeleteFarmerVideo(${videoId})"]`).closest('.farmer-video-item').remove();
+                } else {
+                    console.error("فشل حذف الفيديو:", response.message); // Replaced alert
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                console.error("AJAX Error deleting Video:", textStatus, errorThrown, jqXHR.responseText);
+            });
+        }
+    }
     // function DeleteFarmerVideo(videoId) {
     //     if (true) { // Replaced confirm with true for Canvas environment. Use a custom modal for production.
     //         alert.log("Attempting to delete video with ID:", videoId);
@@ -122,60 +139,60 @@
     //         });
     //     }
     // }
-    function DeleteFarmerVideo(videoId) {
-        Swal.fire({
-            title: 'هل أنت متأكد؟',
-            text: "هل أنت متأكد من أنك تريد حذف هذا الفيديو؟",
-            icon: 'warning', // Shows a warning icon
-            showCancelButton: true, // Displays the cancel button
-            confirmButtonText: 'نعم، احذف!', // Text for the confirmation button
-            cancelButtonText: 'إلغاء', // Text for the cancel button
-            reverseButtons: true, // Reverses the order of confirm and cancel buttons (good for RTL languages)
-            customClass: { // Apply custom CSS classes to buttons for styling (e.g., Bootstrap classes)
-                confirmButton: 'btn btn-danger mx-1', // Red button with margin
-                cancelButton: 'btn btn-secondary mx-1' // Grey button with margin
-            },
-            buttonsStyling: false // Important: disables SweetAlert's default button styling to use custom classes
-        }).then((result) => {
-            // This 'then' block executes after the user makes a choice in the SweetAlert dialog
-            if (result.isConfirmed) {
-                // User clicked 'Yes, delete!'
+    // function DeleteFarmerVideo(videoId) {
+    //     Swal.fire({
+    //         title: 'هل أنت متأكد؟',
+    //         text: "هل أنت متأكد من أنك تريد حذف هذا الفيديو؟",
+    //         icon: 'warning', // Shows a warning icon
+    //         showCancelButton: true, // Displays the cancel button
+    //         confirmButtonText: 'نعم، احذف!', // Text for the confirmation button
+    //         cancelButtonText: 'إلغاء', // Text for the cancel button
+    //         reverseButtons: true, // Reverses the order of confirm and cancel buttons (good for RTL languages)
+    //         customClass: { // Apply custom CSS classes to buttons for styling (e.g., Bootstrap classes)
+    //             confirmButton: 'btn btn-danger mx-1', // Red button with margin
+    //             cancelButton: 'btn btn-secondary mx-1' // Grey button with margin
+    //         },
+    //         buttonsStyling: false // Important: disables SweetAlert's default button styling to use custom classes
+    //     }).then((result) => {
+    //         // This 'then' block executes after the user makes a choice in the SweetAlert dialog
+    //         if (result.isConfirmed) {
+    //             // User clicked 'Yes, delete!'
 
-                // 1. Get the DOM element to remove immediately (visual feedback)
-                // We use the data-video-id attribute added to the video item div
-                const $itemToRemove = $(`.farmer-video-item[data-video-id="${videoId}"]`);
-                $itemToRemove.addClass('removing'); // Add a class to apply a fade-out animation (defined in CSS)
+    //             // 1. Get the DOM element to remove immediately (visual feedback)
+    //             // We use the data-video-id attribute added to the video item div
+    //             const $itemToRemove = $(`.farmer-video-item[data-video-id="${videoId}"]`);
+    //             $itemToRemove.addClass('removing'); // Add a class to apply a fade-out animation (defined in CSS)
 
-                // 2. Make the AJAX call to the server to perform the actual deletion
-                $.post('@Url.Content("~/Farmers/DeleteFarmerVideo")', { videoId: videoId }, function (response) {
-                    // This callback function executes when the server responds
-                    if (response.success) {
-                        // Deletion was successful on the server
-                        showSweetAlert('success', 'تم الحذف!', response.message); // Show success message
+    //             // 2. Make the AJAX call to the server to perform the actual deletion
+    //             $.post('@Url.Content("~/Farmers/DeleteFarmerVideo")', { videoId: videoId }, function (response) {
+    //                 // This callback function executes when the server responds
+    //                 if (response.success) {
+    //                     // Deletion was successful on the server
+    //                     showSweetAlert('success', 'تم الحذف!', response.message); // Show success message
 
-                        // Remove the element from the DOM after a short delay
-                        // This allows the 'removing' CSS transition to complete before removal
-                        setTimeout(() => {
-                            $itemToRemove.remove(); // Removes the video item from the page
-                        }, 300); // 300ms delay, match this to your CSS transition duration
+    //                     // Remove the element from the DOM after a short delay
+    //                     // This allows the 'removing' CSS transition to complete before removal
+    //                     setTimeout(() => {
+    //                         $itemToRemove.remove(); // Removes the video item from the page
+    //                     }, 300); // 300ms delay, match this to your CSS transition duration
 
-                    } else {
-                        // Deletion failed on the server (response.success is false)
-                        showSweetAlert('error', 'خطأ!', response.message); // Show error message from server
-                        $itemToRemove.removeClass('removing'); // If deletion fails, remove the fade-out class
-                    }
-                }).fail(function (jqXHR, textStatus, errorThrown) {
-                    // This 'fail' callback executes if the AJAX request itself fails (e.g., network error, 404, 500)
-                    showSweetAlert('error', 'خطأ في الاتصال!', 'حدث خطأ أثناء الاتصال بالخادم: ' + errorThrown);
-                    console.error("AJAX Error deleting video:", textStatus, errorThrown, jqXHR.responseText); // Log detailed error
-                    $itemToRemove.removeClass('removing'); // If AJAX fails, remove the fade-out class
-                });
-            } else if (result.dismiss === Swal.DismissReason.cancel) {
-                // User clicked 'Cancel' or dismissed the dialog (e.g., by pressing Esc or clicking outside)
-                showSweetAlert('info', 'تم الإلغاء', 'لم يتم حذف الفيديو.'); // Show info message
-            }
-        });
-    }
+    //                 } else {
+    //                     // Deletion failed on the server (response.success is false)
+    //                     showSweetAlert('error', 'خطأ!', response.message); // Show error message from server
+    //                     $itemToRemove.removeClass('removing'); // If deletion fails, remove the fade-out class
+    //                 }
+    //             }).fail(function (jqXHR, textStatus, errorThrown) {
+    //                 // This 'fail' callback executes if the AJAX request itself fails (e.g., network error, 404, 500)
+    //                 showSweetAlert('error', 'خطأ في الاتصال!', 'حدث خطأ أثناء الاتصال بالخادم: ' + errorThrown);
+    //                 console.error("AJAX Error deleting video:", textStatus, errorThrown, jqXHR.responseText); // Log detailed error
+    //                 $itemToRemove.removeClass('removing'); // If AJAX fails, remove the fade-out class
+    //             });
+    //         } else if (result.dismiss === Swal.DismissReason.cancel) {
+    //             // User clicked 'Cancel' or dismissed the dialog (e.g., by pressing Esc or clicking outside)
+    //             showSweetAlert('info', 'تم الإلغاء', 'لم يتم حذف الفيديو.'); // Show info message
+    //         }
+    //     });
+    // }
     function showSweetAlert(icon, title, text) {
         Swal.fire({
             icon: icon,
@@ -818,7 +835,8 @@
                                         @Html.DisplayFor(a => a.ExtraFeature[i].ExtraText)
                                         <br />
                                         @Html.CheckBoxFor(a => a.ExtraFeature[i].IsCheck, new { @class = "form-control", @style = "margin-top: 10px;" })
-                                        @Html.TextBoxFor(a => a.ExtraFeature[i].ExtraTextDescription, new { @class = "form-control", @maxlength = 100 })
+                                        @Html.TextBoxFor(a => a.ExtraFeature[i].ExtraTextDescriptionAr, new { @class = "form-control", @maxlength = 100 ,@placeholder="الوصف بالعربي"})
+                                        @Html.TextBoxFor(a => a.ExtraFeature[i].ExtraTextDescriptionEn, new { @class = "form-control", @maxlength = 100 ,@placeholder="الوصف بالانجليزيه"})
                                     </div>
                                 </div>
                             }
