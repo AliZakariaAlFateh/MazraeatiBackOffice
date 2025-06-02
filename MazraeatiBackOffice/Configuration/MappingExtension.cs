@@ -236,6 +236,8 @@ namespace MazraeatiBackOffice.Extenstion
             entity.PageName = model.PageName;
             entity.Image = model.Image;
             entity.ExtraText = model.ExtraText;
+            entity.ExtraTextEn = model.ExtraTextEn;
+
             entity.RedirectLink = model.RedirectLink;
             entity.Target = model.Target;
             entity.Value = model.Value;
