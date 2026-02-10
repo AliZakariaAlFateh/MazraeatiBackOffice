@@ -1,0 +1,269 @@
+﻿@using MazraeatiBackOffice.Models
+@model List<FarmerReservationModel>
+@{
+    ViewData["Title"] = "الحجوزات";
+}
+
+<div class="container-fluid py-4">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+        <h1 class="h3 mb-0 mt-3">@ViewData["Title"]</h1>
+    </div>
+
+    <!-- Filters -->
+    <div class="card shadow-sm mb-3">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-12 col-md-4">
+                    <label class="form-label">Search</label>
+                    <input id="searchBox" class="form-control" placeholder="Customer, mobile, farmer, note, type…" />
+                </div>
+                <div class="col-6 col-md-3">
+                    <label class="form-label">From date</label>
+                    <input id="fromDate" type="date" class="form-control" />
+                </div>
+                <div class="col-6 col-md-3">
+                    <label class="form-label">To date</label>
+                    <input id="toDate" type="date" class="form-control" />
+                </div>
+                <div class="col-12 col-md-2">
+                    <label class="form-label">Type</label>
+                    <select id="typeFilter" class="form-select">
+                        <option value="">All types</option>
+                        @* Options will be filled from data (names) *@
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Desktop/Table view -->
+    <div class="table-responsive d-none d-lg-block">
+        <table id="reservationsTable" class="table table-hover align-middle">
+            <thead class="table-light sticky-top">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Farmer ID</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">Reservation Date</th>
+                    <th scope="col">Customer</th>
+                    <th scope="col">Mobile</th>
+                    <th scope="col">Commission</th>
+                    <th scope="col">Note</th>
+                    <th scope="col">Auto Note</th>
+                    <th scope="col">Created</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    var i = 0;
+                    foreach (var r in Model)
+                    {
+                        i++;
+                        var commissionClass = r.IsReciveCommission ? "badge bg-success" : "badge bg-secondary";
+                        // Include ReservationTypeDesc in the searchable blob
+                        var searchBlob = $"{r.CustomerName} {r.CustMobNum} {r.Note} {r.AutomaticallyNote} {r.FarmerId} {r.ReservationTypeId} {r.ReservationTypeDesc}".ToLowerInvariant();
+                        <tr data-search="@searchBlob"
+                            data-date="@r.ReservationDate.ToString("yyyy-MM-dd")"
+                            data-type-name="@r.ReservationTypeDesc">
+                            <td>@i</td>
+                            <td>@r.FarmerId</td>
+                            <td>
+                                <span class="badge bg-info-subtle text-info border">@r.ReservationTypeDesc</span>
+                            </td>
+                            <td>@r.ReservationDate.ToString("yyyy-MM-dd")</td>
+                            <td><div class="fw-semibold">@r.CustomerName</div></td>
+                            <td><a href="tel:@r.CustMobNum" class="text-decoration-none">@r.CustMobNum</a></td>
+                            <td><span class="@commissionClass">@(r.IsReciveCommission ? "Yes" : "No")</span></td>
+                            <td class="text-truncate" style="max-width: 240px;" title="@r.Note">@r.Note</td>
+                            <td class="text-truncate" style="max-width: 240px;" title="@r.AutomaticallyNote">@r.AutomaticallyNote</td>
+                            <td>@r.CreatedDate.ToString("yyyy-MM-dd HH:mm")</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Mobile/Card view -->
+    <div id="mobileCards" class="d-lg-none">
+        @{
+            i = 0;
+            foreach (var r in Model)
+            {
+                i++;
+                var searchBlob = $"{r.CustomerName} {r.CustMobNum} {r.Note} {r.AutomaticallyNote} {r.FarmerId} {r.ReservationTypeId} {r.ReservationTypeDesc}".ToLowerInvariant();
+                <div class="card shadow-sm mb-3 reservation-card"
+                     data-search="@searchBlob"
+                     data-date="@r.ReservationDate.ToString("yyyy-MM-dd")"
+                     data-type-name="@r.ReservationTypeDesc">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <div class="small text-muted">Reservation #@i</div>
+                                <div class="fw-semibold">@r.CustomerName</div>
+                                <div><a href="tel:@r.CustMobNum" class="text-decoration-none">@r.CustMobNum</a></div>
+                            </div>
+                            <span class="badge bg-info-subtle text-info border">@r.ReservationTypeDesc</span>
+                        </div>
+                        <hr class="my-2" />
+                        <div class="row g-2 small">
+                            <div class="col-6">
+                                <span class="text-muted">Farmer</span><br />
+                                <span class="fw-semibold">@r.FarmerId</span>
+                            </div>
+                            <div class="col-6">
+                                <span class="text-muted">Date</span><br />
+                                <span class="fw-semibold">@r.ReservationDate.ToString("yyyy-MM-dd")</span>
+                            </div>
+                            <div class="col-6">
+                                <span class="text-muted">Commission</span><br />
+                                <span class="fw-semibold">@(r.IsReciveCommission ? "Yes" : "No")</span>
+                            </div>
+                            <div class="col-6">
+                                <span class="text-muted">Created</span><br />
+                                <span class="fw-semibold">@r.CreatedDate.ToString("yyyy-MM-dd HH:mm")</span>
+                            </div>
+                            @if (!string.IsNullOrWhiteSpace(r.Note))
+                            {
+                                <div class="col-12">
+                                    <span class="text-muted">Note</span>
+                                    <div class="mt-1">@r.Note</div>
+                                </div>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(r.AutomaticallyNote))
+                            {
+                                <div class="col-12">
+                                    <span class="text-muted">Auto Note</span>
+                                    <div class="mt-1">@r.AutomaticallyNote</div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        #reservationsTable thead th {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+
+        #reservationsTable tbody tr:hover {
+            background: rgba(0,0,0,.02);
+        }
+
+        .text-truncate {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .reservation-card {
+            border-radius: 1rem;
+        }
+
+            .reservation-card:hover {
+                transform: translateY(-1px);
+                transition: transform .15s ease-in-out;
+            }
+
+        .bg-info-subtle {
+            background-color: rgba(13,202,240,.12) !important;
+        }
+
+        .border {
+            border: 1px solid rgba(0,0,0,.075) !important;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        (function () {
+            const table = document.getElementById('reservationsTable');
+            const tbody = table ? table.querySelector('tbody') : null;
+            const rows = tbody ? Array.from(tbody.querySelectorAll('tr')) : [];
+            const cards = Array.from(document.querySelectorAll('#mobileCards .reservation-card'));
+
+            const searchBox = document.getElementById('searchBox');
+            const fromDate = document.getElementById('fromDate');
+            const toDate = document.getElementById('toDate');
+            const typeFilter = document.getElementById('typeFilter');
+
+            // Build "Type" options from data (use names, not IDs)
+            const typeSet = new Set();
+            rows.forEach(tr => typeSet.add(tr.getAttribute('data-type-name')));
+            cards.forEach(c => typeSet.add(c.getAttribute('data-type-name')));
+            const cleanTypes = [...typeSet].filter(Boolean).sort((a, b) => a.localeCompare(b));
+            if (typeFilter && typeFilter.options.length <= 1) {
+                cleanTypes.forEach(t => {
+                    const opt = document.createElement('option');
+                    opt.value = t; opt.textContent = t; // use the name
+                    typeFilter.appendChild(opt);
+                });
+            }
+
+            // Date compare using yyyy-MM-dd strings
+            function dateWithin(ymd, start, end) {
+                if (!ymd) return true;
+                if (start && ymd < start) return false;
+                if (end && ymd > end) return false;
+                return true;
+            }
+
+            function includesText(hay, needle) {
+                if (!needle) return true;
+                return (hay || "").indexOf(needle.toLowerCase()) !== -1;
+            }
+
+            // debounce
+            let timer;
+            function scheduleFilter() { clearTimeout(timer); timer = setTimeout(applyFilters, 120); }
+
+            function applyFilters() {
+                const q = (searchBox?.value || "").trim().toLowerCase(); // matches type name too
+                const start = fromDate?.value || "";
+                const end = toDate?.value || "";
+                const tName = typeFilter?.value || ""; // type NAME
+
+                rows.forEach(tr => {
+                    const searchVal = tr.getAttribute('data-search') || "";
+                    const dateVal = tr.getAttribute('data-date') || "";
+                    const typeName = tr.getAttribute('data-type-name') || "";
+
+                    const ok = includesText(searchVal, q)
+                        && dateWithin(dateVal, start, end)
+                        && (!tName || typeName === tName);
+
+                    tr.style.display = ok ? "" : "none";
+                });
+
+                cards.forEach(card => {
+                    const searchVal = card.getAttribute('data-search') || "";
+                    const dateVal = card.getAttribute('data-date') || "";
+                    const typeName = card.getAttribute('data-type-name') || "";
+
+                    const ok = includesText(searchVal, q)
+                        && dateWithin(dateVal, start, end)
+                        && (!tName || typeName === tName);
+
+                    card.style.display = ok ? "" : "none";
+                });
+            }
+
+            ['input', 'change'].forEach(evt => {
+                searchBox?.addEventListener(evt, scheduleFilter);
+                fromDate?.addEventListener(evt, scheduleFilter);
+                toDate?.addEventListener(evt, scheduleFilter);
+                typeFilter?.addEventListener(evt, scheduleFilter);
+            });
+
+            applyFilters(); // initial
+        })();
+    </script>
+}

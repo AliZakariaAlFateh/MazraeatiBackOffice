@@ -22,12 +22,40 @@ namespace MazraeatiBackOffice.Controllers
             _UnitOfWork = unitOfWork;
         }
 
+        //public LookupValueModel NewFillModel(LookupValueModel model, int lookupId)
+        //{
+        //    string LookupCode = _LookupRepository.Table.FirstOrDefault(l => l.Id == lookupId).LookupCode;
+
+        //    model.LookupId = lookupId;
+        //    model.LookupDesc = (LookupCode == "FarmerExtraFeatureType" ? "مزايا المزرعة" : "مزايا الاقسام الاخرى");
+        //    return model;
+        //}
+
         public LookupValueModel NewFillModel(LookupValueModel model, int lookupId)
         {
-            string LookupCode = _LookupRepository.Table.FirstOrDefault(l => l.Id == lookupId).LookupCode;
+            // It's good practice to handle cases where LookupCode might be null if the lookupId doesn't exist.
+            // However, based on your original code, we'll assume it's always found for now.
+            string LookupCode = _LookupRepository.Table.FirstOrDefault(l => l.Id == lookupId)?.LookupCode;
 
             model.LookupId = lookupId;
-            model.LookupDesc = (LookupCode == "FarmerExtraFeatureType" ? "مزايا المزرعة" : "مزايا الاقسام الاخرى");
+
+            switch (lookupId)
+            {
+                case 2:
+                    model.LookupDesc = "مرفقات المزرعة";
+                    break;
+                case 3:
+                    model.LookupDesc = "نوع التسعير للمزرعة";
+                    break;
+                case 4:
+                    model.LookupDesc = "العملة";
+                    break;
+                default:
+                    // This is your fallback for any other lookupId
+                    model.LookupDesc = "مزايا الاقسام الاخرى";
+                    break;
+            }
+
             return model;
         }
 
@@ -38,7 +66,11 @@ namespace MazraeatiBackOffice.Controllers
 
         public IActionResult Index()
         {
-            var model = _LookupRepository.Table.Where(a => a.LookupCode == "FarmerExtraFeatureType" || a.LookupCode == "TripExtraFeatureType").Select(a => a.ToModel());
+            //var model = _LookupRepository.Table.Where(a => a.LookupCode == "FarmerExtraFeatureType" || a.LookupCode == "FarmerPriceType" || a.LookupCode == "TripExtraFeatureType" || a.LookupCode == "ReservationType" || a.LookupCode == "Currency")
+
+            var model = _LookupRepository.Table.Where(a => a.LookupCode == "FarmerExtraFeatureType" || a.LookupCode == "TripExtraFeatureType" || a.LookupCode == "Currency")
+                .Select(a => a.ToModel());
+
             ViewBag.activePage = "خدمات اخرى";
             return View(model);
         }

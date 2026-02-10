@@ -1,7 +1,8 @@
-﻿@using Microsoft.AspNetCore.Http;
+﻿@* @using Microsoft.AspNetCore.Http; *@
 <!doctype html>
 <html class="no-js " lang="en">
 <head>
+
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
@@ -16,7 +17,7 @@
     <link rel="stylesheet" href="@Url.Content("~/assets/css/fonts.css")">
     <link rel="stylesheet" href="@Url.Content("~/assets/css/color_skins.css")">
     <link href="@Url.Content("~/assets/css/bootstrap-select.css")" rel="stylesheet" />
-
+    @RenderSection("Styles", required: false)
     <style>
         .table thead th {
             vertical-align: bottom;
@@ -47,6 +48,7 @@
             color: white !important;
         }
 
+       
     </style>
 
     <script>
@@ -219,13 +221,40 @@
         </div>
     </aside>
     <!-- Main Content -->
+    <div id="marqueeBox" class="marquee-container d-none">
+        <div class="marquee">
+            <span id="TextForEid">كل عام و أنتم بخير عيدكم مبارك و عساكم من عواده</span>
+        </div>
+    </div>
+    <img id="runningLamb" src="~/assets/images/LambForEid.png" alt="Running Lamb" style="position: absolute; display: none; z-index: 9999;">
+    @* <audio controls="controls" id="eidTakbirat" preload="auto">
+        <source src="~/assets/images/takberat.al3ed.mokrara-matb3aa.com.mp3" type="audio/mpeg" />
+    </audio> *@
+
+    <audio id="eidTakbirat" src="~/assets/images/takberat.al3ed.mokrara-matb3aa.com.mp3" preload="auto"></audio>
+
+@*     <p>Ali Zakaryaaaaaaaaaaa</p> *@
     <section class="content home">
+
         <div class="block-header">
             <div class="row">
                 <div class="col-lg-5 col-md-5 col-sm-12">
                     <h2>
-                        لوحة التحكم
+                         لوحة التحكم
                     </h2>
+
+                    <div style="position: relative; display: inline-block;">
+                        <button id="notificationIcon" onclick="toggleNotifications()" style="position: relative; font-size: 24px; border: none; background: none; cursor: pointer;">
+                            🔔
+                            <span id="notificationCount" style="position:absolute; top:-5px; right:-10px; background:red; color:white; border-radius:50%; padding:2px 6px; font-size:12px; display:none;">0</span>
+                        </button>
+
+                        <!-- Dropdown Notification List -->
+                        <div id="notificationList" style="display:none; position:absolute; right:0; top:35px; width:450px; max-height:300px; overflow-y:auto; border:1px solid #ccc; background:white; box-shadow:0px 2px 8px rgba(0,0,0,0.1); padding:10px; z-index:100;">
+                            <p><i>لا توجد إشعارات</i></p>
+                        </div>
+                    </div>
+
                 </div>
                 <div class="col-lg-7 col-md-7 col-sm-12 text-right">
                     @*<div class="inlineblock text-center m-r-15 m-l-15 hidden-md-down">
@@ -261,3 +290,62 @@
     <script src="@Url.Content("~/assets/js/index.js")"></script>
 </body>
 </html>
+<script src="~/assets/js/layout_script.js"></script>
+<!-- SignalR Library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+
+<script>
+
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("http://localhost:61366/farmHub")//.withUrl("http://5.189.180.190/MazareatiAPI/farmHub") //.withUrl("http://localhost:61366/farmHub")
+        .withAutomaticReconnect()
+        .build();
+
+    let notificationCount = 0;
+    let notificationList = [];
+    debugger
+    connection.on("FarmAdded", function (farm) {
+        const message = `✅ تم اضافة مزرعة : ${farm.name ?? farm.Name}  (الوصف :  ${farm.locationDesc ?? farm.LocationDesc} )`;
+        notificationCount++;
+        notificationList.push(message);
+        updateNotificationUI();
+    });
+
+    connection.start().catch(err => console.error(err));
+
+    function updateNotificationUI() {
+        const countElement = document.getElementById("notificationCount");
+        const listElement = document.getElementById("notificationList");
+
+        // Update counter
+        countElement.textContent = notificationCount;
+        countElement.style.display = notificationCount > 0 ? "inline-block" : "none";
+
+        // Update list
+        listElement.innerHTML = "";
+        if (notificationList.length === 0) {
+            listElement.innerHTML = "<p><i>لا توجد إشعارات</i></p>";
+        } else {
+            notificationList.forEach(n => {
+                const p = document.createElement("p");
+                p.innerHTML = n;
+                listElement.appendChild(p);
+            });
+        }
+    }
+
+    function toggleNotifications() {
+        const listElement = document.getElementById("notificationList");
+        const countElement = document.getElementById("notificationCount");
+
+        if (listElement.style.display === "none") {
+            listElement.style.display = "block";
+            // Reset count when opened
+            notificationCount = 0;
+            countElement.style.display = "none";
+        } else {
+            listElement.style.display = "none";
+        }
+    }
+</script>
+@RenderSection("Scripts", required: false)

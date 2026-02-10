@@ -8,44 +8,30 @@
         width: 120px;
     }
     /* Style for displaying images */
-    .farmer-image-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        margin-top: 15px;
-        margin-bottom: 20px;
+    /* Style for displaying images */
 
-    }
 
-    .farmer-image-item {
-        position: relative;
-        border: 1px solid #ddd;
-        padding: 5px;
-        border-radius: 5px;
-    }
-
-        .farmer-image-item img {
-            width: 150px; /* Adjust as needed */
-            height: 100px; /* Adjust as needed */
-            object-fit: cover;
-            display: block;
-        }
-
-    .delete-image-btn {
-        position: absolute;
-        top: 0px;
-        right: 0px;
-        background-color: rgba(255, 0, 0, 0.7);
-        color: white;
-        border: none;
-        border-radius: 0 5px 0 5px;
-        cursor: pointer;
-        font-size: 14px;
-        padding: 2px 6px;
-    }
+/* If you want the delete button to be more consistent */
+.delete-image-btn {
+    position: absolute;
+    top: 5px; /* Adjust as needed */
+    right: 5px; /* Adjust as needed */
+    background-color: rgba(255, 0, 0, 0.7); /* Red with some transparency */
+    color: white;
+    border: none;
+    border-radius: 50%; /* Makes it circular */
+    width: 25px; /* Size of the button */
+    height: 25px; /* Size of the button */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 0.8em;
+}
 
     img {
-        max-width: 50% !important;
+        /* max-width: 50% !important; */
         /* border-radius: 1px; */
     }
     /* ... Your existing styles ... */
@@ -57,246 +43,20 @@
     }
 
 </style>
-
+<link href="~/assets/css/style_main_mahjouz.css" rel="stylesheet" />
 <script src="~/assets/js/jquery-3.2.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-     // Helper function for showing SweetAlerts
-    function showSweetAlert(icon, title, text) {
-        Swal.fire({
-            icon: icon,
-            title: title,
-            text: text,
-            customClass: {
-                confirmButton: 'btn btn-primary' // Example of custom class for button
-            },
-            buttonsStyling: false // Disable default styling for custom classes
-        });
-    }
-
-     function DeletePriceList(farmerId, personNumber) {
-            if (confirm("هل انت متأكد من انك تريد الغاء هذا السجل")) {
-                $.post('@Url.Content("~/Farmers/DeletePriceList")', { person: personNumber , farmerId: farmerId}, function (result) {
-                    if (result == 1) {
-                        alert(" تم حذف الفترة ");
-                        window.location.reload();
-                    } else {
-                        alert(" لم يتم حذف الفترة ");
-                    }
-                });
-            }
-        }
-
-    function DeleteFarmerImage(imageId) {
-        if (true) { // Replaced confirm with true for Canvas environment. Use a custom modal for production.
-            console.log("Attempting to delete image with ID:", imageId);
-            $.post('@Url.Content("~/Farmers/DeleteFarmerImage")', { imageId: imageId }, function (response) {
-                // Expecting a JSON response like { success: true, message: "..." }
-                if (response.success) {
-                    console.log("تم حذف الصورة بنجاح:", response.message); // Replaced alert
-                    // Instead of full reload, you can remove the element directly for better UX
-                    $(`button[onclick="DeleteFarmerImage(${imageId})"]`).closest('.farmer-image-item').remove();
-                } else {
-                    console.error("فشل حذف الصورة:", response.message); // Replaced alert
-                }
-            }).fail(function (jqXHR, textStatus, errorThrown) {
-                console.error("AJAX Error deleting image:", textStatus, errorThrown, jqXHR.responseText);
-            });
-        }
-    }
-
-    function DeleteFarmerVideo(videoId) {
-        if (true) { // Replaced confirm with true for Canvas environment. Use a custom modal for production.
-            console.log("Attempting to delete image with ID:", videoId);
-            $.post('@Url.Content("~/Farmers/DeleteFarmerVideo")', { videoId: videoId }, function (response) {
-                // Expecting a JSON response like { success: true, message: "..." }
-                if (response.success) {
-                    console.log("تم حذف الفيديو بنجاح:", response.message); // Replaced alert
-                    // Instead of full reload, you can remove the element directly for better UX
-                    $(`button[onclick="DeleteFarmerVideo(${videoId})"]`).closest('.farmer-video-item').remove();
-                } else {
-                    console.error("فشل حذف الفيديو:", response.message); // Replaced alert
-                }
-            }).fail(function (jqXHR, textStatus, errorThrown) {
-                console.error("AJAX Error deleting Video:", textStatus, errorThrown, jqXHR.responseText);
-            });
-        }
-    }
-    // function DeleteFarmerVideo(videoId) {
-    //     if (true) { // Replaced confirm with true for Canvas environment. Use a custom modal for production.
-    //         alert.log("Attempting to delete video with ID:", videoId);
-    //         $.post('@Url.Content("~/Farmers/DeleteFarmerVideo")', { videoId: videoId }, function (response) {
-    //             // Expecting a JSON response like { success: true, message: "..." }
-    //             if (response.success) {
-    //                 alert.log("تم حذف الفيديو بنجاح:", response.message); // Replaced alert
-    //                 // Instead of full reload, you can remove the element directly for better UX
-    //                 $(`button[onclick="DeleteFarmerVideo(${videoId})"]`).closest('.farmer-video-item').remove();
-    //             } else {
-    //                 alert.error("فشل حذف الفيديو:", response.message); // Replaced alert
-    //             }
-    //         }).fail(function (jqXHR, textStatus, errorThrown) {
-    //             alert.error("AJAX Error deleting video:", textStatus, errorThrown, jqXHR.responseText);
-    //         });
-    //     }
-    // }
-    // function DeleteFarmerVideo(videoId) {
-    //     Swal.fire({
-    //         title: 'هل أنت متأكد؟',
-    //         text: "هل أنت متأكد من أنك تريد حذف هذا الفيديو؟",
-    //         icon: 'warning', // Shows a warning icon
-    //         showCancelButton: true, // Displays the cancel button
-    //         confirmButtonText: 'نعم، احذف!', // Text for the confirmation button
-    //         cancelButtonText: 'إلغاء', // Text for the cancel button
-    //         reverseButtons: true, // Reverses the order of confirm and cancel buttons (good for RTL languages)
-    //         customClass: { // Apply custom CSS classes to buttons for styling (e.g., Bootstrap classes)
-    //             confirmButton: 'btn btn-danger mx-1', // Red button with margin
-    //             cancelButton: 'btn btn-secondary mx-1' // Grey button with margin
-    //         },
-    //         buttonsStyling: false // Important: disables SweetAlert's default button styling to use custom classes
-    //     }).then((result) => {
-    //         // This 'then' block executes after the user makes a choice in the SweetAlert dialog
-    //         if (result.isConfirmed) {
-    //             // User clicked 'Yes, delete!'
-
-    //             // 1. Get the DOM element to remove immediately (visual feedback)
-    //             // We use the data-video-id attribute added to the video item div
-    //             const $itemToRemove = $(`.farmer-video-item[data-video-id="${videoId}"]`);
-    //             $itemToRemove.addClass('removing'); // Add a class to apply a fade-out animation (defined in CSS)
-
-    //             // 2. Make the AJAX call to the server to perform the actual deletion
-    //             $.post('@Url.Content("~/Farmers/DeleteFarmerVideo")', { videoId: videoId }, function (response) {
-    //                 // This callback function executes when the server responds
-    //                 if (response.success) {
-    //                     // Deletion was successful on the server
-    //                     showSweetAlert('success', 'تم الحذف!', response.message); // Show success message
-
-    //                     // Remove the element from the DOM after a short delay
-    //                     // This allows the 'removing' CSS transition to complete before removal
-    //                     setTimeout(() => {
-    //                         $itemToRemove.remove(); // Removes the video item from the page
-    //                     }, 300); // 300ms delay, match this to your CSS transition duration
-
-    //                 } else {
-    //                     // Deletion failed on the server (response.success is false)
-    //                     showSweetAlert('error', 'خطأ!', response.message); // Show error message from server
-    //                     $itemToRemove.removeClass('removing'); // If deletion fails, remove the fade-out class
-    //                 }
-    //             }).fail(function (jqXHR, textStatus, errorThrown) {
-    //                 // This 'fail' callback executes if the AJAX request itself fails (e.g., network error, 404, 500)
-    //                 showSweetAlert('error', 'خطأ في الاتصال!', 'حدث خطأ أثناء الاتصال بالخادم: ' + errorThrown);
-    //                 console.error("AJAX Error deleting video:", textStatus, errorThrown, jqXHR.responseText); // Log detailed error
-    //                 $itemToRemove.removeClass('removing'); // If AJAX fails, remove the fade-out class
-    //             });
-    //         } else if (result.dismiss === Swal.DismissReason.cancel) {
-    //             // User clicked 'Cancel' or dismissed the dialog (e.g., by pressing Esc or clicking outside)
-    //             showSweetAlert('info', 'تم الإلغاء', 'لم يتم حذف الفيديو.'); // Show info message
-    //         }
-    //     });
-    // }
-    function showSweetAlert(icon, title, text) {
-        Swal.fire({
-            icon: icon,
-            title: title,
-            text: text,
-            customClass: {
-                confirmButton: 'btn btn-primary'
-            },
-            buttonsStyling: false
-        });
-    }
 
 
-    // New JavaScript for file previews
-    $(document).ready(function () {
-        // Handle Image Previews
-        $('#Images').on('change', function (e) {
-            $('#imagePreviews').empty(); // Clear previous previews
-            const files = e.target.files;
-            if (files.length === 0) return;
+@if (TempData["ErrorMessage"] != null)
+{
+    <div id="errorMessageAlert" class="alert alert-danger alert-dismissible fade show text-center" role="alert" style="opacity: 1;">
+        <i class="fas fa-exclamation-triangle me-2"></i> <strong>Error!</strong> @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
 
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                if (!file.type.startsWith('image/')) {
-                    continue; // Skip non-image files
-                }
 
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    const previewItem = `
-                            <div class="preview-item">
-                                <img src="${e.target.result}" alt="Image Preview" style="width:200px">
-                                <button type="button" class="remove-preview-btn" data-index="${i}">X</button>
-                            </div>
-                        `;
-                    $('#imagePreviews').append(previewItem);
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
-        // Handle Video Previews
-        $('#Videos').on('change', function (e) {
-            $('#videoPreviews').empty(); // Clear previous previews
-            const files = e.target.files;
-            if (files.length === 0) return;
-
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                if (!file.type.startsWith('video/')) {
-                    continue; // Skip non-video files
-                }
-
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    const previewItem = `
-                            <div class="preview-item">
-                                <video controls style="width:250px">
-                                    <source src="${e.target.result}" type="${file.type}">
-                                    Your browser does not support the video tag.
-                                </video>
-                                <button type="button" class="remove-preview-btn" data-index="${i}">X</button>
-                            </div>
-                        `;
-                    $('#videoPreviews').append(previewItem);
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
-        // Handle removal of previewed items
-        $(document).on('click', '.remove-preview-btn', function () {
-            const $itemToRemove = $(this).closest('.preview-item');
-            const indexToRemove = $(this).data('index'); // This identifies the position in the original file list
-
-            // Find the parent container (image or video previews)
-            const $parentContainer = $itemToRemove.parent();
-            const inputId = $parentContainer.attr('id') === 'imagePreviews' ? 'Images' : 'Videos';
-            const fileInput = document.getElementById(inputId);
-
-            // Remove the item from the displayed previews
-            $itemToRemove.remove();
-
-            // IMPORTANT: Create a new DataTransfer object to modify the file list
-            const dataTransfer = new DataTransfer();
-            const currentFiles = Array.from(fileInput.files);
-
-            currentFiles.forEach((file, index) => {
-                if (index !== indexToRemove) {
-                    dataTransfer.items.add(file);
-                }
-            });
-
-            // Update the file input's files property
-            fileInput.files = dataTransfer.files;
-
-            // Re-index remaining preview buttons if necessary (for visual consistency,
-            // though the core logic relies on the DataTransfer object)
-            $parentContainer.find('.remove-preview-btn').each(function (idx) {
-                $(this).data('index', idx);
-            });
-        });
-    });
-</script>
 @Html.HiddenFor(a => a.Id)
 @Html.HiddenFor(a => a.Number)
 @Html.HiddenFor(a => a.IssueDate)
@@ -352,7 +112,7 @@
                         <div class="col-sm-6">
                             <div class="form-group">
                                 @Html.DisplayNameFor(a => a.Name)
-                                @Html.TextBoxFor(a => a.Name, new { @class = "form-control", @autocomplete = "off", @maxlength = 50 })
+                                @Html.TextBoxFor(a => a.Name, new { @class = "form-control", @autocomplete = "off", @maxlength = 200 })
                                 @Html.ValidationMessageFor(a => a.Name, "", new { @style = "color:red;font-size:10px" })
                             </div>
                         </div>
@@ -360,7 +120,7 @@
                         <div class="col-sm-6">
                             <div class="form-group">
                                 @Html.DisplayNameFor(a => a.NameEn)
-                                @Html.TextBoxFor(a => a.NameEn, new { @class = "form-control", @autocomplete = "off", @maxlength = 50 })
+                                @Html.TextBoxFor(a => a.NameEn, new { @class = "form-control", @autocomplete = "off", @maxlength = 200 })
                                 @Html.ValidationMessageFor(a => a.NameEn, "", new { @style = "color:red;font-size:10px" })
                             </div>
                         </div>
@@ -368,14 +128,14 @@
                         <div class="col-sm-6">
                             <div class="form-group">
                                 @Html.DisplayNameFor(a => a.LocationDesc)
-                                @Html.TextBoxFor(a => a.LocationDesc, new { @class = "form-control", @autocomplete = "off", @maxlength = 20 })
+                                @Html.TextBoxFor(a => a.LocationDesc, new { @class = "form-control", @autocomplete = "off", @maxlength = 200 })
                                 @Html.ValidationMessageFor(a => a.LocationDesc, "", new { @style = "color:red;font-size:10px" })
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
                                 @Html.DisplayNameFor(a => a.LocationDescEn)
-                                @Html.TextBoxFor(a => a.LocationDescEn, new { @class = "form-control", @autocomplete = "off", @maxlength = 20 })
+                                @Html.TextBoxFor(a => a.LocationDescEn, new { @class = "form-control", @autocomplete = "off", @maxlength = 200 })
                                 @Html.ValidationMessageFor(a => a.LocationDescEn, "", new { @style = "color:red;font-size:10px" })
                             </div>
                         </div>
@@ -644,7 +404,15 @@
                             <div class="form-group">
                                 @Html.DisplayNameFor(a => a.ConfidentialMessageEn)
                                 @Html.TextBoxFor(a => a.ConfidentialMessageEn, new { @class = "form-control", @autocomplete = "off", @maxlength = 500 })
-                                @Html.ValidationMessageFor(a => a.ConfidentialMessageAr, "", new { @style = "color:red;font-size:10px" })
+                                @Html.ValidationMessageFor(a => a.ConfidentialMessageEn, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.Image3DLink)
+                                @Html.TextBoxFor(a => a.Image3DLink, new { @class = "form-control", @autocomplete = "off", @maxlength = 500 })
+                                @Html.ValidationMessageFor(a => a.Image3DLink, "", new { @style = "color:red;font-size:10px" })
                             </div>
                         </div>
 
@@ -780,13 +548,14 @@
                                                     @Html.HiddenFor(a => Model.PriceList[i].FarmerId)
                                                     @Html.HiddenFor(a => Model.PriceList[i].Person)
                                                     <td style="width:10%">
-                                                        @Html.TextBoxFor(a => Model.PriceList[i].MorningPrice, new { @placeholder = "سعر الفتره الصباحية", @max = 999, @type = "number", @required = "required", @class = "textboxWidth" })
+                                                        @* @Html.TextBoxFor(a => Model.PriceList[i].MorningPrice, new { @placeholder = "سعر الفتره الصباحية", @max = 999, @type = "number", @required = "required", @class = "textboxWidth" }) *@
+                                                        @Html.TextBoxFor(a => Model.PriceList[i].MorningPrice, new { @placeholder = "سعر الفتره الصباحية", @max = 999, @type = "number", @class = "textboxWidth" })
                                                     </td>
                                                     <td style="width:10%">
-                                                        @Html.TextBoxFor(a => Model.PriceList[i].EveningPrice, new { @placeholder = "سعر الفتره المسائية", @max = 999, @type = "number", @required = "required", @class = "textboxWidth" })
+                                                        @Html.TextBoxFor(a => Model.PriceList[i].EveningPrice, new { @placeholder = "سعر الفتره المسائية", @max = 999, @type = "number", @class = "textboxWidth" })
                                                     </td>
                                                     <td style="width:10%">
-                                                        @Html.TextBoxFor(a => Model.PriceList[i].FullDayPrice, new { @placeholder = "سعر يوم كامل", @max = 999, @type = "number", @required = "required", @class = "textboxWidth" })
+                                                        @Html.TextBoxFor(a => Model.PriceList[i].FullDayPrice, new { @placeholder = "سعر يوم كامل", @max = 999, @type = "number", @class = "textboxWidth" })
                                                     </td>
                                                     <td style="width:10%">
                                                         @Html.TextBoxFor(a => Model.PriceList[i].OfferPrice, new { @placeholder = "سعر عرض الفترة الصباحية ان اوجد", @max = 999, @type = "number", @class = "textboxWidth" })
@@ -798,13 +567,13 @@
                                                         @Html.TextBoxFor(a => Model.PriceList[i].OfferFullDayPrice, new { @placeholder = "سعر عرض يوم كامل ان اوجد", @max = 999, @type = "number", @class = "textboxWidth" })
                                                     </td>
                                                     <td style="width:10%">
-                                                        @Html.TextBoxFor(a => Model.PriceList[i].MorningPeriodText, new { @placeholder = " الفتره الصباحية", @maxlength = 25, @type = "text", @required = "required", @class = "textboxWidth" })
+                                                        @Html.TextBoxFor(a => Model.PriceList[i].MorningPeriodText, new { @placeholder = " الفتره الصباحية", @maxlength = 20, @type = "text", @class = "textboxWidth" })
                                                     </td>
                                                     <td style="width:10%">
-                                                        @Html.TextBoxFor(a => Model.PriceList[i].EveningPeriodText, new { @placeholder = " الفتره المسائية", @maxlength = 25, @type = "text", @required = "required", @class = "textboxWidth" })
+                                                        @Html.TextBoxFor(a => Model.PriceList[i].EveningPeriodText, new { @placeholder = " الفتره المسائية", @maxlength = 20, @type = "text", @class = "textboxWidth" })
                                                     </td>
                                                     <td style="width:10%">
-                                                        @Html.TextBoxFor(a => Model.PriceList[i].FullDayPeriodText, new { @placeholder = "يوم كامل", @maxlength = 25, @type = "text", @class = "textboxWidth" })
+                                                        @Html.TextBoxFor(a => Model.PriceList[i].FullDayPeriodText, new { @placeholder = "يوم كامل", @maxlength = 20, @type = "text", @class = "textboxWidth" })
                                                     </td>
                                                     <td style="width:10%">
                                                     </td>
@@ -873,7 +642,7 @@
                                     {
                                         <div class="farmer-image-item">
                                             <img src="~/Images/@image.Url" alt="Farmer Image"  />
-                                            <button type="button" class="delete-image-btn" onclick="DeleteFarmerImage(@image.Id)">X</button>
+                                            <button type="button" class="delete-image-btn" onclick="DeleteFarmerImage(@image.Id)" data-imageid="@image.Id">X</button>
                                         </div>
                                     }
                                 </div>
@@ -902,7 +671,7 @@
                             &nbsp;
                         </div>
                         <div class="col-sm-12">
-                            <div id="videoPreviews" class="farmer-video-container" style="width:250px">
+                            <div id="videoPreviews" class="farmer-video-container" style="">
                             </div>
                         </div>
 
@@ -912,15 +681,15 @@
                         {
                             <div class="col-sm-12" style="margin-bottom:20px">
                                 <h3>الفيديوهات الحالية</h3>
-                                <div class="farmer-image-container">
+                                <div class="farmer-video-container">
                                     @foreach (var video in Model.FarmerVideos)
                                     {
-                                        <div class="farmer-image-item">
+                                        <div class="farmer-video-item">
                                             <video controls style="width:250px">
                                                 <source src="~/Videos/@video.Url">
                                                
                                         </video>
-                                            <button type="button" class="delete-image-btn" onclick="DeleteFarmerVideo(@video.Id)">X</button>
+                                            <button type="button" class="delete-image-btn" onclick="DeleteFarmerVideo(@video.Id)" data-videoid="@video.Id">X</button>
                                         </div>
                                     }
                                 </div>
@@ -942,4 +711,8 @@
     </div>
 </div>
 
+
+@* @section Scripts { *@
+    <script src="~/assets/js/farmer_image_videos_preview_update.js"></script>
+@* } *@
 

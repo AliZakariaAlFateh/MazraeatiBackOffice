@@ -22974,3 +22974,60 @@ th {
 td {
     font-size: 12px;
 }
+
+
+.marquee-container {
+    overflow: hidden;
+    white-space: nowrap;
+    width: 100%;
+    font-size: 16px;
+    font-weight: bold;
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out;
+    direction: ltr; /* Default to English */
+    text-align: left;
+    color: #fff;
+    background: red;
+    border-radius: 0.5rem;
+    box-shadow: 0 0 20px #d81414;
+    transition: background-color 0.3s ease;
+}
+
+.marquee {
+    display: inline-block;
+    padding-left: 100%;
+    animation: marquee-left 30s linear infinite;
+    /*display:none;*/
+}
+
+.rtl .marquee {
+    padding-left: 0;
+    padding-right: 100%;
+    animation: marquee-right 30s linear infinite;
+}
+
+@keyframes marquee-left {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+@keyframes marquee-right {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+
+.alt-color {
+    background-color: white !important;
+    color: red !important;
+}

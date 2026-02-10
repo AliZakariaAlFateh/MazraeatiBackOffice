@@ -11,6 +11,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MazraeatiBackOffice.Core;
+using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 
 namespace MazraeatiBackOffice
 {
@@ -30,7 +32,11 @@ namespace MazraeatiBackOffice
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             //services.AddServices(Configuration);
             services.AddMvc();
+            //For SignalR .....
+            services.AddSingleton<SignalRListenerFarms>();
             services.AddScoped<SQL>();
+            services.AddMemoryCache();
+            services.AddScoped<TimeCacheService>();
             string connectionString = Configuration.GetConnectionString("MazraeatiConnString");
             services.AddDbContext<DataContext>(options => options.UseSqlServer(connectionString));
             services.AddHttpContextAccessor();
@@ -50,6 +56,15 @@ namespace MazraeatiBackOffice
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
+
+            //For SignalR .....
+            //stop the second code for make stop for signal R ......
+            using (var scope = app.ApplicationServices.CreateScope()) // ? fixed
+            {
+                var listener = scope.ServiceProvider.GetRequiredService<SignalRListenerFarms>();
+                listener.StartAsync().GetAwaiter().GetResult(); // ? fixed
+            }
+
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();

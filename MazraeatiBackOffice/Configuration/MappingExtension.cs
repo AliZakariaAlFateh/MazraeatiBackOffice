@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using MazraeatiBackOffice.Core;
 using MazraeatiBackOffice.Models;
+using MazraeatiBackOffice.Configuration;
 
 namespace MazraeatiBackOffice.Extenstion
 {
@@ -68,6 +69,8 @@ namespace MazraeatiBackOffice.Extenstion
             model.CountryDesc = countries == null ? string.Empty : countries.Where(c => c.Id == entity.CountryId).FirstOrDefault().DescAr;
             model.CityDesc = cities == null ? string.Empty : cities.Where(c => c.Id == entity.CityId).FirstOrDefault().DescAr;
             model.MobileNumber = entity.MobileNumber;
+            model.UserName = entity.UserName;
+            model.statusFarmAppUser = (FarmAppUserStatus)(entity.statusFarmAppUser ?? 0);
             model.Number = entity.Number;
             model.Name = entity.Name;
             model.NameEn = entity.NameEn;
@@ -113,6 +116,7 @@ namespace MazraeatiBackOffice.Extenstion
             model.MaxPerson = entity.MaxPerson;
             model.ConfidentialMessageEn = entity.ConfidentialMessageEn;
             model.ConfidentialMessageAr = entity.ConfidentialMessageAr;
+            model.Image3DLink = entity.Image3DLink;
             model.IsTrust = entity.IsTrust;
             model.IsVIP = entity.IsVIP;
             model.IsOffer = entity.IsOffer;
@@ -174,7 +178,7 @@ namespace MazraeatiBackOffice.Extenstion
             entity.MaxPerson = model.MaxPerson;
             entity.ConfidentialMessageEn = model.ConfidentialMessageEn;
             entity.ConfidentialMessageAr = model.ConfidentialMessageAr;
-
+            entity.Image3DLink = model.Image3DLink;
             entity.IsTrust = model.IsTrust;
             entity.IsVIP = model.IsVIP;
             entity.IsOffer = model.IsOffer;
@@ -552,12 +556,43 @@ namespace MazraeatiBackOffice.Extenstion
         #endregion
 
         #region Lookup
+        //public static LookupModel ToModel(this Lookup entity)
+        //{
+        //    LookupModel model = new LookupModel();
+        //    model.Id = entity.Id;
+        //    model.LookupCode = entity.LookupCode;
+        //    model.LookupCodeDesc = (entity.LookupCode == "FarmerExtraFeatureType" ? "مزايا المزرعة" : "مزايا الاقسام الاخرى");
+        //    return model;
+        //}
         public static LookupModel ToModel(this Lookup entity)
         {
             LookupModel model = new LookupModel();
             model.Id = entity.Id;
             model.LookupCode = entity.LookupCode;
-            model.LookupCodeDesc = (entity.LookupCode == "FarmerExtraFeatureType" ? "مزايا المزرعة" : "مزايا الاقسام الاخرى");
+
+            // Apply the conditional logic based on entity.LookupCode
+            switch (entity.Id)
+            {
+                case 2: 
+                    model.LookupCodeDesc = "مرفقات المزرعة";
+                    break;
+                //case 3: 
+                //    model.LookupCodeDesc = "نوع التسعير للمزرعة";
+                //    break;
+                case 4: 
+                    model.LookupCodeDesc = "العملة";
+                    break;
+                case 5: 
+                    model.LookupCodeDesc = "مزايا الرحلات / الأقسام الأخرى";
+                    break;
+                //case 6: 
+                //    model.LookupCodeDesc = "نوع الحجز";
+                //    break;
+                default:
+                    model.LookupCodeDesc = "مزايا الاقسام الاخرى";
+                    break;
+            }
+
             return model;
         }
         public static Lookup ToEntity(this LookupModel model)
@@ -570,12 +605,47 @@ namespace MazraeatiBackOffice.Extenstion
         #endregion
 
         #region Lookup Value
+        //public static LookupValueModel ToModel(this LookupValue entity, string lookupCode)
+        //{
+        //    LookupValueModel model = new LookupValueModel();
+        //    model.Id = entity.Id;
+        //    model.LookupId = entity.LookupId;
+        //    model.LookupDesc = (lookupCode == "FarmerExtraFeatureType" ? "مزايا المزرعة" : "مزايا الاقسام الاخرى"); ;
+        //    model.Code = entity.Code;
+        //    model.ValueAr = entity.ValueAr;
+        //    model.ValueEn = entity.ValueEn;
+        //    return model;
+        //}
         public static LookupValueModel ToModel(this LookupValue entity, string lookupCode)
         {
             LookupValueModel model = new LookupValueModel();
             model.Id = entity.Id;
             model.LookupId = entity.LookupId;
-            model.LookupDesc = (lookupCode == "FarmerExtraFeatureType" ? "مزايا المزرعة" : "مزايا الاقسام الاخرى"); ;
+
+            // Apply the conditional logic based on entity.LookupId
+            switch (entity.LookupId)
+            {
+                case 2:
+                    model.LookupDesc = "مرفقات المزرعة";
+                    break;
+                //case 3:
+                //    model.LookupDesc = "نوع التسعير للمزرعة";
+                //    break;
+                case 4:
+                    model.LookupDesc = "العملة";
+                    break;
+                case 5:
+                    model.LookupDesc = "مزايا الرحلات / الأقسام الأخرى";
+                    break;
+                //case 6:
+                //    model.LookupDesc = "نوع الحجز";
+                //    break;
+                default:
+                    // This will be the fallback if LookupId doesn't match 2, 3, or 4
+                    model.LookupDesc = "مزايا الاقسام الاخرى";
+                    break;
+            }
+
             model.Code = entity.Code;
             model.ValueAr = entity.ValueAr;
             model.ValueEn = entity.ValueEn;

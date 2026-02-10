@@ -1,0 +1,96 @@
+﻿body {
+    /* No specific changes here for this issue */
+}
+
+.form-group {
+    font-size: 13px;
+}
+
+/* Add these styles for the image preview and frame */
+.image-preview-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 5px; /* Adjust margin inside the frame */
+    margin-bottom: 5px; /* Adjust margin inside the frame */
+    min-height: 100px; /* Ensure space even if no image */
+    align-items: center;
+    justify-content: center;
+    color: #888;
+}
+
+/* Styles for individual image/video previews */
+.preview-item {
+    position: relative;
+    border: 1px solid #ddd; /* Border for the image itself */
+    padding: 5px;
+    border-radius: 5px;
+    overflow: hidden;
+    /* Set explicit width and height for the card/item */
+    width: 250px; /* Desired width for the image item */
+    height: 330px; /* Desired height for the image item */
+    display: flex; /* Use flex to center the image within this item */
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box; /* Include padding and border in the width/height */
+}
+
+    .preview-item img {
+        width: 100%; /* Image will fill the item's width */
+        height: 100%; /* Image will fill the item's height */
+        object-fit: cover; /* Use 'cover' to crop and fill the 200x200 space */
+        /* 'contain' would fit the whole image, leaving empty space if aspect ratios don't match.
+           'cover' will fill the space, potentially cropping parts of the image.
+           Based on "make width 200 with heihght 200", 'cover' is usually what's implied for filling. */
+        display: block;
+    }
+
+/* Corrected style for the close button */
+.remove-preview-btn {
+    position: absolute;
+    top: 5px; /* Move from 0px to allow a slight margin from the top edge */
+    right: 5px; /* Move from 0px to allow a slight margin from the right edge */
+    background-color: rgba(255, 0, 0, 0.7); /* Red color with transparency */
+    color: white;
+    border: none;
+    border-radius: 50%; /* Makes it circular */
+    width: 25px; /* Fixed width for the button */
+    height: 25px; /* Fixed height for the button */
+    display: flex; /* Use flexbox to center the 'X' */
+    justify-content: center; /* Center 'X' horizontally */
+    align-items: center; /* Center 'X' vertically */
+    cursor: pointer;
+    font-size: 0.8em; /* Adjust font size for 'X' */
+    font-weight: bold; /* Make 'X' bold */
+    z-index: 10; /* Ensure it's on top of the image */
+    transition: background-color 0.2s ease; /* Smooth transition on hover */
+}
+
+    .remove-preview-btn:hover {
+        background-color: rgba(255, 0, 0, 0.9); /* Darker red on hover */
+    }
+
+.file-input-label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+/* Style for the "frame" itself (using fieldset) */
+fieldset.image-frame {
+    border: 1px solid #ccc; /* Border for the frame */
+    padding: 15px; /* Padding inside the frame */
+    border-radius: 8px; /* Rounded corners for the frame */
+    margin-top: 10px; /* Space above the frame */
+    position: relative; /* For legend positioning */
+    background-color: #f9f9f9; /* Light background for the frame */
+}
+
+    fieldset.image-frame legend {
+        width: auto; /* Shrink to fit content */
+        padding: 0 10px; /* Padding around legend text */
+        font-size: 1em; /* Adjust font size */
+        font-weight: bold;
+        color: #555;
+        margin-left: 10px; /* Adjust legend position */
+    }

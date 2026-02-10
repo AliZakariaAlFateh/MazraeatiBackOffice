@@ -81,13 +81,13 @@
                                         @Html.HiddenFor(a => a.PriceList[i].FarmerId)
 
                                         <td style="width:10%">
-                                            @Html.TextBoxFor(a => a.PriceList[i].MorningPrice, new { @placeholder = "سعر الفتره الصباحية", @max = 999, @type = "number", @required = "required", @class = "textboxWidth" })
+                                            @Html.TextBoxFor(a => a.PriceList[i].MorningPrice, new { @placeholder = "سعر الفتره الصباحية", @max = 999, @type = "number", @class = "textboxWidth" })
                                         </td>
                                         <td style="width:10%">
-                                            @Html.TextBoxFor(a => a.PriceList[i].EveningPrice, new { @placeholder = "سعر الفتره المسائية", @max = 999, @type = "number", @required = "required", @class = "textboxWidth" })
+                                            @Html.TextBoxFor(a => a.PriceList[i].EveningPrice, new { @placeholder = "سعر الفتره المسائية", @max = 999, @type = "number", @class = "textboxWidth" })
                                         </td>
                                         <td style="width:10%">
-                                            @Html.TextBoxFor(a => a.PriceList[i].FullDayPrice, new { @placeholder = "سعر يوم كامل", @max = 999, @type = "number", @required = "required", @class = "textboxWidth" })
+                                            @Html.TextBoxFor(a => a.PriceList[i].FullDayPrice, new { @placeholder = "سعر يوم كامل", @max = 999, @type = "number", @class = "textboxWidth" })
                                         </td>
                                         <td style="width:10%">
                                             @Html.TextBoxFor(a => a.PriceList[i].OfferPrice, new { @placeholder = "سعر عرض الفترة الصباحية ان اوجد", @max = 999, @type = "number", @class = "textboxWidth" })
@@ -99,13 +99,13 @@
                                             @Html.TextBoxFor(a => a.PriceList[i].OfferFullDayPrice, new { @placeholder = "سعر عرض يوم كامل ان اوجد", @max = 999, @type = "number", @class = "textboxWidth" })
                                         </td>
                                         <td style="width:10%">
-                                            @Html.TextBoxFor(a => a.PriceList[i].MorningPeriodText, new { @placeholder = " الفتره الصباحية", @maxlength = 25, @type = "text", @required = "required", @class = "textboxWidth" })
+                                            @Html.TextBoxFor(a => a.PriceList[i].MorningPeriodText, new { @placeholder = " الفتره الصباحية", @maxlength = 25, @type = "text", @class = "textboxWidth" })
                                         </td>
                                         <td style="width:10%">
-                                            @Html.TextBoxFor(a => a.PriceList[i].EveningPeriodText, new { @placeholder = " الفتره المسائية", @maxlength = 25, @type = "text", @required = "required", @class = "textboxWidth" })
+                                            @Html.TextBoxFor(a => a.PriceList[i].EveningPeriodText, new { @placeholder = " الفتره المسائية", @maxlength = 25, @type = "text", @class = "textboxWidth" })
                                         </td>
                                         <td style="width:10%">
-                                            @Html.TextBoxFor(a => a.PriceList[i].FullDayPeriodText, new { @placeholder = "يوم كامل", @maxlength = 25, @type = "text", @required = "required", @class = "textboxWidth" })
+                                            @Html.TextBoxFor(a => a.PriceList[i].FullDayPeriodText, new { @placeholder = "يوم كامل", @maxlength = 25, @type = "text", @class = "textboxWidth" })
                                         </td>
                                     </tr>
                                 </tbody>

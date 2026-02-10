@@ -1,4 +1,5 @@
-﻿@model IEnumerable<FarmerModel>
+﻿@using MazraeatiBackOffice.Configuration;
+@model IEnumerable<FarmerModel>
 <div class="col-md-12">
     <div class="card patients-list">
         <div class="header">
@@ -8,17 +9,17 @@
         </div>
         <div class="body">
             <!-- Nav tabs -->
-            <form action="@Url.Action("Index")" method="post">
+            <form action="" method="post">
 
                 <div class="row clearfix">
                     <div class="col-sm-6">
                         <div class="form-group">
-                            <input type="text" name="search" value="@ViewBag.search" placeholder="الكلمة المفتاحية" class="form-control" />
+                            <input id="searchInput" type="text" name="search" value="@ViewBag.search" placeholder="الكلمة المفتاحية" class="form-control" />
                         </div>
                     </div>
 
                     <div class="col-sm-3" style="margin-top:1px">
-                        <select class="form-control" name="CityBy">
+                        <select class="form-control" name="CityBy" id="citySelect">
                             <option selected="selected" value="0">--الرجاء اختيار  المدينة--</option>
                             @foreach (var item in ViewBag.cities)
                             {
@@ -40,11 +41,31 @@
                         </div>
                     </div>
 
-                    <div class="col-sm-2">
+                    @* <div class="col-sm-2">
                         <div class="form-group" style="margin-top: -10px;">
                             <button type="button" onclick="window.location.href='@Url.Content("~/Farmers/FarmerExcel'")" class="btn btn-primary btn-round">تصدير جميع البيانات</button>
                         </div>
+                    </div> *@
+
+
+                    <div class="col-sm-2">
+                        <div class="form-group" style="margin-top: -10px;">
+                            <button id="exportButton" type="button" class="btn btn-primary btn-round">تصدير جميع البيانات</button>
+                        </div>
+                    </div> 
+
+
+                    @* <div class="col-sm-2">
+                        <div class="form-group" style="margin-top: -10px;">
+                            <button type="button" id="exportButton" class="btn btn-primary btn-round">تصدير جميع البيانات</button>
+                        </div>
                     </div>
+
+                    <form id="exportForm" action="@Url.Action("FarmerExcel", "Farmers")" method="get" style="display:none;">
+                        <input type="hidden" name="search" id="exportSearchInput" />
+                        <input type="hidden" name="CityBy" id="exportCitySelect" />
+                        <input type="hidden" name="ReservationDate" id="exportReservationDateInput" />
+                    </form> *@
 
                     <div class="col-sm-2" style="pointer-events:none">
                         <div class="form-group" style="margin-top: -10px;">
@@ -76,6 +97,8 @@
                                 <th>@Html.DisplayNameFor(a => a.CountryDesc)</th>
                                 <th>@Html.DisplayNameFor(a => a.CityDesc)</th>
                                 <th>@Html.DisplayNameFor(a => a.MobileNumber)</th>
+                                <th>@Html.DisplayNameFor(a => a.UserName)</th>
+                                <th>@Html.DisplayNameFor(a => a.statusFarmAppUser)</th>
                                 <th>@Html.DisplayNameFor(a => a.Name)</th>
                                 <th>@Html.DisplayNameFor(a => a.Number)</th>
                                 <th>@Html.DisplayNameFor(a => a.IsTrust)</th>
@@ -97,6 +120,8 @@
                                 <td>@item.CountryDesc</td>
                                 <td>@item.CityDesc</td>
                                 <td>@item.MobileNumber</td>
+                                <td>@item.UserName</td>
+                                <td>@(((FarmAppUserStatus?)item.statusFarmAppUser).ToArabic())</td>
                                 <td>
                                     @(item.Name)
                                     <span style="color:red"> @(item.ReservationCount > 0 ?  "( "+ item.ReservationCount + " ) حجز " : "")  </span> 
@@ -125,4 +150,101 @@
         </div>
     </div>
 </div>
+
+
+@* <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script> *@
+@* <script>
+    $(document).ready(function () {
+        debugger
+        $('#exportButton').on('click', function () {
+            var search = $('#searchInput').val();
+            var cityBy = $('#citySelect').val();
+            var reservationDate = $('#reservationDateInput').val();
+
+            var url = '@Url.Action("FarmerExcel", "Farmers")';
+            var params = [];
+
+            if (search) {
+                params.push('search=' + encodeURIComponent(search));
+            }
+            if (cityBy && cityBy !== "0") {
+                params.push('CityBy=' + encodeURIComponent(cityBy));
+            }
+            if (reservationDate) {
+                params.push('ReservationDate=' + encodeURIComponent(reservationDate));
+            }
+
+            if (params.length > 0) {
+                url += '?' + params.join('&');
+            }
+
+            window.location.href = url;
+        });
+    });
+</script>  *@
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    @* <script>
+        $(function () {
+            // Remove the debugger statement unless actively debugging
+            // debugger;
+
+            $('#exportButton').on('click', function (e) {
+                e.preventDefault(); // Prevent any default form submission if the button was inside a form
+
+                // Get values from the visible search form
+                var searchVal = $('#searchInput').val();
+                var cityByVal = $('#citySelect').val();
+                var reservationDateVal = $('#reservationDateInput').val();
+
+                // Prepare data for the AJAX request
+                var requestData = {
+                    search: searchVal,
+                    CityBy: cityByVal,
+                    ReservationDate: reservationDateVal
+                };
+
+                // Make the AJAX call
+                $.ajax({
+                    url: '@Url.Action("FarmerExcel", "Farmers")', // Your action URL
+                    type: 'GET', // Or 'POST' if your action expects a POST, but 'GET' is common for downloads
+                    data: requestData,
+                    xhrFields: { // Important for handling binary file data
+                        responseType: 'blob'
+                    },
+                    success: function (blob, status, xhr) {
+                        // Get the filename from the Content-Disposition header, if available
+                        var filename = "Farmers.xlsx"; // Default filename
+                        var disposition = xhr.getResponseHeader('Content-Disposition');
+                        if (disposition && disposition.indexOf('attachment') !== -1) {
+                            var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+                            var matches = filenameRegex.exec(disposition);
+                            if (matches != null && matches[1]) {
+                                filename = decodeURIComponent(matches[1].replace(/['"]/g, ''));
+                            }
+                        }
+
+                        // Create a Blob URL and trigger the download
+                        var url = window.URL.createObjectURL(blob);
+                        var a = document.createElement('a');
+                        a.href = url;
+                        a.download = filename; // Set the filename for download
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url); // Clean up the Blob URL
+                        $(a).remove(); // Remove the temporary link
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error exporting Excel:", error);
+                        alert("An error occurred during export. Please try again.");
+                    }
+                });
+            });
+        });
+    </script> *@
+
+@* <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>*@
+<script src="~/assets/js/export_farmers_data_in_excel_seheet.js"></script>
+
+
 

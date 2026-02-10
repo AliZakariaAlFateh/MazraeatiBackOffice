@@ -1,4 +1,5 @@
-﻿using MazraeatiBackOffice.Core;
+﻿using MazraeatiBackOffice.Configuration;
+using MazraeatiBackOffice.Core;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -40,7 +41,7 @@ namespace MazraeatiBackOffice.Models
         public string Name { get; set; }
 
         [DisplayName("الاسم بالانجليزية المزرعة")]
-        [Required(ErrorMessage = "برجاء تعبئة الحقل")]
+        //[Required(ErrorMessage = "برجاء تعبئة الحقل")]
         public string NameEn { get; set; }
 
         [DisplayName("وصف المزرعة بالعربى")]
@@ -58,7 +59,7 @@ namespace MazraeatiBackOffice.Models
         public string LocationDesc { get; set; }
 
         [DisplayName("اسم المنطقة بالانجليزيه")]
-        [Required(ErrorMessage = "برجاء تعبئة الحقل")]
+        //[Required(ErrorMessage = "برجاء تعبئة الحقل")]
         public string LocationDescEn { get; set; }
 
         public DateTime IssueDate { get; set; }
@@ -158,7 +159,11 @@ namespace MazraeatiBackOffice.Models
         public string ConfidentialMessageAr { get; set; }
         [DisplayName("رسالة التوثيق بالانجليزي")]
 
-        public string ConfidentialMessageEn{ get; set; }
+        public string ConfidentialMessageEn { get; set; }
+
+        [DisplayName("رابط ثلاثى الأبعاد للمزرعة")]
+
+        public string? Image3DLink { get; set; }
 
         [DisplayName("هل الاعلان موثوق")]
         public bool IsTrust { get; set; }
@@ -177,6 +182,11 @@ namespace MazraeatiBackOffice.Models
         public int ReservationCount { get; set; }
         public int FeedbackCount { get; set; }
 
+        [DisplayName("اسم المالك من AppUser")]
+        public string? UserName { get; set; } = null;//new
+        [DisplayName("حالة المزرعة")]
+        //public FarmAppUserStatus? statusFarmAppUser { get; set; } = FarmAppUserStatus.Active;
+        public FarmAppUserStatus statusFarmAppUser { get; set; } = FarmAppUserStatus.Active;
         public List<Country> Countries { get; set; }
         public List<City> Cities { get; set; }
         public List<FarmerExtraFeatureTypeDto> ExtraFeature { get; set; }

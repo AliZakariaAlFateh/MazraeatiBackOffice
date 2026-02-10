@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MazraeatiBackOffice.Configuration;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -59,10 +60,15 @@ namespace MazraeatiBackOffice.Core
         public int MaxPerson { get; set; }
         public string ConfidentialMessageEn { get; set; }
         public string ConfidentialMessageAr { get; set; }
+
+        public  string ? Image3DLink { get; set; }
         public bool IsTrust { get; set; }
         public bool IsVIP { get; set; }
         public bool IsOffer { get; set; }
         public bool IsWinter { get; set; }
         public bool IsApprove { get; set; }
+        public string? UserName { get; internal set; }
+        public FarmAppUserStatus? statusFarmAppUser { get; set; } = FarmAppUserStatus.Active;
+
     }
 }
