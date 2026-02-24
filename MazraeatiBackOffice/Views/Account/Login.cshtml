@@ -60,6 +60,10 @@
             color: white !important;
         }
 
+        .login-box input {
+            background: rgba(0,0,0,0.15);
+            color: #fff;
+        }
     </style>
 </head>
 
@@ -72,8 +76,9 @@
     <!-------- image fixed position ------->
     <section id="wrapper">
         <div class="login-register">
-            <div class="login-box card">
-                <div class="card-body">
+            <div class="login-box card" style="background: rgba(0, 0, 0, 0.55);box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+                border: 1px solid rgba(255, 255, 255, 0.15);color: #fff;border-radius: 12px;">
+                <div class="card-body" style="background: rgb(0 0 0 / 0%);">
                     <form class="form-horizontal form-material" id="loginform" method="post" action="@Url.Action("Login","Account")">
                         <h3 class="text-center m-b-20">تسجيل الدخول للنظام</h3>
                         <div class="form-group" style="margin-top:30px;">
@@ -91,7 +96,9 @@
                         <div class="form-group text-center" style="margin-top:50px;">
                             <div class="col-xs-12 p-b-20">
                                 <button class="btn btn-block btn-lg btn-primary btn-rounded" type="submit" 
-                                        style="background-color:#53DE24 !important;font-size:13pt;font-weight:bold">دخول</button>
+                                        style="background-color:rgb(0 0 0 / 0%) !important;font-size:13pt;font-weight:bold">
+                                    دخول
+                                </button>
                             </div>
                         </div>
                         <div class="form-group text-center" style="color:red">

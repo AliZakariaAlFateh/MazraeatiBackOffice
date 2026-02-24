@@ -1,5 +1,15 @@
 ﻿@using MazraeatiBackOffice.Configuration;
 @model IEnumerable<FarmerModel>
+<style>
+    #All thead th {
+        position: sticky;
+        top: 0;
+        background: #198754; /* نفس لون الهيدر */
+        color: #fff;
+        z-index: 10;
+    }
+
+</style>
 <div class="col-md-12">
     <div class="card patients-list">
         <div class="header">
@@ -90,9 +100,9 @@
             </form>
             <!-- Tab panes -->
             <div class="tab-content m-t-10">
-                <div class="tab-pane table-responsive active" id="All">
+                <div class="tab-pane table-responsive active" id="All" style="height:270px; overflow-y:auto;">
                     <table class="table m-b-0 table-hover">
-                        <thead>
+                        <thead style="position: sticky;top: 0;z-index: 999;">
                             <tr>
                                 <th>@Html.DisplayNameFor(a => a.CountryDesc)</th>
                                 <th>@Html.DisplayNameFor(a => a.CityDesc)</th>

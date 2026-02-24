@@ -291,7 +291,12 @@ namespace MazraeatiBackOffice.Controllers
             else
             {
                 // لو المستخدم ما حدّدش، نبدأ من اليوم
-                anchor = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+                //anchor = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+                anchor= new DateTime(
+                                    DateTime.Today.Year,
+                                    DateTime.Today.Month,
+                                    DateTime.Today.Day
+                                );
             }
 
             // 3) حدود الشهور
@@ -337,7 +342,18 @@ namespace MazraeatiBackOffice.Controllers
 
                 if (maxDate != default)
                 {
-                    anchor = new DateTime(maxDate.Year, maxDate.Month, 1);
+                    if (id == 1)
+                    {
+                        anchor = new DateTime(
+                                            DateTime.Today.Year,
+                                            DateTime.Today.Month,
+                                            DateTime.Today.Day );
+                    }
+                    else
+                    {
+                        anchor = new DateTime(maxDate.Year, maxDate.Month, 1);
+                    }
+                    
                     firstThis = anchor;
                     firstNext = firstThis.AddMonths(1);
                     firstPrev = firstThis.AddMonths(-1);
@@ -386,6 +402,154 @@ namespace MazraeatiBackOffice.Controllers
             }).ToList();
 
             return View(models);
+        }
+
+
+
+    [HttpGet]
+    public IActionResult ReservationFarmersPage(
+    int id,
+    int? year,
+    int? month,
+    int page = 1,
+    int pageSize = 10
+    )
+        {
+            var typeMap = _LookupValueRepository.Table
+                .Where(l => l.LookupId == 6)
+                .Select(l => new { l.Id, l.ValueAr })
+                .ToDictionary(x => x.Id, x => x.ValueAr);
+
+            DateTime anchor = (year.HasValue && month.HasValue)
+                ? new DateTime(year.Value, month.Value, 1)
+                : new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+
+            DateTime firstThis = anchor;
+            DateTime firstNext = firstThis.AddMonths(1);
+            DateTime firstPrev = firstThis.AddMonths(-1);
+
+            var baseQuery = _FarmerReservation.Table.AsQueryable();
+
+            IQueryable<FarmerReservation> filteredQuery = id switch
+            {
+                1 => baseQuery.Where(r => r.ReservationDate >= firstThis && r.ReservationDate < firstNext),
+                -1 => baseQuery.Where(r => r.ReservationDate >= firstPrev && r.ReservationDate < firstThis),
+                _ => baseQuery
+            };
+
+            int totalCount = filteredQuery.Count();
+
+            var items = filteredQuery
+                .OrderByDescending(r => r.ReservationDate)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(x => new
+                {
+                    x.Id,
+                    x.FarmerId,
+                    Type = typeMap.ContainsKey(x.ReservationTypeId)
+                        ? typeMap[x.ReservationTypeId]
+                        : "",
+                    ReservationDate = x.ReservationDate.ToString("yyyy-MM-dd"),
+                    x.CustomerName,
+                    x.CustMobNum,
+                    x.IsReciveCommission,
+                    x.Note,
+                    CreatedDate = x.CreatedDate.ToString("yyyy-MM-dd HH:mm")
+                })
+                .ToList();
+
+            return Json(new
+            {
+                items,
+                totalCount,
+                totalPages = (int)Math.Ceiling((double)totalCount / pageSize),
+                currentPage = page
+            });
+        }
+
+
+        [HttpGet]
+        public IActionResult ReservationFarmersAjax(
+            int id,
+            int? year,
+            int? month,
+            int page = 1,
+            int pageSize = 10,
+            string search = "",
+            string type = "",
+            DateTime? fromDate = null,
+            DateTime? toDate = null
+        )
+        {
+            var typeMap = _LookupValueRepository.Table
+                .Where(l => l.LookupId == 6)
+                .ToDictionary(l => l.Id, l => l.ValueAr);
+
+            DateTime anchor = (year.HasValue && month.HasValue)
+                ? new DateTime(year.Value, month.Value, 1)
+                : new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+
+            DateTime firstThis = anchor;
+            DateTime firstNext = firstThis.AddMonths(1);
+            DateTime firstPrev = firstThis.AddMonths(-1);
+
+            IQueryable<FarmerReservation> q = id switch
+            {
+                1 => _FarmerReservation.Table.Where(r => r.ReservationDate >= firstThis && r.ReservationDate < firstNext),
+                -1 => _FarmerReservation.Table.Where(r => r.ReservationDate >= firstPrev && r.ReservationDate < firstThis),
+                _ => _FarmerReservation.Table
+            };
+
+            // 🔍 SEARCH
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                q = q.Where(r =>
+                    r.CustomerName.Contains(search) ||
+                    r.CustMobNum.Contains(search) ||
+                    r.Note.Contains(search) ||
+                    r.AutomaticallyNote.Contains(search)
+                );
+            }
+
+            // 📅 DATE FILTER
+            if (fromDate.HasValue)
+                q = q.Where(r => r.ReservationDate >= fromDate.Value);
+
+            if (toDate.HasValue)
+                q = q.Where(r => r.ReservationDate <= toDate.Value);
+
+            // 🏷 TYPE FILTER
+            if (!string.IsNullOrWhiteSpace(type))
+            {
+                q = q.Where(r => typeMap[r.ReservationTypeId] == type);
+            }
+
+            int totalCount = q.Count();
+
+            var items = q
+                .OrderByDescending(r => r.ReservationDate)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(r => new
+                {
+                    r.FarmerId,
+                    Type = typeMap[r.ReservationTypeId],
+                    ReservationDate = r.ReservationDate.ToString("yyyy-MM-dd"),
+                    r.CustomerName,
+                    r.CustMobNum,
+                    r.IsReciveCommission,
+                    r.Note,
+                    CreatedDate = r.CreatedDate.ToString("yyyy-MM-dd HH:mm")
+                })
+                .ToList();
+
+            return Json(new
+            {
+                items,
+                totalPages = (int)Math.Ceiling((double)totalCount / pageSize),
+                currentPage = page
+            });
         }
 
 

@@ -7,7 +7,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <title>محجوز - لوحة التحكم</title>
-    <!--<link rel="icon" href="@Url.Content("~/assets/images/favicon.ico")" type="image/x-icon">--> <!-- Favicon-->
+    <link rel="shortcut icon" type="image/x-icon" href="@Url.Content("~/Mahjouz_VaIcon.jpeg")" asp-append-version="true">
+    @* <link rel="icon" href="@Url.Content("~/assets/images/favicon.ico")" type="image/x-icon"> *@
+    <!-- Favicon-->
     <link rel="stylesheet" href="@Url.Content("~/assets/css/bootstrap.min.css")">
     <link rel="stylesheet" href="@Url.Content("~/assets/css/jquery-jvectormap-2.0.3.min.css")" />
     <link rel="stylesheet" href="@Url.Content("~/assets/css/morris.css")" />
@@ -297,7 +299,8 @@
 <script>
 
     const connection = new signalR.HubConnectionBuilder()
-        .withUrl("http://localhost:61366/farmHub")//.withUrl("http://5.189.180.190/MazareatiAPI/farmHub") //.withUrl("http://localhost:61366/farmHub")
+        .withUrl("http://5.189.180.190/MazareatiAPI/farmHub")
+        //.withUrl("http://localhost:61366/farmHub")
         .withAutomaticReconnect()
         .build();
 

@@ -14,7 +14,8 @@ namespace MazraeatiBackOffice.Core
         public SignalRListenerFarms()
         {
             _connection = new HubConnectionBuilder()
-                .WithUrl("http://localhost:61366/farmHub")//.WithUrl("http://5.189.180.190/MazareatiAPI/farmHub") //.WithUrl("http://localhost:61366/farmHub") // ✅ API Hub URL
+                .WithUrl("http://5.189.180.190/MazareatiAPI/farmHub")
+                //.WithUrl("http://localhost:61366/farmHub") // API Hub URL
                 .WithAutomaticReconnect()
                 .Build();
 
