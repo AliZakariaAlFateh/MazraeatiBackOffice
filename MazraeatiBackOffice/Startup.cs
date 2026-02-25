@@ -32,7 +32,7 @@ namespace MazraeatiBackOffice
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             //services.AddServices(Configuration);
             services.AddMvc();
-            //For SignalR .....
+            //For SignalR ...............................
             services.AddSingleton<SignalRListenerFarms>();
             services.AddScoped<SQL>();
             services.AddMemoryCache();
