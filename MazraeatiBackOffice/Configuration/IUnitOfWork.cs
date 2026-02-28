@@ -34,7 +34,7 @@ namespace MazraeatiBackOffice.Configuration
         IRepository<Lookup> LookupRepository { get; }
         IRepository<LookupValue> LookupValueRepository { get; }
         IRepository<terms> TermsRepository { get; }
-
+        IRepository<Region> RegionRepository { get; }
 
         int Save();
     }

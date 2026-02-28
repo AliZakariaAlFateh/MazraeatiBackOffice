@@ -1,4 +1,4 @@
-﻿<form action="@Url.Action("Index")" method="post">
+﻿@* <form action="@Url.Action("Index")" method="post">
     <div class="row clearfix">
         <div class="col-sm-6">
             <div class="form-group">
@@ -16,6 +16,35 @@
             </div>
         </div>
     </div>
-</form>
+</form> *@
+@{
+    var createUrl = ViewBag.CreateUrl as string ?? Url.Action("Create");
+}
 
+<form action="@Url.Action("Index")" method="post">
+    <input type="hidden" name="cityid" value="@ViewBag.CityId" />
+
+    <div class="row clearfix">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <input type="text" name="search" value="@ViewBag.search"
+                       placeholder="الكلمة المفتاحية" class="form-control" />
+            </div>
+        </div>
+
+        <div class="col-sm-3">
+            <div class="form-group" style="margin-top: -10px;">
+                <button type="submit" class="btn btn-primary btn-round">بحث</button>
+            </div>
+        </div>
+
+        <div class="col-sm-3">
+            <div class="form-group" style="margin-top: -10px;">
+                <a href="@createUrl" class="btn btn-primary btn-round">
+                    اضافة سجل جديد
+                </a>
+            </div>
+        </div>
+    </div>
+</form>
 

@@ -573,16 +573,16 @@ namespace MazraeatiBackOffice.Extenstion
             // Apply the conditional logic based on entity.LookupCode
             switch (entity.Id)
             {
-                case 2: 
+                case 2:
                     model.LookupCodeDesc = "مرفقات المزرعة";
                     break;
                 //case 3: 
                 //    model.LookupCodeDesc = "نوع التسعير للمزرعة";
                 //    break;
-                case 4: 
+                case 4:
                     model.LookupCodeDesc = "العملة";
                     break;
-                case 5: 
+                case 5:
                     model.LookupCodeDesc = "مزايا الرحلات / الأقسام الأخرى";
                     break;
                 //case 6: 
@@ -679,6 +679,31 @@ namespace MazraeatiBackOffice.Extenstion
             entity.Id = model.Id;
             entity.DescAr = model.DescAr;
             entity.DescEn = model.DescEn;
+            return entity;
+        }
+        #endregion
+
+        #region Region
+        public static RegionModel ToModel(this Region entity,List<City> cities = null)
+        {
+            RegionModel model = new RegionModel();
+            model.Id = entity.Id;
+            model.DescAr = entity.DescAr;
+            model.DescEn = entity.DescEn;
+            model.CityId = entity.CityId;
+            //model.CityName = cities == null ? string.Empty : cities.Where(c => c.Id == entity.CityId).FirstOrDefault().DescAr;
+            model.CityName = cities?
+            .FirstOrDefault(c => c.Id == entity.CityId)
+            ?.DescAr ?? string.Empty;
+            return model;
+        }
+        public static Region ToEntity(this RegionModel model)
+        {
+            Region entity = new Region();
+            entity.Id = model.Id;
+            entity.DescAr = model.DescAr;
+            entity.DescEn = model.DescEn;
+            entity.CityId = model.CityId;
             return entity;
         }
         #endregion

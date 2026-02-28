@@ -5,10 +5,10 @@ namespace MazraeatiBackOffice.Configuration
 {
     public class DataContext : DbContext
     {
-        public DataContext(DbContextOptions<DataContext> options): base(options)
+        public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
         }
-        
+
         public DbSet<Farmer> Farmers { get; set; }
         public DbSet<FarmerPriceList> FarmerPriceList { get; set; }
         public DbSet<FarmerExtraFeatureType> FarmerExtraFeatureType { get; set; }
@@ -34,9 +34,9 @@ namespace MazraeatiBackOffice.Configuration
         public DbSet<FarmerFeedback> FarmerFeedback { get; set; }
         public DbSet<CustomerBlackList> CustomerBlackList { get; set; }
         public DbSet<FarmerBlackList> FarmerBlackList { get; set; }
-
         public DbSet<NotificationsFarm> NotificationsFarm { get; set; }
-        public DbSet<terms> terms { get; set; }  
+        public DbSet<terms> terms { get; set; }
+        public DbSet<Region> Region { get; set; }
 
     }
 }

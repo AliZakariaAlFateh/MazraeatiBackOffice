@@ -30,6 +30,7 @@ namespace MazraeatiBackOffice.Configuration
         public IRepository<Lookup> LookupRepository { get; }
         public IRepository<LookupValue> LookupValueRepository { get; }
         public IRepository<terms> TermsRepository { get; }
+        public IRepository<Region> RegionRepository { get; }
 
 
         public UnitOfWork(DataContext context, IRepository<Farmer> farmerRepository, 
@@ -56,7 +57,8 @@ namespace MazraeatiBackOffice.Configuration
             IRepository<Lookup> lookupRepository,
             IRepository<LookupValue> lookupValueRepository,
             IRepository<TripPriceList> tripPriceListRepository,
-            IRepository<terms> termsRepository
+            IRepository<terms> termsRepository,
+            IRepository<Region> regionRepository
 
             )
         {
@@ -86,6 +88,7 @@ namespace MazraeatiBackOffice.Configuration
             LookupValueRepository = lookupValueRepository;
             TripPriceListRepository = tripPriceListRepository;
             TermsRepository = termsRepository;
+            RegionRepository = regionRepository;
 
         }
 
