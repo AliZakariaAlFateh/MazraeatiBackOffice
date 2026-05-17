@@ -511,7 +511,9 @@ namespace MazraeatiBackOffice.Controllers
                     note = fr.Note,
                     deposit = fr.ReservationDepositAmt,
                     remain = fr.ReservationRemainAmt,
+                    ReservationType=fr.ReservationTypeId,
                     className = "bg-success"
+
                 })
                 .ToList();
 

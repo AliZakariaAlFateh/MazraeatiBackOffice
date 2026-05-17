@@ -3,11 +3,10 @@
 <link href="~/assets/css/bootstrap.min.css" rel="stylesheet" />
 <link href="~/assets/css/icons.min.css" rel="stylesheet" />
 <link href="~/assets/css/app.min.css" rel="stylesheet" /> *@
-<style>
+@* <style>
     .fc-direction-ltr .fc-daygrid-event.fc-event-end, .fc-direction-rtl .fc-daygrid-event.fc-event-start {
         margin-right: 2px;
         border-radius: 1rem !important;
-        background: #1e36e2 !important;
         text-align: center;
     }
 
@@ -41,73 +40,210 @@
         background: #2b14c1;
         border-radius: 0;
     }
- /*    @@media (max-width: 768px) {
 
-    
-    #calendar {
-        padding: 5px;
+    .bg-success {
+        background-color: #198754 !important;
+        border-color: #198754 !important;
+        color: white !important;
     }
 
-    
-    .fc .fc-toolbar {
-        display: flex !important;
-        flex-direction: column !important;
-        gap: 10px;
+    .bg-primary {
+        background-color: #0d6efd !important;
+        border-color: #0d6efd !important;
+        color: white !important;
     }
 
-    
-    .fc .fc-toolbar-chunk {
-        display: flex;
-        justify-content: center;
-        flex-wrap: wrap;
-        gap: 5px;
+    .bg-warning {
+        background-color: #fd7e14 !important;
+        border-color: #fd7e14 !important;
+        color: white !important;
     }
 
-    
-    .fc .fc-button {
-        padding: 4px 8px !important;
-        font-size: 11px !important;
+    .bg-secondary {
+        background-color: #6c757d !important;
+        border-color: #6c757d !important;
+        color: white !important;
     }
 
-   
-    .fc .fc-toolbar-title {
-        font-size: 18px !important;
+
+.calendar-legend {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 25px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+    padding: 15px;
+    border-radius: 12px;
+    background: #f8f9fa;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+    font-weight: bold;
+    color: #333;
+}
+
+.legend-color {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: inline-block;
+    border: 2px solid #ddd;
+}
+
+
+@@media(max-width:768px){
+
+    .calendar-legend{
+        gap: 12px;
+        padding: 10px;
+    }
+
+    .legend-item{
+        font-size: 13px;
+    }
+
+    .legend-color{
+        width: 14px;
+        height: 14px;
+    }
+}
+
+
+    
+    </style> *@
+    <style>
+    .fc-direction-ltr .fc-daygrid-event.fc-event-end, .fc-direction-rtl .fc-daygrid-event.fc-event-start {
+        margin-right: 2px;
+        border-radius: 1rem !important;
         text-align: center;
     }
 
-    
-    .fc-col-header-cell-cushion {
-        font-size: 11px !important;
+    .fc a[data-navlink] {
+        cursor: pointer;
+        color: #5517ca !important;
     }
 
+    table > thead {
+        background-color: #4312df !important;
+        color: white !important;
+    }
+
+    .fc .fc-toolbar {
+        height: auto; /* تم التعديل ليناسب السطور المتعددة في الموبايل */
+        padding: 10px;
+        color: #fff;
+        background: #2b14c1;
+        border-radius: 0;
+    }
+
+    .bg-success { background-color: #198754 !important; border-color: #198754 !important; color: white !important; }
+    .bg-primary { background-color: #0d6efd !important; border-color: #0d6efd !important; color: white !important; }
+    .bg-warning { background-color: #fd7e14 !important; border-color: #fd7e14 !important; color: white !important; }
+    .bg-secondary { background-color: #6c757d !important; border-color: #6c757d !important; color: white !important; }
+
+    /* =========================
+       Calendar Legend
+    ========================= */
+    .calendar-legend {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 25px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+        padding: 15px;
+        border-radius: 12px;
+        background: #f8f9fa;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 15px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .legend-color {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        display: inline-block;
+        border: 2px solid #ddd;
+    }
+
+    /* ==================================
+       تعديلات الموبايل الاحترافية (Mobile Responsive)
+    ================================== */
+    @@media(max-width: 768px) {
+        /* ضبط الـ Toolbar الخاص بالتقويم */
+        .fc .fc-toolbar {
+            flex-direction: column !important;
+            gap: 8px;
+            text-align: center;
+            height: auto !important;
+        }
+
+        .fc .fc-toolbar-title {
+            font-size: 1.2rem !important;
+        }
+
+        /* تصغير خطوط أيام الأسبوع والأرقام داخل التقويم */
+        .fc .fc-col-header-cell-cushion, 
+        .fc .fc-daygrid-day-number {
+            font-size: 11px !important;
+            padding: 2px !important;
+        }
+
+        /* تقليص مساحة الأيام حتى لا يتمدد الجدول رأسياً بشكل مشوه */
+        .fc-daygrid-day-frame {
+            min-height: 45px !important;
+        }
+
+        /* إخفاء النصوص الطويلة داخل أحداث الموبايل إذا اخترت عرض الشهر وعملها كنقاط */
+        .fc-event-title {
+            font-size: 10px !important;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* ضبط الـ Legend أسفل الكالندر */
+        .calendar-legend {
+            gap: 12px;
+            padding: 10px;
+        }
+
+        .legend-item {
+            font-size: 13px;
+        }
+
+        .legend-color {
+            width: 14px;
+            height: 14px;
+        }
+    }
+    @@media(max-width: 768px) {
+    /* يجعل أزرار التقويم مرنة وتلتف لسطر جديد لو المساحة ضيقة */
+    .fc .fc-toolbar-chunk {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 4px;
+    }
     
-    .fc-daygrid-day-number {
+    .fc .fc-button {
+        padding: 4px 8px !important;
         font-size: 12px !important;
     }
-
-   
-    .fc-event {
-        font-size: 10px !important;
-        padding: 1px 2px !important;
-        border-radius: 6px !important;
-    }
-
-    
-    .fc-daygrid-day-frame {
-        min-height: 60px !important;
-    }
-
-   
-    .fc-scroller {
-        overflow-x: hidden !important;
-    }
-
-
-    .fc {
-        width: 100% !important;
-    }
-} */
-    </style>
+}
+</style>
 <div class="col-md-12">
     <div class="card patients-list">
             <div class="header">
@@ -167,6 +303,25 @@
                                     <div class="card-body">
                                         <div id="calendar" class="fc fc-media-screen fc-direction-ltr fc-theme-standard">
                                         </div>
+                                    <!-- Calendar Legend -->
+                                    <div class="calendar-legend">
+
+                                        <div class="legend-item">
+                                            <span class="legend-color bg-success"></span>
+                                            <span class="legend-text">حجز يوم كامل</span>
+                                        </div>
+
+                                        <div class="legend-item">
+                                            <span class="legend-color bg-primary"></span>
+                                            <span class="legend-text">حجز صباحي</span>
+                                        </div>
+
+                                        <div class="legend-item">
+                                            <span class="legend-color bg-warning"></span>
+                                            <span class="legend-text">حجز مسائي</span>
+                                        </div>
+
+                                    </div>
                                     </div>
                                 </div>
                             </div> <!-- end col -->
