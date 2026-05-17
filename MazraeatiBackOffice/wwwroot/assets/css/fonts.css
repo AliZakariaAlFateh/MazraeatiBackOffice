@@ -1,0 +1,10 @@
+﻿@font-face {
+    font-family: DeveloperGFont;
+src:url(../../assets/fonts/JF-Flat-regular.ttf);
+font-weight:bold;
+}
+
+*{
+    font-family:DeveloperGFont;
+}
+

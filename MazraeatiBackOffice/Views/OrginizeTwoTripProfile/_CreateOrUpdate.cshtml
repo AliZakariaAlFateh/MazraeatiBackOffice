@@ -1,0 +1,142 @@
+﻿@model TripProfileModel
+<style>
+    .form-group {
+        font-size: 13px;
+    }
+</style>
+@Html.HiddenFor(a => a.Id)
+@Html.HiddenFor(a => a.TypeId)
+@Html.HiddenFor(a => a.ImageUrl)
+@Html.HiddenFor(a => a.Countries)
+@Html.HiddenFor(a => a.Cities)
+<div class="container-fluid">
+    <div class="row clearfix">
+        <div class="col-lg-12 col-md-12 col-sm-12">
+            <div class="card">
+                <div class="header">
+                    <h2><strong>معالجة </strong> السجل</h2>
+                    <ul class="header-dropdown">
+                    </ul>
+                </div>
+                <div class="body">
+                    <div class="row clearfix">
+                        <div class="col-sm-6">
+                            @Html.DisplayNameFor(a => a.CountryDesc)
+                            <select class="form-control" name="CountryId">
+                                <option selected="selected" disabled="disabled">--الرجاء اختيار الدوله--</option>
+                                @foreach (var item in Model.Countries)
+                                {
+                                    <option selected="@(item.Id  == Model.CountryId)" value="@item.Id">@item.DescAr</option>
+                                }
+                            </select>
+                            @Html.ValidationMessageFor(a => a.CountryId, "", new { @style = "color:red;font-size:10px" })
+                        </div>
+
+                        <div class="col-sm-6">
+                            @Html.DisplayNameFor(a => a.CityDesc)
+                            <select class="form-control" name="CityId">
+                                <option selected="selected" disabled="disabled">--الرجاء اختيار المدينة--</option>
+                                @foreach (var item in Model.Cities)
+                                {
+                                    <option selected="@(item.Id  == Model.CityId)" value="@item.Id">@item.DescAr</option>
+                                }
+                            </select>
+                            @Html.ValidationMessageFor(a => a.CityId, "", new { @style = "color:red;font-size:10px" })
+                        </div>
+
+                    </div>
+                    <div style="height:50px !important">
+                        &nbsp;
+                    </div>
+                    <div class="row clearfix">
+                        @if (!string.IsNullOrEmpty(Model.ImageUrl) && Model.Id > 0)
+                        {
+                            <div class="col-sm-2 card-title">
+                                <fieldset class="form-group">
+                                    <label>عرض الصورة</label>
+                                    <fieldset class="form-group position-relative has-icon-left">
+                                        <div class="form-control-position" style="width: 100px;">
+                                            <a href="@Url.Content("~/images/")@Model.ImageUrl" style="color:black" target="_blank"><i class="zmdi zmdi-eye"></i></a>
+                                        </div>
+                                    </fieldset>
+                                </fieldset>
+                            </div>
+                        }
+
+                        <div class="col-sm-3 card-title">
+                            <fieldset class="form-group">
+                                <label>@Html.DisplayNameFor(a => a.ImageUrl) *</label>
+                                <div class="">
+                                    <input type="file" name="formFile" style="margin-top:1px" id="formFile">
+                                    <label class="" for="inputGroupFile01"></label>
+                                </div>
+                            </fieldset>
+                        </div>
+
+
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.Name)
+                                @Html.TextBoxFor(a => a.Name, new { @class = "form-control", @autocomplete = "off" })
+                                @Html.ValidationMessageFor(a => a.Name, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.Description)
+                                @Html.TextAreaFor(a => a.Description, new { @class = "form-control", @autocomplete = "off", @maxlength = 5000 })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.FacebookUrl)
+                                @Html.TextBoxFor(a => a.FacebookUrl, new { @class = "form-control", @autocomplete = "off" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.InstgramUrl)
+                                @Html.TextBoxFor(a => a.InstgramUrl, new { @class = "form-control", @autocomplete = "off" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.MobileNumber)
+                                @Html.TextBoxFor(a => a.MobileNumber, new { @class = "form-control", @autocomplete = "off", @placeholder = "962xxxxxxxxx", @maxlength = 12 })
+                                @Html.ValidationMessageFor(a => a.MobileNumber, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.TelephoneNumber)
+                                @Html.TextBoxFor(a => a.TelephoneNumber, new { @class = "form-control", @autocomplete = "off", @placeholder = "9626xxxxxxx", @maxlength = 11 })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.Active)
+                                <br />
+                                @Html.CheckBoxFor(a => a.Active, new { @class = "form-control", @style = "margin-top: 10px;" })
+                            </div>
+                        </div>
+
+
+
+                        <div class="col-sm-12">
+                            <button type="submit" class="btn btn-primary btn-round">حفظ</button>
+                            <button type="button" onclick="window.location.href='@Url.Content("~/OrginizeTwoTripProfile/index/")'" class="btn btn-default btn-round btn-simple">رجوع</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,98 @@
+﻿@model SendNotificationModel
+
+<div class="container-fluid">
+    <div class="row clearfix">
+        <div class="col-lg-12 col-md-12 col-sm-12">
+            <div class="card">
+                <div class="header">
+                    <h2><strong>معالجة </strong> السجل</h2>
+                    <ul class="header-dropdown">
+                    </ul>
+                </div>
+                @if (TempData["Success"] != null)
+                {
+                    <div style="color:green">
+                        @TempData["Success"]
+                    </div>
+                }
+                <div class="body">
+
+
+
+@* <h3>إرسال إشعار لكل المستخدمين</h3>
+
+@if (TempData["Success"] != null)
+{
+    <div style="color:green">@TempData["Success"]</div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div style="color:red">@TempData["Error"]</div>
+}
+
+<form asp-action="Send_Notification" method="post">
+    <div>
+        <label>عنوان الإشعار</label>
+        <input type="text" asp-for="Title" class="form-control" />
+    </div>
+
+    <div>
+        <label>نص الإشعار</label>
+        <textarea asp-for="Body" class="form-control"></textarea>
+    </div>
+
+    <br />
+
+    <button type="submit" class="btn btn-primary">
+        إرسال الإشعار 🚀
+    </button>
+</form> *@
+
+                    <form id="notifyForm" asp-action="Send_Notification" method="post">
+
+                        <div>
+                            <label>العنوان</label>
+                            <input type="text" asp-for="Title" class="form-control" />
+                        </div>
+
+                        <div>
+                            <label>الرسالة</label>
+                            <textarea asp-for="Body" class="form-control"></textarea>
+                        </div>
+
+                        <br />
+
+                        <button id="submitBtn" type="submit" class="btn btn-primary">
+                            إرسال 🚀
+                        </button>
+
+                    </form>
+
+                    <!-- Spinner -->
+                    <div id="loadingSpinner" style="display:none; text-align:center; margin-top:20px;">
+                        <div class="spinner-border text-primary"></div>
+                        <p>جاري إرسال الإشعارات... برجاء الانتظار ⏳</p>
+                    </div>
+
+
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById("notifyForm").addEventListener("submit", function () {
+
+        // إظهار الـ Spinner
+        document.getElementById("loadingSpinner").style.display = "block";
+
+        // تعطيل الزر
+        document.getElementById("submitBtn").disabled = true;
+
+    });
+</script>

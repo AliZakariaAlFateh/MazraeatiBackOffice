@@ -1,0 +1,179 @@
+﻿@model CommonQuestionsModel
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="~/assets/js/jquery-3.2.1.min.js"></script>
+<link href="~/assets/css/sliderimages_mahjoz.css" rel="stylesheet" />
+<style>
+    .form-group {
+        font-size: 13px;
+    }
+
+    .textboxWidth {
+        width: 120px;
+    }
+
+    .form-label {
+        font-weight: bold;
+        margin-bottom: 5px;
+        display: block;
+    }
+
+    .form-control {
+        border-radius: 10px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        transition: 0.3s;
+    }
+
+        .form-control:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 5px rgba(13, 110, 253, 0.3);
+        }
+
+    .form-card {
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        padding: 25px;
+        background: #fff;
+    }
+
+    .section-title {
+        font-weight: bold;
+        margin-bottom: 15px;
+        color: #0d6efd;
+    }
+
+    .btn-custom {
+        border-radius: 25px;
+        padding: 8px 25px;
+    }
+
+    .input-group-box {
+        margin-bottom: 15px;
+    }
+
+    /*DDL*/
+
+    .select2-container--default .select2-selection--single {
+        height: 45px;
+        border-radius: 10px;
+        padding: 8px;
+        border: 1px solid #ddd;
+    }
+
+    .select2-selection__rendered {
+        line-height: 28px !important;
+        font-weight: 500;
+    }
+
+    .select2-dropdown {
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .select2-results__option {
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .select2-results__option--highlighted {
+        background: #0d6efd !important;
+        color: #fff;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 15px !important;
+    }
+</style>
+<script>
+    // Helper function for SweetAlerts (from previous discussions)
+</script>
+
+
+@Html.HiddenFor(a => a.Id)
+@Html.HiddenFor(a => a.ImageUrl) @* This hidden field will carry the original image URL if no new file is selected *@
+
+<div class="container-fluid">
+    <div class="row clearfix">
+        <div class="col-lg-12 col-md-12 col-sm-12">
+            <div class="card">
+                <div class="header">
+                    <h2><strong>معالجة </strong> السجل</h2>
+                    <ul class="header-dropdown">
+                    </ul>
+                </div>
+                <div class="body">
+                    <form asp-action="@(Model.Id > 0 ? "Edit" : "Create")" method="post" enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
+                        <div class="row clearfix">
+                            
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    @Html.DisplayNameFor(a => a.QuestAr)
+                                    @Html.TextBoxFor(a => a.QuestAr, new { @class = "form-control", @autocomplete = "off" })
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    @Html.DisplayNameFor(a => a.AnswerAr)
+                                    @Html.TextBoxFor(a => a.AnswerAr, new { @class = "form-control", @autocomplete = "off" })
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    @Html.DisplayNameFor(a => a.QuestEn)
+                                    @Html.TextBoxFor(a => a.QuestEn, new { @class = "form-control", @autocomplete = "off" })
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    @Html.DisplayNameFor(a => a.AnswerEn)
+                                    @Html.TextBoxFor(a => a.AnswerEn, new { @class = "form-control", @autocomplete = "off" })
+                                </div>
+                            </div>
+                            <div class="col-sm-12" style="height:20px !important;"> &nbsp; </div>
+
+                            <div class="col-sm-12">
+                                <h5 style="text-decoration:underline">تحميل الصورة</h5>
+                            </div>
+                            <div class="col-sm-12"> @* Removed col-sm-3, used col-sm-12 to encompass both input and frame *@
+                                <div class="form-group">
+                                    <label for="formFile" class="file-input-label">@Html.DisplayNameFor(a => a.ImageUrl) *</label>
+                                    <input type="file" name="formFile" style="margin-top:1px" id="formFile" accept="image/*" class="form-control">
+                                    @Html.ValidationMessageFor(a => a.ImageUrl, "", new { @style = "color:red;font-size:10px" })
+                                </div>
+
+                                <fieldset class="form-group image-frame">
+                                    <legend>عرض الصورة المختارة/الحالية</legend>
+                                    <div id="imagePreviewArea" class="image-preview-container">
+                                        <span id="noImageText">لا توجد صورة مختارة</span>
+                                        
+                                        @* Existing image will be rendered here by Razor on page load *@
+                                        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                                        {
+                                            <div class="preview-item existing-image-preview">
+                                                <img src="@Url.Content("~/Images/" + Model.ImageUrl)" alt="الصورة الحالية">
+                                                <button type="button" class="remove-preview-btn" data-existing="true">X</button>
+                                            </div>
+                                        }
+                                    </div>
+                                </fieldset>
+                            </div>
+
+
+                            <div class="col-sm-12" style="margin-bottom:20px"> &nbsp; </div>
+
+                            
+                           
+                            <div class="col-sm-12">
+                                <button type="submit" class="btn btn-primary btn-round">حفظ</button>
+                                <button type="button" onclick="window.location.href='@Url.Content("~/ImageSlider/index/")'" class="btn btn-default btn-round btn-simple">رجوع</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/assets/js/slider_images_mahjoz.js"></script>

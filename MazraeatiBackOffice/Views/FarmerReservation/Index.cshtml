@@ -1,0 +1,181 @@
+﻿@using MazraeatiBackOffice.Configuration;
+<style>
+    .table-scroll {
+        height: 350px;
+        overflow-y: scroll;
+    }
+
+        /* Sticky header */
+        .table-scroll thead th {
+            position: sticky;
+            top: 0;
+            background: #198754;
+            color: #fff;
+            z-index: 10;
+        }
+
+        /* Chrome / Edge */
+        .table-scroll::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        .table-scroll::-webkit-scrollbar-track {
+            background: #eee;
+        }
+
+        .table-scroll::-webkit-scrollbar-thumb {
+            background: #999;
+            border-radius: 10px;
+            border: 2px solid #eee;
+        }
+
+            .table-scroll::-webkit-scrollbar-thumb:hover {
+                background: #666;
+            }
+
+    /* Firefox */
+    .table-scroll {
+        scrollbar-width: auto;
+        scrollbar-color: #999 #eee;
+    }
+</style>
+@{
+    int currentYear = DateTime.Now.Year;
+}
+@model IEnumerable<FarmerReservationModel>
+<div class="col-md-12">
+    <div class="card patients-list">
+        <div class="header">
+            <h2><strong>قائمة</strong> حجوزات - @ViewBag.FarmerName</h2>
+            <ul class="header-dropdown">
+            </ul>
+        </div>
+        <div class="body">
+
+            <!-- Nav tabs -->
+            <form action="@Url.Action("Index")" method="post">
+                @Html.Hidden("farmerId", (int)ViewBag.FarmerId)
+                <div class="row clearfix">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <input type="text" name="search" value="@ViewBag.search" placeholder="الكلمة المفتاحية" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="col-sm-2" style="margin-top:1px">
+                        الحجز من
+                        <select class="form-control select2" name="source">
+                            <option selected="@(ViewBag.source == null)" value="null">الكل</option>
+                            <option selected="@(ViewBag.source == 0)" value="0">لوحة التحكم</option>
+                            <option selected="@(ViewBag.source == 1)" value="1">تطبيق الموبايل</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-2" style="margin-top:1px">
+                        اختيار الشهر
+                        <select class="form-control select2" name="MonthId">
+                            <option selected="@(ViewBag.MonthId == null)" value="null">الكل</option>
+                            @for (int i = 1; i <= 12; i++)
+                            {
+                                <option selected="@(ViewBag.MonthId == i)" value="@i">@i</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-sm-2" style="margin-top:1px">
+                        اختيار السنة
+                        <select class="form-control select2" name="YearId">
+                            <option selected="@(ViewBag.YearId == null)" value="null">الكل</option>
+                            @for (int i = currentYear - 2; i <= currentYear + 2; i++)
+                            {
+                                <option selected="@(ViewBag.YearId == i)" value="@i">@i</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-sm-2">
+                        <div class="form-group" style="margin-top: -10px;">
+                            <button type="submit" class="btn btn-primary btn-round">بحث</button>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-2" style="pointer-events:none">
+                        <div class="form-group" style="margin-top: -10px;">
+                            <label class="btn btn-primary btn-round" style="color:white"> العدد الاجمالي :  @Model.Count()</label>
+                        </div>
+                    </div>
+
+
+
+                </div>
+
+            </form>
+
+            <div class="col-sm-2">
+                <div class="form-group" style="margin-top: -10px;">
+                    <a href="@Url.Content("~/FarmerReservation/Create?farmerId=")@ViewBag.FarmerId" class="btn btn-primary btn-round">اضافة سجل جديد</a>
+                </div>
+            </div>
+
+            <div class="col-sm-2">
+                <button type="button" onclick="window.location.href='@Url.Content("~/Farmers/index")'" class="btn btn-default btn-round btn-simple">رجوع</button>
+            </div>
+
+            <div class="tab-content m-t-10">
+                <div class="tab-pane table-responsive active table-scroll" id="All">
+                    <table class="table m-b-0 table-hover">
+                        <thead>
+                            <tr>
+                                <th>@Html.DisplayNameFor(a => a.ReservationTypeId)</th>
+                                <th>@Html.DisplayNameFor(a => a.ReservationDate)</th>
+                                <th>@Html.DisplayNameFor(a => a.CustMobNum)</th>
+                                <th>@Html.DisplayNameFor(a => a.CustomerName)</th>
+                                <th>الحجز عن طريق</th>
+                                @* <th>@Html.DisplayNameFor(a => a.AutomaticallyNote)</th> *@
+                                <th>@Html.DisplayNameFor(a => a.IsReciveCommission)</th>
+                                <th>تفاصيل</th>
+                                <th>حذف</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                            <tr>
+                                <td>@item.ReservationTypeDesc</td>
+                                <td>@item.ReservationDate.ToShortDateString()</td>
+                                <td>@item.CustMobNum</td>
+                                <td>@item.CustomerName</td>
+                                <td>
+                                    @((item.IsMahjouzReservation.HasValue
+                                        ? (item.IsMahjouzReservation.Value
+                                        ? IsMahjouzAppOrDashboard.MahjouzApp
+                                        : IsMahjouzAppOrDashboard.Dashboard)
+                                        : (IsMahjouzAppOrDashboard?)null
+                                        ).ToArabicUserAppOrDashboard())
+                                </td>
+                                @* <td>@(string.IsNullOrEmpty(item.AutomaticallyNote) ? "" : item.AutomaticallyNote)</td> *@
+                                <td>@(item.IsReciveCommission == true ? "نعم" : "لا" )</td>
+                                <td><a href="@Url.Content("~/FarmerReservation/edit/")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
+                                <td>
+                                    <a href="javascript:DeleteFarmerReservationWithParampter('FarmerReservation',@item.Id,'Delete','Index',@item.FarmerId)" class="btn btn-danger btn-sm">حذف</a>
+                                </td>
+                            </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+
+        $('.select2').select2({
+            placeholder: "اختر من القائمة",
+            width: '100%'
+        });
+    });
+</script>

@@ -1,0 +1,217 @@
+﻿@model AppUserBlackListModel
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.min.css" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+<style>
+    .form-group {
+        font-size: 13px;
+    }
+
+    .textboxWidth {
+        width: 120px;
+    }
+</style>
+@Html.HiddenFor(a => a.Id)
+<div class="container-fluid">
+    <div class="row clearfix">
+        <div class="col-lg-12 col-md-12 col-sm-12">
+            <div class="card">
+                <div class="header">
+                    <h2><strong>معالجة </strong> السجل</h2>
+                    <ul class="header-dropdown">
+                    </ul>
+                </div>
+                <div class="body">
+                    <div class="row clearfix">
+
+                        <div class="col-sm-6">
+                            @Html.DisplayNameFor(a => a.UserDesc)
+                            <select class="form-control select2" name="UserId" id="UserId">
+                                <option selected disabled>--الرجاء اختيار المستخدم--</option>
+                                @foreach (var item in Model.Users)
+                                {
+                                    <option value="@item.Id"
+                                            data-username="@item.UserName"
+                                            data-mobilephone="@item.MobilePhone"
+                                            selected="@(item.Id == Model.UserId)">
+                                        @item.UserName
+                                    </option>
+                                }
+                            </select>
+                            @Html.ValidationMessageFor(a => a.UserId, "", new { @style = "color:red;font-size:10px" })
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.CustMobileNum)
+                                @Html.TextBoxFor(a => a.CustMobileNum, new { @class = "form-control", @autocomplete = "off", id = "CustMobileNum", @readonly = "readonly",@dir="ltr"})
+                                @Html.ValidationMessageFor(a => a.CustMobileNum, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.CustName)
+                                @Html.TextBoxFor(a => a.CustName, new { @class = "form-control", @autocomplete = "off", @maxlength = 50 ,@id = "CustNameAr", @readonly = "readonly"  })
+                                @Html.ValidationMessageFor(a => a.CustName, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.CustNameEn)
+                                @Html.TextBoxFor(a => a.CustNameEn, new { @class = "form-control", @autocomplete = "off", @maxlength = 50, @id = "CustNameEn", @readonly = "readonly" })
+                                @Html.ValidationMessageFor(a => a.CustNameEn, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.Reason)
+                                @Html.TextAreaFor(a => a.Reason, new { @class = "form-control", @autocomplete = "off", @maxlength = 250, @id = "ReasonAr" })
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.ReasonEn)
+                                @Html.TextAreaFor(a => a.ReasonEn, new { @class = "form-control", @autocomplete = "off", @maxlength = 250, @id = "ReasonEn" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            @if (!string.IsNullOrEmpty(Model.ImageUrl) && Model.Id > 0)
+                            {
+                                <div class="col-sm-2 card-title">
+                                    <fieldset class="form-group">
+                                        <label>عرض الصورة</label>
+                                        <fieldset class="form-group position-relative has-icon-left">
+                                            <div class="form-control-position" style="width: 100px;">
+                                                <a href="@Url.Content("~/images/")@Model.ImageUrl" style="color:black" target="_blank"><i class="zmdi zmdi-eye"></i></a>
+                                            </div>
+                                        </fieldset>
+                                    </fieldset>
+                                </div>
+                            }
+
+                            <div class="col-sm-3 card-title">
+                                <fieldset class="form-group">
+                                    <label>@Html.DisplayNameFor(a => a.ImageUrl) *</label>
+                                    <div class="">
+                                        <input type="file" name="formFile" style="margin-top:1px" id="formFile">
+                                        <label class="" for="inputGroupFile01"></label>
+                                    </div>
+                                </fieldset>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.IsApprove)
+                                <br />
+                                @Html.CheckBoxFor(a => a.IsApprove, new { @class = "form-control", @style = "margin-top: 10px;" })
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.IsBlocked)
+                                <br />
+                                @Html.CheckBoxFor(a => a.IsBlocked, new { @class = "form-control", @style = "margin-top: 10px;" })
+                            </div>
+                        </div>
+                        <div class="col-sm-12" style="margin-bottom:20px">
+                            &nbsp;
+                        </div>
+
+                        <div class="col-sm-12">
+                            <button type="submit" class="btn btn-primary btn-round">حفظ</button>
+                            <button type="button" onclick="window.location.href='@Url.Content("~/CustomerBlackList/index")'" class="btn btn-default btn-round btn-simple">رجوع</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@* <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> *@
+<script src="~/assets/js/jquery-3.6.0.min.js"></script>
+@* @section Scripts {  *@
+
+<script>
+    $(document).ready(function () {
+
+        $("#UserId").on("change", function () {
+
+            var selectedOption = $(this).find("option:selected");
+
+            var userName = selectedOption.data("username");
+            var mobilePhone = selectedOption.data("mobilephone");
+
+            $("#CustNameAr").val(userName);
+            $("#CustNameEn").val(userName);
+            //$("#CustMobileNum").val(mobilePhone);
+            if (mobilePhone) {
+                iti1.setNumber(mobilePhone);
+            }
+            $("#ReasonAr").val("حضر هذا العميل");
+            $("#ReasonEn").val("Block this User");
+        });
+
+
+
+        function initPhone(inputId) {
+
+            var input = document.querySelector(inputId);
+
+            var iti = window.intlTelInput(input, {
+
+                initialCountry: "auto",
+
+                geoIpLookup: function (callback) {
+                    $.get("https://ipapi.co/json/", function (data) {
+                        callback(data.country_code.toLowerCase());
+                    }).fail(function () {
+                        callback("eg"); // fallback
+                    });
+                },
+
+                separateDialCode: true,
+                preferredCountries: ["eg", "sa", "ae", "jo"],
+
+                utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"
+            });
+
+            // لو فيه رقم جاى من DB
+            var existingValue = $(inputId).val();
+            if (existingValue) {
+                iti.setNumber(existingValue);
+            }
+
+            return iti;
+        }
+
+        // Initialize الاتنين
+        var iti1 = initPhone("#CustMobileNum");
+
+        // ============================
+        // Submit
+        // ============================
+        $("form").on("submit", function () {
+
+            // تأكد إن utils اتحمل
+            if (!iti1.isValidNumber()) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'رقم الموبايل غير صحيح'
+                });
+                return false;
+            }
+
+            $("#CustMobileNum").val(iti1.getNumber());
+        });
+
+
+
+    });
+</script>
+
+@* } *@

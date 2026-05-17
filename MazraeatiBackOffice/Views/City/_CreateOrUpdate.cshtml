@@ -1,0 +1,63 @@
+﻿@model CityModel
+<style>
+    .form-group {
+        font-size: 13px;
+    }
+</style>
+@Html.HiddenFor(a => a.Id)
+<div class="container-fluid">
+    <div class="row clearfix">
+        <div class="col-lg-12 col-md-12 col-sm-12">
+            <div class="card">
+                <div class="header">
+                    <h2><strong>معالجة </strong> السجل</h2>
+                    <ul class="header-dropdown">
+                    </ul>
+                </div>
+                <div class="body">
+                    <div class="row clearfix">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.DescAr)
+                                @Html.TextBoxFor(a => a.DescAr, new { @class = "form-control", @autocomplete = "off" })
+                                @Html.ValidationMessageFor(a => a.DescAr, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.DescEn)
+                                @Html.TextBoxFor(a => a.DescEn, new { @class = "form-control", @autocomplete = "off" })
+                                @Html.ValidationMessageFor(a => a.DescEn, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            @Html.DisplayNameFor(a => a.CountryId)
+                            <select class="form-control" name="CountryId">
+                                <option selected="selected" disabled="disabled">--الرجاء اختيار الدوله--</option>
+                                @foreach (var item in Model.Countries)
+                                {
+                                    <option selected="@(item.Id  == Model.CountryId)" value="@item.Id">@item.DescAr</option>
+                                }
+                            </select>
+                            @Html.ValidationMessageFor(a => a.CountryId, "", new { @style = "color:red;font-size:10px" })
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.Active)
+                                <br />
+                                @Html.CheckBoxFor(a => a.Active, new { @class = "form-control", @style = "margin-top: 10px;" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12">
+                            <button type="submit" class="btn btn-primary btn-round">حفظ</button>
+                            <button type="button" onclick="window.location.href='@Url.Content("~/City/index/")'" class="btn btn-default btn-round btn-simple">رجوع</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,5 @@
+﻿@model CustomerBlackListModel
+@using (Html.BeginForm("Create", "CustomerBlackList", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.Partial("_CreateOrUpdate", Model)
+}

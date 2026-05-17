@@ -1,0 +1,49 @@
+﻿@model IEnumerable<CommonQuestionsModel>
+<div class="col-md-12">
+    <div class="card patients-list">
+        <div class="header">
+            <h2><strong>قائمة</strong> اعلانات الصفحه الرئيسية</h2>
+            <ul class="header-dropdown">
+            </ul>
+        </div>
+        <div class="body">
+            <!-- Nav tabs -->
+            @Html.Partial("_search")
+            <!-- Tab panes -->
+            <div class="tab-content m-t-10">
+                <div class="tab-pane table-responsive active" id="All">
+                    <table class="table m-b-0 table-hover">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>@Html.DisplayNameFor(a => a.QuestAr)</th>
+                                <th>@Html.DisplayNameFor(a => a.AnswerAr)</th>
+                                <th>@Html.DisplayNameFor(a => a.QuestEn)</th>
+                                <th>@Html.DisplayNameFor(a => a.AnswerEn)</th>
+                                <th>@Html.DisplayNameFor(a => a.ImageUrl)</th>
+                                <th>تفاصيل</th>
+                                <th>حذف</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                            <tr>
+                                <td>@item.Id</td>
+                                <td>@item.QuestAr</td>
+                                <td>@item.AnswerAr</td>
+                                <td>@item.QuestEn</td>
+                                <td>@item.AnswerEn</td>
+                                <td><a href="@Url.Content("~/images/")@item.ImageUrl" style="color:black" target="_blank"><i class="zmdi zmdi-eye"></i></a></td>
+                                <td><a href="@Url.Content("~/CommonQuestions/Edit/")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
+                                <td><a href="javascript:Delete('CommonQuestions',@item.Id,'Delete','Index')" style="height: 25px;" class="btn btn-danger btn-round"><i class="zmdi zmdi-delete" style="color: white;margin-top: -10px;"></i></a></td>
+                            </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

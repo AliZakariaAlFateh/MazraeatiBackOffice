@@ -1,0 +1,5 @@
+﻿@model TripModel
+@using (Html.BeginForm("TripEdit", "InternalExternalTripProfile", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.Partial("_TripCreateOrUpdate", Model)
+}

@@ -1,0 +1,5 @@
+﻿@model AppUserBlackListModel
+@using (Html.BeginForm("Edit", "AppUserBlackList", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.Partial("_CreateOrUpdate", Model)
+}

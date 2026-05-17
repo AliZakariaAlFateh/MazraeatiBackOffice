@@ -1,0 +1,189 @@
+﻿<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.min.css" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+@model FarmerBlackListModel
+<style>
+    .form-group {
+        font-size: 13px;
+    }
+
+    .textboxWidth {
+        width: 120px;
+    }
+</style>
+@Html.HiddenFor(a => a.Id)
+<div class="container-fluid">
+    <div class="row clearfix">
+        <div class="col-lg-12 col-md-12 col-sm-12">
+            <div class="card">
+                <div class="header">
+                    <h2><strong>معالجة </strong> السجل</h2>
+                    <ul class="header-dropdown">
+                    </ul>
+                </div>
+                <div class="body">
+                    <div class="row clearfix">
+                        <div class="col-sm-6">
+                            @Html.DisplayNameFor(a => a.FarmerName)
+                            <select class="form-control select2" name="FarmerId">
+                                <option selected="selected" disabled="disabled">--الرجاء اختيار المزرعة--</option>
+                                @foreach (var item in Model.Farmers)
+                                {
+                                    <option selected="@(item.Id  == Model.FarmerId)" value="@item.Id">@item.Name</option>
+                                }
+                            </select>
+                            @Html.ValidationMessageFor(a => a.FarmerId, "", new { @style = "color:red;font-size:10px" })
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.FarmerMobNum)
+                                @* @placeholder = "962xxxxxxxxx", @maxlength = 12 *@
+                                @Html.TextBoxFor(a => a.FarmerMobNum, new { @class = "form-control", @autocomplete = "off", @id = "FarmerMobNumber",@dir="ltr" })
+                                @Html.ValidationMessageFor(a => a.FarmerMobNum, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.FarmerName)
+                                @Html.TextBoxFor(a => a.FarmerName, new { @class = "form-control", @autocomplete = "off", @maxlength = 50 })
+                                @Html.ValidationMessageFor(a => a.FarmerName, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.FarmerNameEn)
+                                @Html.TextBoxFor(a => a.FarmerNameEn, new { @class = "form-control", @autocomplete = "off", @maxlength = 50 })
+                                @Html.ValidationMessageFor(a => a.FarmerNameEn, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.Reason)
+                                @Html.TextAreaFor(a => a.Reason, new { @class = "form-control", @autocomplete = "off", @maxlength = 250 })
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.ReasonEn)
+                                @Html.TextAreaFor(a => a.ReasonEn, new { @class = "form-control", @autocomplete = "off", @maxlength = 250 })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            @if (!string.IsNullOrEmpty(Model.ImageUrl) && Model.Id > 0)
+                            {
+                                <div class="col-sm-2 card-title">
+                                    <fieldset class="form-group">
+                                        <label>عرض الصورة</label>
+                                        <fieldset class="form-group position-relative has-icon-left">
+                                            <div class="form-control-position" style="width: 100px;">
+                                                <a href="@Url.Content("~/images/")@Model.ImageUrl" style="color:black" target="_blank"><i class="zmdi zmdi-eye"></i></a>
+                                            </div>
+                                        </fieldset>
+                                    </fieldset>
+                                </div>
+                            }
+
+                            <div class="col-sm-3 card-title">
+                                <fieldset class="form-group">
+                                    <label>@Html.DisplayNameFor(a => a.ImageUrl) *</label>
+                                    <div class="">
+                                        <input type="file" name="formFile" style="margin-top:1px" id="formFile">
+                                        <label class="" for="inputGroupFile01"></label>
+                                    </div>
+                                </fieldset>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.IsApprove)
+                                <br />
+                                @Html.CheckBoxFor(a => a.IsApprove, new { @class = "form-control", @style = "margin-top: 10px;" })
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.IsBlocked)
+                                <br />
+                                @Html.CheckBoxFor(a => a.IsBlocked, new { @class = "form-control", @style = "margin-top: 10px;" })
+                            </div>
+                        </div>
+                        <div class="col-sm-12" style="margin-bottom:20px">
+                            &nbsp;
+                        </div>
+
+                        <div class="col-sm-12">
+                            <button type="submit" class="btn btn-primary btn-round">حفظ</button>
+                            <button type="button" onclick="window.location.href='@Url.Content("~/FarmerBlackList/index")'" class="btn btn-default btn-round btn-simple">رجوع</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        //BaseUrl_Pro
+        //BaseUrl_Dev
+       
+        function initPhone(inputId) {
+
+            var input = document.querySelector(inputId);
+
+            var iti = window.intlTelInput(input, {
+
+                initialCountry: "auto",
+
+                geoIpLookup: function (callback) {
+                    $.get("https://ipapi.co/json/", function (data) {
+                        callback(data.country_code.toLowerCase());
+                    }).fail(function () {
+                        callback("eg"); // fallback
+                    });
+                },
+
+                separateDialCode: true,
+                preferredCountries: ["eg", "sa", "ae", "jo"],
+
+                utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"
+            });
+
+            // لو فيه رقم جاى من DB
+            var existingValue = $(inputId).val();
+            if (existingValue) {
+                iti.setNumber(existingValue);
+            }
+
+            return iti;
+        }
+
+        // Initialize الاتنين
+        var iti1 = initPhone("#FarmerMobNumber");
+
+        // ============================
+        // Submit
+        // ============================
+        $("form").on("submit", function () {
+
+            // تأكد إن utils اتحمل
+            if (!iti1.isValidNumber()) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'رقم الموبايل  غير صحيح'
+                });
+                return false;
+            }
+
+            $("#FarmerMobNumber").val(iti1.getNumber());
+        });
+
+
+    });
+
+</script>

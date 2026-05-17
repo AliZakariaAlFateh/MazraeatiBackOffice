@@ -1,0 +1,57 @@
+﻿@model IEnumerable<ImageSliderModel>
+<div class="col-md-12">
+    <div class="card patients-list">
+        <div class="header">
+            <h2><strong>قائمة</strong> اعلانات الصفحه الرئيسية</h2>
+            <ul class="header-dropdown">
+            </ul>
+        </div>
+        <div class="body">
+            <!-- Nav tabs -->
+            @Html.Partial("_search")
+            <!-- Tab panes -->
+            <div class="tab-content m-t-10">
+                <div class="tab-pane table-responsive active" id="All">
+                    <table class="table m-b-0 table-hover">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>@Html.DisplayNameFor(a => a.CountryId)</th>
+                                <th>@Html.DisplayNameFor(a => a.PageName)</th>
+                                <th>@Html.DisplayNameFor(a => a.Image)</th>
+                                <th>@Html.DisplayNameFor(a => a.ExtraText)</th>
+                                <th>@Html.DisplayNameFor(a => a.RedirectLink)</th>
+                                <th>@Html.DisplayNameFor(a => a.SortOrder)</th>
+                                <th>@Html.DisplayNameFor(a => a.Active)</th>
+                                <th>تفاصيل</th>
+                                <th>حذف</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                            <tr>
+                                <td>@item.Id</td>
+                                <td>@item.CountryDesc</td>
+                                <td>
+                                    @(item.PageName == "default" ? "في حالة لا يوجد بانرات" : 
+                                     (item.PageName == "home" ? "الصفحة الرئيسية" : (item.PageName == "section" ? "الاقسام" : 
+                                     (item.PageName == "farms" ? "تفاصيل المزرعة" : "لوحة تحكم الادمن"))))
+                                </td>
+                                <td><a href="@Url.Content("~/images/")@item.Image" style="color:black" target="_blank"><i class="zmdi zmdi-eye"></i></a></td>
+                                <td>@item.ExtraText</td>
+                                <td>@item.RedirectLink</td>
+                                <td>@item.SortOrder</td>
+                                <td><span class="badge badge-@(item.Active ? "success" : "danger")">@(item.Active ? "فعال" : "غير فعال")</span></td>
+                                <td><a href="@Url.Content("~/ImageSlider/Edit/")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
+                                <td><a href="javascript:Delete('ImageSlider',@item.Id,'Delete','Index')" style="height: 25px;" class="btn btn-danger btn-round"><i class="zmdi zmdi-delete" style="color: white;margin-top: -10px;"></i></a></td>
+                            </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

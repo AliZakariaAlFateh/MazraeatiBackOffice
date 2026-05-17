@@ -1,0 +1,87 @@
+﻿@model FarmerUserModel
+
+
+<script src="~/assets/js/jquery-3.2.1.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#btnChange").on("click", function () {
+            var password = $("#newPassword").val();
+            if (password == "")
+                return alert("الرجاء ادخال كلمة مرور");
+            $.post('/Farmers/ChangePassword', { id: '@Model.Id', newPassword: password }, function (result) {
+                if (result == 1) {
+                     alert("تم التحديث بنجاح");
+                    window.location.reload();
+                } else {
+                    alert(result);
+                }
+            });
+        });
+    })
+</script>
+<div class="col-md-12">
+    <div class="card patients-list">
+        <div class="header">
+            <h2>@ViewBag.activePage - <strong>@ViewBag.farmerName</strong> </h2>
+            <ul class="header-dropdown">
+            </ul>
+        </div>
+        <div class="body">
+            @using (Html.BeginForm("FarmerUser" , "Farmers", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+            <div class="row clearfix">
+                @Html.HiddenFor(a => a.Id)
+                @Html.HiddenFor(a => a.FarmerId)
+                @Html.HiddenFor(a => a.CreatedDate)
+                @Html.HiddenFor(a => a.UpdateDate)
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.DisplayNameFor(a => a.UserName)
+                        @Html.TextBoxFor(a => a.UserName, new { @class = "form-control", @autocomplete = "off", @maxlength = "20" })
+                        @Html.ValidationMessageFor(a => a.UserName, "", new { @style = "color:red;font-size:10px" })
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.DisplayNameFor(a => a.Password)
+                        @Html.TextBoxFor(a => a.Password, new { @class = "form-control", @autocomplete = "off", @maxlength = "20" })
+                        @Html.ValidationMessageFor(a => a.Password, "", new { @style = "color:red;font-size:10px" })
+                    </div>
+                </div>
+
+                @*@if (Model.Id > 0)
+                {
+                    <div class="col-sm-4">
+                        <div class="form-group" style="margin-bottom:7px">
+                            كلمة المرور الجديدة
+                            <input class="form-control" data-val="true" data-val-required="برجاء تعبئة هذا الحقل" id="newPassword" name="newPassword" type="password">
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class="form-group" style="margin-top: 8px;">
+                            <button type="button" id="btnChange" class="btn btn-primary btn-round">تحديث</button>
+                        </div>
+                    </div>
+                }*@
+
+
+                <div class="col-sm-12" style="height:50px;">
+                    &nbsp;
+                </div>
+
+                <div class="col-sm-12">
+                    <button type="submit" class="btn btn-primary btn-round">حفظ</button>
+                    <button type="button" onclick="window.location.href='@Url.Content("~/Farmers/index/")'" class="btn btn-default btn-round btn-simple">رجوع</button>
+                </div>
+
+                <div class="col-sm-12" style="height:50px;">
+                    &nbsp;
+                </div>
+
+
+            </div>
+            }
+        </div>
+    </div>
+</div>

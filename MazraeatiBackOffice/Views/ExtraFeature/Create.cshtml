@@ -1,0 +1,5 @@
+﻿@model LookupValueModel
+@using (Html.BeginForm("Create", "ExtraFeature", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.Partial("_CreateOrUpdate",Model)
+}

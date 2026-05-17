@@ -1,0 +1,19 @@
+  "AllowedHosts": "*",
+  "Firebase": {
+    "ProjectId": "mahjouz-admin",
+    "ServiceAccountKeyPath": "Firebase/mahjouz-admin-firebase-adminsdk-fbsvc-e2b6d48878.json"
+  },
+
+  "Firebase": {
+    "ProjectId": "mahjouz-admin",
+    "ServiceAccountKeyPath": "Firebase/mahjouz-admin-firebase-adminsdk-fbsvc-e2b6d48878.json"
+  },
+
+
+و أنت بتعمل Push 
+لازم تمسح ملف ال firebase 
+و تمسحه من ال history 
+by :: rmdir /s /q .git
+و تتأكد أنه معمول له ignore
+و كمان تشيل الجزء اللى فوق دا الخاص ب firebase
+داخل ملف ال Json

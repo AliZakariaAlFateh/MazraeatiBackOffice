@@ -1,0 +1,76 @@
+﻿<style>
+    .table-scroll {
+        height: 350px;
+        overflow-y: scroll;
+    }
+
+        /* Sticky header */
+        .table-scroll thead th {
+            position: sticky;
+            top: 0;
+            background: #198754;
+            color: #fff;
+            z-index: 10;
+        }
+
+        /* Chrome / Edge */
+        .table-scroll::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        .table-scroll::-webkit-scrollbar-track {
+            background: #eee;
+        }
+
+        .table-scroll::-webkit-scrollbar-thumb {
+            background: #999;
+            border-radius: 10px;
+            border: 2px solid #eee;
+        }
+
+            .table-scroll::-webkit-scrollbar-thumb:hover {
+                background: #666;
+            }
+
+    /* Firefox */
+    .table-scroll {
+        scrollbar-width: auto;
+        scrollbar-color: #999 #eee;
+    }
+</style>
+@model IEnumerable<LookupModel>
+<div class="col-md-12">
+    <div class="card patients-list">
+        <div class="header">
+            <h2><strong>قائمة</strong> معلومات اضافية</h2>
+            <ul class="header-dropdown">
+            </ul>
+        </div>
+        <div class="body">
+            <div class="tab-content m-t-10">
+                <div class="tab-pane table-responsive active table-scroll" id="All">
+                    <table class="table m-b-0 table-hover">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>@Html.DisplayNameFor(a => a.LookupCode)</th>
+                                <th>تفاصيل</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.Id</td>
+                                    <td>@item.LookupCodeDesc</td>
+                                    <td><a href="@Url.Content("~/ExtraFeature/ExtraFeatureDetailsIndex?lookupId=")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

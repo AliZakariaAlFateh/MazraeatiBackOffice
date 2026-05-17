@@ -1,0 +1,86 @@
+﻿@model IEnumerable<FarmerBlackListModel>
+<div class="col-md-12">
+    <div class="card patients-list">
+        <div class="header">
+            <h2><strong>قائمة</strong> المزارع المحظوريين  - @ViewBag.FarmerName</h2>
+            <ul class="header-dropdown">
+            </ul>
+        </div>
+        <div class="body">
+
+            <!-- Nav tabs -->
+            <form action="@Url.Action("Index")" method="post">
+                <div class="row clearfix">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <input type="text" name="search" value="@ViewBag.search" placeholder="الكلمة المفتاحية" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="col-sm-2">
+                        <div class="form-group" style="margin-top: -10px;">
+                            <button type="submit" class="btn btn-primary btn-round">بحث</button>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-2" style="pointer-events:none">
+                        <div class="form-group" style="margin-top: -10px;">
+                            <label class="btn btn-primary btn-round" style="color:white"> العدد الاجمالي :  @Model.Count()</label>
+                        </div>
+                    </div>
+
+                </div>
+
+            </form>
+
+            <div class="col-sm-2">
+                <div class="form-group" style="margin-top: -10px;">
+                    <a href="@Url.Content("~/FarmerBlackList/Create")" class="btn btn-primary btn-round">اضافة سجل جديد</a>
+                </div>
+            </div>
+
+            <div class="tab-content m-t-10">
+                <div class="tab-pane table-responsive active" id="All">
+                    <table class="table m-b-0 table-hover">
+                        <thead>
+                            <tr>
+                                <th>@Html.DisplayNameFor(a => a.FarmerMobNum)</th>
+                                <th>@Html.DisplayNameFor(a => a.FarmerName)</th>
+                                <th>@Html.DisplayNameFor(a => a.Reason)</th>
+                                <th>@Html.DisplayNameFor(a => a.ImageUrl)</th>
+                                <th>@Html.DisplayNameFor(a => a.IsApprove)</th>
+                                <th>تفاصيل</th>
+                                <th>حذف</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                            <tr>
+                                <td>@item.FarmerMobNum</td>
+                                <td>@item.FarmerName</td>
+                                <td>@(string.IsNullOrEmpty(item.Reason) ? "" : (item.Reason.Length > 40 ? item.Reason.Substring(0,40) : item.Reason))</td>
+                                <td>
+                                    <a href="@Url.Content("~/images/")@item.ImageUrl" target="_blank">
+                                        <img width="120" height="120" src="@Url.Content("~/images/")@item.ImageUrl" />
+                                    </a>
+                                </td>
+                                <td> <span class="badge badge-@(item.IsApprove ? "success" : "danger")">@(item.IsApprove ? "موافق عليها" : "غير موافق عليها")</span></td>
+                                <td><a href="@Url.Content("~/FarmerBlackList/edit/")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
+                                <td>
+                                    <a href="javascript:Delete('FarmerBlackList',@item.Id,'Delete','Index')" class="btn btn-danger btn-sm">حذف</a>
+                                </td>
+                            </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+</div>
+

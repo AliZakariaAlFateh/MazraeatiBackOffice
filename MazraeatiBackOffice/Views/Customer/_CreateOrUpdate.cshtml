@@ -1,0 +1,216 @@
+﻿@model CustomerModel
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.min.css" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+<style>
+    .form-group {
+        font-size: 13px;
+    }
+
+    /* شكل البوكس */
+    .select2-container--default .select2-selection--multiple {
+        min-height: 45px;
+        border-radius: 10px;
+        border: 1px solid #ddd;
+        padding: 5px;
+    }
+
+        /* شكل العنصر المختار */
+        .select2-container--default .select2-selection--multiple .select2-selection__choice {
+            background-color: #2196f3;
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            margin-top: 5px;
+            border-radius: 20px;
+            font-size: 13px;
+        }
+
+    /* زر الحذف */
+    .select2-selection__choice__remove {
+        color: white !important;
+        margin-left: 5px;
+    }
+
+    /* عند الفوكس */
+    .select2-container--default.select2-container--focus .select2-selection--multiple {
+        border-color: #2196f3;
+        box-shadow: 0 0 5px rgba(33,150,243,0.3);
+    }
+
+    /* dropdown */
+    .select2-dropdown {
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    /* hover */
+    .select2-results__option--highlighted {
+        background-color: #2196f3 !important;
+    }
+
+    .select2-container--default[dir="rtl"] .select2-selection--multiple .select2-selection__choice__display {
+        background: #4b4b67;
+    }
+
+    .select2-container--default[dir="rtl"] .select2-selection--multiple .select2-selection__choice__remove {
+        background: #f00
+    }
+
+    .select2-container--default[dir="rtl"] .select2-selection--multiple .select2-selection__choice {
+        background: #f00
+    }
+
+    
+</style>
+<!-- 1. jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+
+<!-- 3. كودك -->
+<script>
+    $(document).ready(function () {
+        $('.select2').select2({
+            placeholder: "اختر المزارع",
+            width: '100%',
+            dir: "rtl",
+            closeOnSelect: false
+        });
+    });
+    // $(document).on("click", ".iti__selected-flag", function () {
+
+    //     setTimeout(function () {
+
+    //         var list = $(".iti__country-list");
+
+    //         // لو already موجود متعملش حاجة
+    //         if (list.find(".iti__search-input").length === 0) {
+
+    //             var searchBox = $('<input type="text" class="iti__search-input" placeholder="ابحث عن الدولة...">');
+
+    //             // 👇 مهم جدا: يمنع القفلة
+    //             searchBox.on("click", function (e) {
+    //                 e.stopPropagation();
+    //             });
+
+    //             searchBox.on("keyup", function () {
+    //                 var value = $(this).val().toLowerCase();
+
+    //                 $(".iti__country").each(function () {
+    //                     var text = $(this).text().toLowerCase();
+    //                     $(this).toggle(text.includes(value));
+    //                 });
+    //             });
+
+    //             list.prepend(searchBox);
+    //         }
+
+    //         // focus بدون مشاكل
+    //         $(".iti__search-input").focus();
+
+    //     }, 100);
+    // });
+</script>
+@Html.HiddenFor(a => a.Id)
+<div class="container-fluid">
+    <div class="row clearfix">
+        <div class="col-lg-12 col-md-12 col-sm-12">
+            <div class="card">
+                <div class="header">
+                    <h2><strong>معالجة </strong> السجل</h2>
+                    <ul class="header-dropdown">
+                    </ul>
+                </div>
+                <div class="body">
+                    <div class="row clearfix">
+                        <div class="col-sm-12 d-none">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.Id)
+                                @Html.TextBoxFor(a => a.Id, new { @class = "form-control", @autocomplete = "off", @readonly = "readonly" })
+                                @Html.ValidationMessageFor(a => a.Id, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.FullName)
+                                @Html.TextBoxFor(a => a.FullName, new { @class = "form-control", @autocomplete = "off" })
+                                @Html.ValidationMessageFor(a => a.FullName, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.MobileNumber)
+                                @Html.TextBoxFor(a => a.MobileNumber, new { @class = "form-control", @autocomplete = "off", @id = "phone1", @dir = "ltr" })
+                                @Html.ValidationMessageFor(a => a.MobileNumber, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <button type="submit" class="btn btn-primary btn-round">حفظ</button>
+                            <button type="button" onclick="window.location.href='@Url.Content("~/Customer/index/")'" class="btn btn-default btn-round btn-simple">رجوع</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@* <script src="~/assets/js/multipeselect.js"></script> *@
+<script>
+    $(document).ready(function () {
+
+        function initPhone(inputId) {
+
+            var input = document.querySelector(inputId);
+
+            var iti = window.intlTelInput(input, {
+
+                initialCountry: "auto",
+
+                geoIpLookup: function (callback) {
+                    $.get("https://ipapi.co/json/", function (data) {
+                        callback(data.country_code.toLowerCase());
+                    }).fail(function () {
+                        callback("eg"); // fallback
+                    });
+                },
+
+                separateDialCode: true,
+                preferredCountries: ["eg", "sa", "ae", "jo"],
+
+                utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"
+            });
+
+            // لو فيه رقم جاى من DB
+            var existingValue = $(inputId).val();
+            if (existingValue) {
+                iti.setNumber(existingValue);
+            }
+
+            return iti;
+        }
+
+        // Initialize الاتنين
+        var iti1 = initPhone("#phone1");
+
+        // ============================
+        // Submit
+        // ============================
+        $("form").on("submit", function () {
+
+            // تأكد إن utils اتحمل
+            if (!iti1.isValidNumber()) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'رقم الموبايل غير صحيح'
+                });
+                return false;
+            }
+
+            $("#phone1").val(iti1.getNumber());
+        });
+
+    });
+</script>

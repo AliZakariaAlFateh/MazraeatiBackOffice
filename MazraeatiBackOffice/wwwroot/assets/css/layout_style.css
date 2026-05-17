@@ -1,0 +1,59 @@
+﻿body {
+}
+/* يخلي الحقل ياخد عرض كامل */
+.iti {
+    width: 100%;
+    position: relative;
+}
+
+/* wrapper */
+.iti--allow-dropdown {
+    width: 100%;
+}
+
+/* القائمة نفسها */
+.iti__country-list {
+    position: absolute !important;
+    top: 100% !important;
+    left: 0 !important;
+    max-height: 250px;
+    overflow-y: auto;
+    border-radius: 10px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    z-index: 9999;
+}
+
+/* كل عنصر */
+.iti__country {
+    padding: 10px;
+    font-size: 14px;
+}
+
+    /* hover شيك */
+    .iti__country:hover {
+        background-color: #f1f1f1;
+    }
+
+/* ========================= */
+/* 📱 MOBILE FIX */
+/* ========================= */
+@media (max-width: 768px) {
+
+    .iti__country-list {
+        position: absolute !important; /*  مهم */
+        top: 100% !important;
+        max-height: 180px; /*  مش كبير */
+        font-size: 14px;
+    }
+
+    /* animation */
+    @keyframes slideUp {
+        from {
+            transform: translateY(100%);
+        }
+
+        to {
+            transform: translateY(0);
+        }
+    }
+}

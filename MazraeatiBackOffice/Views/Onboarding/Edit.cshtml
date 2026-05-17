@@ -1,0 +1,5 @@
+﻿@model OnboardingModel
+@using (Html.BeginForm("Edit", "Onboarding", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.Partial("_CreateOrUpdate", Model)
+}

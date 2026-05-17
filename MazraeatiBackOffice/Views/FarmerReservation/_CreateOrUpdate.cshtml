@@ -1,0 +1,329 @@
+﻿@model FarmerReservationModel
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+<style>
+    .form-group {
+        font-size: 13px;
+    }
+
+    .textboxWidth {
+        width: 120px;
+    }
+
+    .form-label {
+        font-weight: bold;
+        margin-bottom: 5px;
+        display: block;
+    }
+
+    .form-control {
+        border-radius: 10px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        transition: 0.3s;
+    }
+
+        .form-control:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 5px rgba(13, 110, 253, 0.3);
+        }
+
+    .form-card {
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        padding: 25px;
+        background: #fff;
+    }
+
+    .section-title {
+        font-weight: bold;
+        margin-bottom: 15px;
+        color: #0d6efd;
+    }
+
+    .btn-custom {
+        border-radius: 25px;
+        padding: 8px 25px;
+    }
+
+    .input-group-box {
+        margin-bottom: 15px;
+    }
+
+    /*DDL*/
+
+    .select2-container--default .select2-selection--single {
+        height: 45px;
+        border-radius: 10px;
+        padding: 8px;
+        border: 1px solid #ddd;
+    }
+
+    .select2-selection__rendered {
+        line-height: 28px !important;
+        font-weight: 500;
+    }
+
+    .select2-dropdown {
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .select2-results__option {
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .select2-results__option--highlighted {
+        background: #0d6efd !important;
+        color: #fff;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 15px !important;
+    }
+
+
+
+
+
+</style>
+@Html.HiddenFor(a => a.Id)
+@* @Html.HiddenFor(a => a.FarmerId, new { id = "FarmerIdHidden" }) *@
+@Html.HiddenFor(a => a.CreatedDate)
+@Html.HiddenFor(a => a.AutomaticallyNote)
+<div class="container-fluid">
+    <div class="row clearfix">
+        <div class="col-lg-12 col-md-12 col-sm-12">
+            <div class="card">
+                <div class="header">
+                    <h2><strong>معالجة </strong> السجل</h2>
+                    <ul class="header-dropdown">
+                    </ul>
+                </div>
+                <div class="body">
+                    <div class="row clearfix">
+
+                        <div class="col-sm-4">
+                            @Html.DisplayNameFor(a => a.FarmerId)
+                                <select asp-for="FarmerId"asp-items="@(new SelectList(Model.Farms,"Id","Name"))"
+                                        class="form-control select2">
+                                </select>
+                                @Html.ValidationMessageFor(a => a.FarmerId, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-sm-4">
+                            @Html.DisplayNameFor(a => a.ReservationTypeId)
+                            <select class="form-control select2" name="ReservationTypeId" id="ReservationTypeId">
+                                @foreach (var item in Model.LookupValues)
+                                {
+                                    <option value="@item.Id">@item.ValueAr</option>
+                                }
+                            </select>
+                            @Html.ValidationMessageFor(a => a.ReservationTypeId, "", new { @style = "color:red;font-size:medium" })
+                        </div>
+
+                        <div class="col-sm-4">
+                            <div class="form-group" style="text-align:center;">
+                                @Html.DisplayNameFor(a => a.ReservationDate)
+                                <br>
+                                @Html.EditorFor(a => a.ReservationDate, new { @class = "form-control", @id = "datepicker" })
+                                @Html.ValidationMessageFor(a => a.ReservationDate, "", new { @style = "color:red;font-size:medium" })
+                            </div>
+                        </div>
+                        <br>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.CustMobNum)
+                                @Html.TextBoxFor(a => a.CustMobNum, new { @class = "form-control", @autocomplete = "off", @maxlength = 12, @style = "color:#000;font-size:medium", id = "CustMobNumber" ,dir="ltr"})
+                                @Html.ValidationMessageFor(a => a.CustMobNum, "", new { @style = "color:red;font-size:medium" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.CustomerName)
+                                @Html.TextBoxFor(a => a.CustomerName, new { @class = "form-control", @autocomplete = "off", @maxlength = 50, @style = "color:#000;font-size:medium" })
+                                @Html.ValidationMessageFor(a => a.CustomerName, "", new { @style = "color:red;font-size:medium" })
+                            </div>
+                        </div>
+                        <br>
+                        @* for cost reservation *@
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.NumberOfPerson)
+                                @Html.TextBoxFor(a => a.NumberOfPerson, new { @class = "form-control", @autocomplete = "off", type = "number", @style = "color:#000;font-size:medium" })
+                                @Html.ValidationMessageFor(a => a.NumberOfPerson, "", new { @style = "color:red;font-size:medium" })
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.CostReservationAmtOnMahjouz)
+                                @Html.TextBoxFor(a => a.CostReservationAmtOnMahjouz, new { @class = "form-control", @autocomplete = "off", type = "number", @id = "ReservCostOnMahjouz", @style = "color:#000;font-size:medium", step = "0.001", })
+                                @Html.ValidationMessageFor(a => a.CostReservationAmtOnMahjouz, "", new { @style = "color:red;font-size:medium" })
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.ReservationAmt)
+                                @Html.TextBoxFor(a => a.ReservationAmt, new { @class = "form-control", @autocomplete = "off", type = "number", @id = "totalAmt", @style = "color:#000;font-size:medium", step = "0.001", })
+                                @Html.ValidationMessageFor(a => a.ReservationAmt, "", new { @style = "color:red;font-size:medium" })
+                            </div>
+                        </div>
+                        <br>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.NetProfit)
+                                @Html.TextBoxFor(a => a.NetProfit, new { @class = "form-control", @autocomplete = "off", type = "number", @id = "NetProfitAmout", @readonly = "readonly", @style = "color:#000;font-size:medium" })
+                                @Html.ValidationMessageFor(a => a.NetProfit, "", new { @style = "color:red;font-size:medium;" })
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.ReservationDepositAmt)
+                                @Html.TextBoxFor(a => a.ReservationDepositAmt, new { @class = "form-control", @autocomplete = "off", type = "number", @id = "depositAmt", @style = "color:#000;font-size:medium", step = "0.001", })
+                                @Html.ValidationMessageFor(a => a.ReservationDepositAmt, "", new { @style = "color:red;font-size:medium" })
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.ReservationRemainAmt)
+                                @Html.TextBoxFor(a => a.ReservationRemainAmt, new { @class = "form-control", @autocomplete = "off", type = "number", @id = "remainAmt", @readonly = "readonly", @style = "color:#000;font-size:medium" })
+                                @Html.ValidationMessageFor(a => a.ReservationRemainAmt, "", new { @style = "color:red;font-size:medium" })
+                            </div>
+                        </div>
+                        <br>
+                        @* for cost reservation *@
+
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.Note)
+                                @Html.TextAreaFor(a => a.Note, new { @class = "form-control", @autocomplete = "off", @maxlength = 250, @style = "color:#000;font-size:medium" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.IsReciveCommission)
+                                <br />
+                                @Html.CheckBoxFor(a => a.IsReciveCommission, new { @class = "form-control", @style = "margin-top: 10px; width:5% !important" })
+                            </div>
+                        </div>
+
+                        @if (Model.Id > 0)
+                        {
+                            <div class="col-sm-12">
+                                <div class="form-group" style="pointer-events:none">
+                                    @Html.DisplayNameFor(a => a.AutomaticallyNote)
+                                    @Html.TextAreaFor(a => a.AutomaticallyNote, new { @class = "form-control", @autocomplete = "off", @maxlength = 250, @style = "color:#000;font-size:medium" })
+                                </div>
+                            </div>
+                        }
+
+                        <div class="col-sm-12" style="margin-bottom:20px">
+                            &nbsp;
+                        </div>
+
+                        <div class="col-sm-12">
+                            <button type="submit" class="btn btn-primary btn-round">حفظ</button>
+                            <button type="button" onclick="window.location.href='@Url.Content("~/FarmerReservation/index?farmerId=")@Model.FarmerId'" class="btn btn-default btn-round btn-simple">رجوع</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+<script>
+    $(document).ready(function () {
+        var typeId = '@Model.ReservationTypeId';
+        $('select[name="ReservationTypeId"]').val(typeId).trigger('change');
+
+        $('.select2').select2({
+            placeholder: "اختر من القائمة",
+            width: '100%'
+        });
+
+        function calculateRemain() {
+            var total = parseFloat($('#totalAmt').val()) || 0;
+            var deposit = parseFloat($('#depositAmt').val()) || 0;
+
+            var remain = total - deposit;
+            //$('#remainAmt').val(remain >= 0 ? remain : 0);
+            $('#remainAmt').val(remain >= 0 ? remain.toFixed(3) : 0);
+        }
+
+        $('#totalAmt, #depositAmt').on('input', calculateRemain);
+
+        function calculateProfit() {
+            var total = parseFloat($('#totalAmt').val()) || 0;
+            var ReservCostOnMahjouz = parseFloat($('#ReservCostOnMahjouz').val()) || 0;
+
+            var NetProfitAmout = total - ReservCostOnMahjouz;
+            //$('#NetProfitAmout').val(NetProfitAmout >= 0 ? NetProfitAmout : 0);
+            $('#NetProfitAmout').val(NetProfitAmout >= 0 ? NetProfitAmout.toFixed(3) : 0);
+        }
+        //NetProfitAmout
+        $('#ReservCostOnMahjouz,#totalAmt').on('input',calculateProfit)
+
+
+
+
+        function initPhone(inputId) {
+
+            var input = document.querySelector(inputId);
+
+            var iti = window.intlTelInput(input, {
+
+                initialCountry: "auto",
+
+                geoIpLookup: function (callback) {
+                    $.get("https://ipapi.co/json/", function (data) {
+                        callback(data.country_code.toLowerCase());
+                    }).fail(function () {
+                        callback("eg"); // fallback
+                    });
+                },
+
+                separateDialCode: true,
+                preferredCountries: ["eg", "sa", "ae", "jo"],
+
+                utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"
+            });
+
+            // لو فيه رقم جاى من DB
+            var existingValue = $(inputId).val();
+            if (existingValue) {
+                iti.setNumber(existingValue);
+            }
+
+            return iti;
+        }
+
+        // Initialize الاتنين
+        var iti1 = initPhone("#CustMobNumber");
+
+        // ============================
+        // Submit
+        // ============================
+        $("form").on("submit", function () {
+
+            // تأكد إن utils اتحمل
+            if (!iti1.isValidNumber()) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'رقم الموبايل  غير صحيح'
+                });
+                return false;
+            }
+
+            $("#CustMobNumber").val(iti1.getNumber());
+        });
+
+
+    });
+</script>

@@ -1,0 +1,5 @@
+﻿@model UserModel
+@using (Html.BeginForm("Edit", "AppUser", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.Partial("_CreateOrUpdate", Model)
+}

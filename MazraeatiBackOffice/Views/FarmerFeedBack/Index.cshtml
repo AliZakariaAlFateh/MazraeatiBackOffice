@@ -1,0 +1,96 @@
+﻿@model IEnumerable<FarmerFeedbackModel>
+<div class="col-md-12">
+    <div class="card patients-list">
+        <div class="header">
+            <h2><strong>قائمة</strong> ملاحظات  - @ViewBag.FarmerName</h2>
+            <ul class="header-dropdown">
+            </ul>
+        </div>
+        <div class="body">
+
+            <!-- Nav tabs -->
+            <form action="@Url.Action("Index")" method="post">
+                @Html.Hidden("farmerId", (int)ViewBag.FarmerId)
+                <div class="row clearfix">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <input type="text" name="search" value="@ViewBag.search" placeholder="الكلمة المفتاحية" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3" style="margin-top:1px">
+                        اختيار التقييم
+                        <select class="form-control" name="FeedbackId">
+                            <option selected="selected" disabled="disabled">--الرجاء اختيار نوع التقييم--</option>
+                            @foreach (var item in ViewBag.FeedbackList)
+                            {
+                                <option selected="@(item.Id == (int)ViewBag.FeedbackId)" value="@item.Id">@item.ValueAr</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-sm-2">
+                        <div class="form-group" style="margin-top: -10px;">
+                            <button type="submit" class="btn btn-primary btn-round">بحث</button>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-2" style="pointer-events:none">
+                        <div class="form-group" style="margin-top: -10px;">
+                            <label class="btn btn-primary btn-round" style="color:white"> العدد الاجمالي :  @Model.Count()</label>
+                        </div>
+                    </div>
+
+
+
+                </div>
+
+            </form>
+
+            <div class="col-sm-2">
+                <div class="form-group" style="margin-top: -10px;">
+                    <a href="@Url.Content("~/FarmerFeedBack/Create?farmerId=")@ViewBag.FarmerId" class="btn btn-primary btn-round">اضافة سجل جديد</a>
+                </div>
+            </div>
+
+            <div class="col-sm-2">
+                <button type="button" onclick="window.location.href='@Url.Content("~/Farmers/index")'" class="btn btn-default btn-round btn-simple">رجوع</button>
+            </div>
+
+            <div class="tab-content m-t-10">
+                <div class="tab-pane table-responsive active" id="All">
+                    <table class="table m-b-0 table-hover">
+                        <thead>
+                            <tr>
+                                <th>@Html.DisplayNameFor(a => a.FeedbackId)</th>
+                                <th>@Html.DisplayNameFor(a => a.Note)</th>
+                                <th>@Html.DisplayNameFor(a => a.IsSolved)</th>
+                                <th>تفاصيل</th>
+                                <th>حذف</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                            <tr>
+                                <td>@item.FeedbackTypeDesc</td>
+                                <td>@(string.IsNullOrEmpty(item.Note) ? "" : (item.Note.Length > 40 ? item.Note.Substring(0,40) : item.Note))</td>
+                                <td>@(item.IsSolved == true ? "نعم" : "لا" )</td>
+                                <td><a href="@Url.Content("~/FarmerFeedBack/edit/")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
+                                <td>
+                                    <a href="javascript:DeleteFarmerReservationWithParampter('FarmerFeedBack',@item.Id,'Delete','Index',@item.FarmerId)" class="btn btn-danger btn-sm">حذف</a>
+                                </td>
+                            </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+</div>
+
