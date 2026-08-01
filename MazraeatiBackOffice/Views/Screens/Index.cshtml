@@ -1,0 +1,1177 @@
+﻿@model ScreenManagementViewModel
+
+@{
+    ViewData["Title"] = "إدارة الشاشات";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int row = 1;
+}
+
+<style>
+    /* =============================================
+           CSS Styles
+        ============================================= */
+    .rtl .table th, .rtl .table td {
+        text-align: center;
+    }
+    .page-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px 25px;
+        border-radius: 10px;
+        margin-bottom: 25px;
+        height: 95px;
+    }
+
+        .page-header h2 {
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .page-header small {
+            opacity: 0.8;
+            font-size: 14px;
+        }
+
+    .add-screen-card {
+        background: white;
+        border-radius: 10px;
+        padding: 25px;
+        box-shadow: 0 0 30px rgba(0,0,0,0.06);
+        margin-bottom: 25px;
+        border: 1px solid #eef2f7;
+    }
+
+        .add-screen-card .card-title {
+            color: #4e73df;
+            font-weight: 600;
+            font-size: 18px;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #f0f2f5;
+        }
+
+        .add-screen-card .form-label {
+            font-weight: 600;
+            color: #495057;
+            font-size: 13px;
+        }
+
+        .add-screen-card .form-control {
+            border-radius: 8px;
+            border: 1px solid #e2e6ea;
+            padding: 10px 14px;
+            transition: 0.3s;
+            font-size: 14px;
+        }
+
+            .add-screen-card .form-control:focus {
+                border-color: #667eea;
+                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.12);
+            }
+
+            .add-screen-card .form-control.is-invalid {
+                border-color: #dc3545;
+            }
+
+        .add-screen-card .form-check {
+            padding-top: 8px;
+        }
+
+        .add-screen-card .form-check-input {
+            width: 18px;
+            height: 18px;
+            margin-top: 3px;
+            cursor: pointer;
+        }
+
+        .add-screen-card .form-check-label {
+            font-weight: 500;
+            color: #495057;
+            cursor: pointer;
+        }
+
+    .btn-submit {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 10px 40px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 15px;
+        transition: 0.3s;
+    }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.35);
+            color: white;
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+    .screens-table-card {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 0 30px rgba(0,0,0,0.06);
+        border: 1px solid #eef2f7;
+        overflow: hidden;
+    }
+
+        .screens-table-card .card-header {
+            background: #f8f9fc;
+            padding: 15px 25px;
+            border-bottom: 1px solid #eef2f7;
+        }
+
+            .screens-table-card .card-header h5 {
+                margin: 0;
+                color: #4e73df;
+                font-weight: 600;
+            }
+
+    .screens-table {
+        margin: 0;
+    }
+
+        .screens-table thead {
+            background: #f8f9fc;
+        }
+
+            .screens-table thead th {
+                padding: 12px 15px;
+                font-weight: 700;
+                color: #4e73df;
+                font-size: 13px;
+                text-align: center;
+                border-bottom: 2px solid #e3e6f0;
+            }
+
+        .screens-table tbody td {
+            padding: 10px 15px;
+            vertical-align: middle;
+            text-align: center;
+            border-bottom: 1px solid #eef2f7;
+            font-size: 14px;
+        }
+
+        .screens-table tbody tr:hover {
+            background: #f8f9ff;
+            transition: 0.3s;
+        }
+
+        .screens-table .screen-name-cell {
+            text-align: center !important;
+            font-weight: 500;
+        }
+
+            .screens-table .screen-name-cell i {
+                margin-left: 8px;
+                color: #667eea;
+                width: 18px;
+                font-size: 16px;
+            }
+
+        .screens-table .screen-url-cell {
+            text-align: center !important;
+            color: #6c757d;
+            font-size: 13px;
+            font-family: 'Consolas', monospace;
+            direction: ltr;
+        }
+
+        .screens-table .parent-cell {
+            text-align: center !important;
+            color: #6c757d;
+            font-size: 13px;
+        }
+
+    .badge-status {
+        padding: 4px 14px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+        display: inline-block;
+    }
+
+    .badge-active {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .badge-inactive {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .badge-menu {
+        background: #cce5ff;
+        color: #004085;
+    }
+
+    .badge-not-menu {
+        background: #e2e3e5;
+        color: #383d41;
+    }
+
+    .btn-action {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 500;
+        border: none;
+        cursor: pointer;
+        transition: 0.3s;
+        text-decoration: none;
+        margin: 2px;
+    }
+
+        .btn-action i {
+            margin-left: 4px;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+        }
+
+    .btn-edit {
+        background: #ffc107;
+        color: #212529;
+    }
+
+        .btn-edit:hover {
+            background: #e0a800;
+            color: #212529;
+        }
+
+    .btn-toggle {
+        background: #17a2b8;
+        color: white;
+    }
+
+        .btn-toggle:hover {
+            background: #138496;
+            color: white;
+        }
+
+    .btn-delete {
+        background: #dc3545;
+        color: white;
+    }
+
+        .btn-delete:hover {
+            background: #c82333;
+            color: white;
+        }
+
+    .empty-state {
+        padding: 50px 20px;
+        text-align: center;
+    }
+
+        .empty-state i {
+            font-size: 60px;
+            color: #d1d3e2;
+            margin-bottom: 20px;
+        }
+
+        .empty-state h5 {
+            color: #6c757d;
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            color: #a0aec0;
+            font-size: 14px;
+        }
+
+    /* Toast */
+    .toast-container {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 10000;
+        direction: rtl;
+    }
+
+    .toast-message {
+        background: white;
+        padding: 14px 24px;
+        border-radius: 8px;
+        box-shadow: 0 5px 25px rgba(0,0,0,0.13);
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        transform: translateX(-420px);
+        transition: 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        border-right: 4px solid #28a745;
+        min-width: 280px;
+    }
+
+        .toast-message.show {
+            transform: translateX(0);
+        }
+
+        .toast-message.error {
+            border-right-color: #dc3545;
+        }
+
+        .toast-message i {
+            font-size: 20px;
+        }
+
+    /* Loading Spinner */
+    .loading-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.45);
+        z-index: 9999;
+        justify-content: center;
+        align-items: center;
+    }
+
+        .loading-overlay .loading-box {
+            background: white;
+            padding: 35px 50px;
+            border-radius: 14px;
+            text-align: center;
+            min-width: 200px;
+        }
+
+    .spinner {
+        width: 45px;
+        height: 45px;
+        border: 4px solid #e9ecef;
+        border-top: 4px solid #667eea;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        margin: 0 auto 15px;
+    }
+
+    @@keyframes spin {
+        0%
+
+    {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .page-header {
+            padding: 15px;
+        }
+
+            .page-header h2 {
+                font-size: 20px;
+            }
+
+        .add-screen-card {
+            padding: 15px;
+        }
+
+        .screens-table thead th,
+        .screens-table tbody td {
+            padding: 6px 8px;
+            font-size: 12px;
+        }
+
+        .btn-action {
+            font-size: 10px;
+            padding: 3px 8px;
+        }
+
+        .screens-table .screen-url-cell {
+            font-size: 11px;
+        }
+
+        .toast-message {
+            min-width: 200px;
+            padding: 12px 18px;
+            font-size: 13px;
+        }
+    }
+
+    /* Modal Styles */
+    .modal-content {
+        border-radius: 12px;
+        border: none;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    }
+
+    .modal-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 12px 12px 0 0;
+        padding: 18px 25px;
+    }
+
+        .modal-header .close {
+            color: white;
+            opacity: 0.8;
+        }
+
+            .modal-header .close:hover {
+                opacity: 1;
+            }
+
+    .modal-body {
+        padding: 25px;
+    }
+
+    .modal-footer {
+        padding: 15px 25px;
+        border-top: 1px solid #eef2f7;
+    }
+
+    .text-muted-small {
+        font-size: 12px;
+        color: #6c757d;
+    }
+</style>
+
+<!-- ===== Loading Overlay ===== -->
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-box">
+        <div class="spinner"></div>
+        <h5 id="loadingText">جاري المعالجة...</h5>
+    </div>
+</div>
+
+<!-- ===== Toast Container ===== -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ===== Page Content ===== -->
+<div class="container-fluid">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h2>
+                    <i class="fas fa-desktop"></i>
+                    إدارة الشاشات
+                </h2>
+                <small>إضافة وتعديل وحذف شاشات النظام</small>
+            </div>
+            <div>
+                <span class="badge badge-light" style="font-size: 16px; padding: 8px 18px;">
+                    <i class="fas fa-file-alt"></i>
+                    @Model.Screens.Count شاشة
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== Add Screen Form ===== -->
+    <div class="add-screen-card">
+        <div class="card-title">
+            <i class="fas fa-plus-circle text-success"></i>
+            إضافة شاشة جديدة
+        </div>
+
+        <form id="addScreenForm">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group mb-3">
+                        <label class="form-label">اسم الشاشة <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="screenName"
+                               placeholder="مثل: إدارة العملاء" required />
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group mb-3">
+                        <label class="form-label">الـ URL <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="screenUrl"
+                               placeholder="مثل: /Customers/Index" required />
+                        <small class="text-muted" id="urlCheckMessage"></small>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group mb-3">
+                        <label class="form-label">الأيقونة</label>
+                        <input type="text" class="form-control" id="screenIcon"
+                               placeholder="fas fa-users" />
+                        <small class="text-muted-small">من Font Awesome</small>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group mb-3">
+                        <label class="form-label">ترتيب العرض</label>
+                        <input type="number" class="form-control" id="displayOrder"
+                               value="100" min="0" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group mb-3">
+                        <label class="form-label">الشاشة الأم</label>
+                        <select class="form-control" id="parentId">
+                            <option value="">بدون أم</option>
+                            @foreach (var screen in Model.Screens.Where(s => s.ParentId == null))
+                            {
+                                <option value="@screen.Id">@screen.ScreenName</option>
+                            }
+                        </select>
+                        <small class="text-muted-small">اختر شاشة لتكون تابعة لها</small>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group mb-3" style="padding-top: 28px;">
+                        <div class="form-check form-check-inline">
+                            <input type="checkbox" class="form-check-input" id="isMenu" checked />
+                            <label class="form-check-label" for="isMenu">
+                                <i class="fas fa-bars"></i> تظهر في القائمة الجانبية
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 text-left" style="padding-top: 18px;">
+                    <button type="submit" class="btn-submit" id="submitBtn">
+                        <i class="fas fa-save"></i> إضافة الشاشة
+                    </button>
+                    <button type="reset" class="btn btn-secondary" style="border-radius: 8px; padding: 10px 25px;">
+                        <i class="fas fa-undo"></i> إعادة تعيين
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- ===== Screens Table ===== -->
+    <div class="screens-table-card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5><i class="fas fa-list"></i> قائمة الشاشات</h5>
+            <div>
+                <button class="btn btn-sm btn-outline-success" onclick="refreshTable()">
+                    <i class="fas fa-sync-alt"></i> تحديث
+                </button>
+            </div>
+        </div>
+        <div class="tab-content m-t-10">
+            <div class="tab-pane table-responsive active table-scroll table table-bordered" id="All">
+                <table class="table m-b-0 table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>اسم الشاشة</th>
+                            <th>الـ URL</th>
+                            <th>الأيقونة</th>
+                            <th>الأم</th>
+                            <th>الترتيب</th>
+                            <th>قائمة</th>
+                            <th>الحالة</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Screens.Any())
+                        {
+                            foreach (var screen in Model.Screens.OrderBy(s => s.DisplayOrder))
+                            {
+                                <tr id="row-@screen.Id">
+                                    <td>@row</td>
+                                    <td class="screen-name-cell">
+                                        @if (!string.IsNullOrEmpty(screen.Icon))
+                                        {
+                                            <i class="@screen.Icon"></i>
+                                        }
+                                        @screen.ScreenName
+                                    </td>
+                                    <td class="screen-url-cell">@screen.ScreenUrl</td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(screen.Icon))
+                                        {
+                                            <code style="font-size: 11px;">@screen.Icon</code>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">—</span>
+                                        }
+                                    </td>
+                                    <td class="parent-cell">
+                                        @(!string.IsNullOrEmpty(screen.ParentName) ? screen.ParentName : "—")
+                                    </td>
+                                    <td>@screen.DisplayOrder</td>
+                                    <td>
+                                        <span class="badge-status @(screen.IsMenu ? "badge-menu" : "badge-not-menu")">
+                                            @(screen.IsMenu ? "نعم" : "لا")
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge-status @(screen.IsActive ? "badge-active" : "badge-inactive")">
+                                            @(screen.IsActive ? "نشط" : "غير نشط")
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <button class="btn-action btn-edit" onclick="editScreen(@screen.Id)">
+                                            <i class="fas fa-edit"></i> تعديل
+                                        </button>
+                                        <button class="btn-action btn-toggle" onclick="toggleStatus(@screen.Id)">
+                                            <i class="fas fa-exchange-alt"></i>
+                                            @(screen.IsActive ? "تعطيل" : "تفعيل")
+                                        </button>
+                                        <button class="btn-action btn-delete" onclick="deleteScreen(@screen.Id)">
+                                            <i class="fas fa-trash"></i> حذف
+                                        </button>
+                                    </td>
+                                </tr>
+                                row += 1;
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="9">
+                                    <div class="empty-state">
+                                        <i class="fas fa-desktop"></i>
+                                        <h5>لا توجد شاشات مسجلة</h5>
+                                        <p>قم بإضافة أول شاشة باستخدام النموذج أعلاه</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+        
+
+
+    </div>
+</div>
+
+<!-- ===== Edit Modal ===== -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-edit"></i> تعديل الشاشة
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editScreenForm">
+                    <input type="hidden" id="editScreenId" />
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label class="form-label">اسم الشاشة <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="editScreenName" required />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label class="form-label">الـ URL <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="editScreenUrl" required />
+                                <small class="text-muted" id="editUrlCheckMessage"></small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group mb-3">
+                                <label class="form-label">الأيقونة</label>
+                                <input type="text" class="form-control" id="editScreenIcon" placeholder="fas fa-users" />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group mb-3">
+                                <label class="form-label">ترتيب العرض</label>
+                                <input type="number" class="form-control" id="editDisplayOrder" min="0" />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group mb-3">
+                                <label class="form-label">الشاشة الأم</label>
+                                <select class="form-control" id="editParentId">
+                                    <option value="">بدون أم</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="editIsMenu" />
+                                <label class="form-check-label" for="editIsMenu">
+                                    <i class="fas fa-bars"></i> تظهر في القائمة الجانبية
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="editIsActive" />
+                                <label class="form-check-label" for="editIsActive">
+                                    <i class="fas fa-check-circle"></i> نشطة
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">إلغاء</button>
+                <button type="button" class="btn btn-primary" id="saveEditBtn">
+                    <i class="fas fa-save"></i> حفظ التغييرات
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== JavaScript ===== -->
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // =============================================
+        // Global Variables
+        // =============================================
+        var isSubmitting = false;
+
+        // =============================================
+        // Toast System
+        // =============================================
+        function showToast(message, isError = false) {
+            var container = document.getElementById('toastContainer');
+            var toast = document.createElement('div');
+            toast.className = 'toast-message' + (isError ? ' error' : '');
+            toast.innerHTML = `
+                <i class="fas ${isError ? 'fa-times-circle text-danger' : 'fa-check-circle text-success'}"></i>
+                <span>${message}</span>
+            `;
+            container.appendChild(toast);
+
+            setTimeout(() => { toast.classList.add('show'); }, 100);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => { toast.remove(); }, 500);
+            }, 4000);
+        }
+
+        // =============================================
+        // Loading Overlay
+        // =============================================
+        function showLoading(show, text = 'جاري المعالجة...') {
+            document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
+            document.getElementById('loadingText').textContent = text;
+        }
+
+        // =============================================
+        // Add Screen
+        // =============================================
+        $('#addScreenForm').on('submit', function(e) {
+            e.preventDefault();
+
+            if (isSubmitting) return;
+            isSubmitting = true;
+
+            var screenData = {
+                ScreenName: $('#screenName').val().trim(),
+                ScreenUrl: $('#screenUrl').val().trim(),
+                Icon: $('#screenIcon').val().trim(),
+                DisplayOrder: parseInt($('#displayOrder').val()) || 100,
+                ParentId: $('#parentId').val() ? parseInt($('#parentId').val()) : null,
+                IsMenu: $('#isMenu').is(':checked'),
+                IsActive: true
+            };
+
+            if (!screenData.ScreenName || !screenData.ScreenUrl) {
+                showToast('اسم الشاشة والـ URL مطلوبان', true);
+                isSubmitting = false;
+                return;
+            }
+
+            showLoading(true, 'جاري إضافة الشاشة...');
+
+            $.ajax({
+                url: '@Url.Action("AddScreen", "Screens")',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(screenData),
+                success: function(response) {
+                    showLoading(false);
+                    if (response.success) {
+                        showToast(response.message);
+                        // إضافة الصف الجديد في الجدول
+                        addScreenRow(response.screen);
+                        // إعادة تعيين الفورم
+                        $('#addScreenForm')[0].reset();
+                        $('#displayOrder').val(100);
+                        $('#isMenu').prop('checked', true);
+                        $('#urlCheckMessage').html('');
+                        $('#screenUrl').removeClass('is-invalid');
+                        // تحديث قائمة Parent
+                        refreshParentDropdown();
+                    } else {
+                        showToast(response.message, true);
+                    }
+                },
+                error: function() {
+                    showLoading(false);
+                    showToast('حدث خطأ في إضافة الشاشة', true);
+                },
+                complete: function() {
+                    isSubmitting = false;
+                }
+            });
+        });
+
+        // =============================================
+        // Add Screen Row to Table
+        // =============================================
+        function addScreenRow(screen) {
+            var rowCount = $('#screensTableBody tr').length + 1;
+
+            var iconHtml = screen.icon ? `<i class="${screen.icon}"></i>` : '';
+            var iconCodeHtml = screen.icon ? `<code style="font-size: 11px;">${screen.icon}</code>` : '<span class="text-muted">—</span>';
+            var menuBadge = screen.isMenu
+                ? '<span class="badge-status badge-menu">نعم</span>'
+                : '<span class="badge-status badge-not-menu">لا</span>';
+            var statusBadge = screen.isActive
+                ? '<span class="badge-status badge-active">نشط</span>'
+                : '<span class="badge-status badge-inactive">غير نشط</span>';
+
+            var newRow = `
+                <tr id="row-${screen.id}">
+                    <td>${rowCount}</td>
+                    <td class="screen-name-cell">
+                        ${iconHtml}
+                        ${screen.screenName}
+                    </td>
+                    <td class="screen-url-cell">${screen.screenUrl}</td>
+                    <td>${iconCodeHtml}</td>
+                    <td class="parent-cell">—</td>
+                    <td>${screen.displayOrder}</td>
+                    <td>${menuBadge}</td>
+                    <td>${statusBadge}</td>
+                    <td>
+                        <button class="btn-action btn-edit" onclick="editScreen(${screen.id})">
+                            <i class="fas fa-edit"></i> تعديل
+                        </button>
+                        <button class="btn-action btn-toggle" onclick="toggleStatus(${screen.id})">
+                            <i class="fas fa-exchange-alt"></i> تعطيل
+                        </button>
+                        <button class="btn-action btn-delete" onclick="deleteScreen(${screen.id})">
+                            <i class="fas fa-trash"></i> حذف
+                        </button>
+                    </td>
+                </tr>
+            `;
+
+            $('#screensTableBody').append(newRow);
+        }
+
+        // =============================================
+        // Edit Screen - Open Modal
+        // =============================================
+        function editScreen(id) {
+            showLoading(true, 'جاري تحميل البيانات...');
+
+            $.ajax({
+                url: '@Url.Action("GetScreen", "Screens")',
+                type: 'GET',
+                data: { id: id },
+                success: function(response) {
+                    showLoading(false);
+                    if (response.success) {
+                        var screen = response.screen;
+                        $('#editScreenId').val(screen.id);
+                        $('#editScreenName').val(screen.screenName);
+                        $('#editScreenUrl').val(screen.screenUrl);
+                        $('#editScreenIcon').val(screen.icon || '');
+                        $('#editDisplayOrder').val(screen.displayOrder);
+                        $('#editIsMenu').prop('checked', screen.isMenu);
+                        $('#editIsActive').prop('checked', screen.isActive);
+
+                        // تحميل قائمة Parent
+                        loadParentScreens(screen.id, screen.parentId);
+
+                        $('#editModal').modal('show');
+                    } else {
+                        showToast(response.message, true);
+                    }
+                },
+                error: function() {
+                    showLoading(false);
+                    showToast('حدث خطأ في تحميل البيانات', true);
+                }
+            });
+        }
+
+        // =============================================
+        // Load Parent Screens for Edit
+        // =============================================
+        function loadParentScreens(excludeId, selectedId) {
+            $.ajax({
+                url: '@Url.Action("GetParentScreens", "Screens")',
+                type: 'GET',
+                data: { excludeId: excludeId },
+                success: function(data) {
+                    var select = $('#editParentId');
+                    select.find('option:not(:first)').remove();
+
+                    data.forEach(function(screen) {
+                        var selected = screen.id === selectedId ? 'selected' : '';
+                        select.append(`<option value="${screen.id}" ${selected}>${screen.screenName}</option>`);
+                    });
+
+                    if (selectedId) {
+                        select.val(selectedId);
+                    }
+                }
+            });
+        }
+
+        // =============================================
+        // Save Edit
+        // =============================================
+        $('#saveEditBtn').on('click', function() {
+            var id = parseInt($('#editScreenId').val());
+
+            var screenData = {
+                Id: id,
+                ScreenName: $('#editScreenName').val().trim(),
+                ScreenUrl: $('#editScreenUrl').val().trim(),
+                Icon: $('#editScreenIcon').val().trim(),
+                DisplayOrder: parseInt($('#editDisplayOrder').val()) || 100,
+                ParentId: $('#editParentId').val() ? parseInt($('#editParentId').val()) : null,
+                IsMenu: $('#editIsMenu').is(':checked'),
+                IsActive: $('#editIsActive').is(':checked')
+            };
+
+            if (!screenData.ScreenName || !screenData.ScreenUrl) {
+                showToast('اسم الشاشة والـ URL مطلوبان', true);
+                return;
+            }
+
+            showLoading(true, 'جاري حفظ التغييرات...');
+
+            $.ajax({
+                url: '@Url.Action("UpdateScreen", "Screens")',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(screenData),
+                success: function(response) {
+                    showLoading(false);
+                    if (response.success) {
+                        showToast(response.message);
+                        $('#editModal').modal('hide');
+                        location.reload();
+                    } else {
+                        showToast(response.message, true);
+                    }
+                },
+                error: function() {
+                    showLoading(false);
+                    showToast('حدث خطأ في حفظ التغييرات', true);
+                }
+            });
+        });
+
+        // =============================================
+        // Toggle Status
+        // =============================================
+        function toggleStatus(id) {
+            if (!confirm('هل أنت متأكد من تغيير حالة هذه الشاشة؟')) return;
+
+            showLoading(true, 'جاري تغيير الحالة...');
+
+            $.ajax({
+                url: '@Url.Action("ToggleStatus", "Screens")',
+                type: 'POST',
+                data: { id: id },
+                success: function(response) {
+                    showLoading(false);
+                    if (response.success) {
+                        showToast(response.message);
+                        location.reload();
+                    } else {
+                        showToast(response.message, true);
+                    }
+                },
+                error: function() {
+                    showLoading(false);
+                    showToast('حدث خطأ في تغيير الحالة', true);
+                }
+            });
+        }
+
+        // =============================================
+        // Delete Screen
+        // =============================================
+        function deleteScreen(id) {
+            if (!confirm('⚠️ هل أنت متأكد من حذف هذه الشاشة؟\nسيتم حذف جميع الصلاحيات المرتبطة بها.')) return;
+
+            showLoading(true, 'جاري حذف الشاشة...');
+
+            $.ajax({
+                url: '@Url.Action("DeleteScreen", "Screens")',
+                type: 'POST',
+                data: { id: id },
+                success: function(response) {
+                    showLoading(false);
+                    if (response.success) {
+                        showToast(response.message);
+                        $('#row-' + id).fadeOut(500, function() {
+                            $(this).remove();
+                            // إعادة ترقيم الصفوف
+                            renumberRows();
+                        });
+                    } else {
+                        showToast(response.message, true);
+                    }
+                },
+                error: function() {
+                    showLoading(false);
+                    showToast('حدث خطأ في حذف الشاشة', true);
+                }
+            });
+        }
+
+        // =============================================
+        // Renumber Rows
+        // =============================================
+        function renumberRows() {
+            var rows = $('#screensTableBody tr');
+            rows.each(function(index) {
+                $(this).find('td:first').text(index + 1);
+            });
+        }
+
+        // =============================================
+        // Refresh Table
+        // =============================================
+        function refreshTable() {
+            location.reload();
+        }
+
+        // =============================================
+        // Refresh Parent Dropdown
+        // =============================================
+        function refreshParentDropdown() {
+            $.ajax({
+                url: '@Url.Action("GetParentScreens", "Screens")',
+                type: 'GET',
+                success: function(data) {
+                    var select = $('#parentId');
+                    var currentVal = select.val();
+                    select.find('option:not(:first)').remove();
+
+                    data.forEach(function(screen) {
+                        select.append(`<option value="${screen.id}">${screen.screenName}</option>`);
+                    });
+
+                    if (currentVal && currentVal !== '') {
+                        select.val(currentVal);
+                    }
+                }
+            });
+        }
+
+        // =============================================
+        // Check URL Existence (Add Form)
+        // =============================================
+        $('#screenUrl').on('blur', function() {
+            var url = $(this).val().trim();
+            if (!url) return;
+
+            $.ajax({
+                url: '@Url.Action("CheckUrl", "Screens")',
+                type: 'POST',
+                data: { url: url },
+                success: function(response) {
+                    var msg = $('#urlCheckMessage');
+                    if (response.exists) {
+                        msg.html('<span class="text-danger">⚠️ هذا الرابط مستخدم من قبل</span>');
+                        $('#screenUrl').addClass('is-invalid');
+                    } else {
+                        msg.html('<span class="text-success">✓ الرابط متاح</span>');
+                        $('#screenUrl').removeClass('is-invalid');
+                    }
+                }
+            });
+        });
+
+        // =============================================
+        // Check URL Existence (Edit Form)
+        // =============================================
+        $('#editScreenUrl').on('blur', function() {
+            var url = $(this).val().trim();
+            var id = parseInt($('#editScreenId').val());
+            if (!url || !id) return;
+
+            $.ajax({
+                url: '@Url.Action("CheckUrl", "Screens")',
+                type: 'POST',
+                data: { url: url, excludeId: id },
+                success: function(response) {
+                    var msg = $('#editUrlCheckMessage');
+                    if (response.exists) {
+                        msg.html('<span class="text-danger">⚠️ هذا الرابط مستخدم من قبل</span>');
+                        $('#editScreenUrl').addClass('is-invalid');
+                    } else {
+                        msg.html('<span class="text-success">✓ الرابط متاح</span>');
+                        $('#editScreenUrl').removeClass('is-invalid');
+                    }
+                }
+            });
+        });
+
+        // =============================================
+        // Keyboard Shortcuts
+        // =============================================
+        $(document).on('keydown', function(e) {
+            // Ctrl + R : Refresh
+            if (e.ctrlKey && e.key === 'r') {
+                e.preventDefault();
+                refreshTable();
+            }
+            // Escape : Close Modal
+            if (e.key === 'Escape') {
+                $('#editModal').modal('hide');
+            }
+        });
+
+        // =============================================
+        // Initialize
+        // =============================================
+        $(document).ready(function() {
+            console.log('Screen Management System Loaded ✅');
+
+            // Reset form on modal close
+            $('#editModal').on('hidden.bs.modal', function() {
+                $('#editUrlCheckMessage').html('');
+                $('#editScreenUrl').removeClass('is-invalid');
+            });
+        });
+    </script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+}

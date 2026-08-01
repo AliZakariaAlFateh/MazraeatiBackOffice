@@ -1,0 +1,104 @@
+﻿@using MazraeatiBackOffice.Models.LoyaltyPoints
+@model List<LoyaltyRedeemRuleModel>
+
+@{
+    ViewBag.Title = "قواعد صرف النقاط";
+    ViewBag.activePage = "قواعد الصرف";
+}
+
+<div class="container-fluid">
+    <div class="row clearfix">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="header">
+                    <h2><strong>قواعد</strong> صرف النقاط</h2>
+                    <ul class="header-dropdown">
+                        <li>
+                            <a href="@Url.Action("Create")" class="btn btn-primary btn-round">
+                                <i class="fa fa-plus"></i> إضافة قاعدة جديدة
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="body">
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success"><strong>تم!</strong> @TempData["SuccessMessage"]</div>
+                    }
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger"><strong>خطأ!</strong> @TempData["ErrorMessage"]</div>
+                    }
+
+                    <div class="tab-pane table-responsive active table-scroll table table-bordered">
+                        <table class="table table-bordered table-striped table-hover">
+                            <thead class="bg-primary text-white">
+                                <tr>
+                                    <th>#</th>
+                                    <th>عدد النقاط</th>
+                                    <th>قيمة الخصم</th>
+                                    <th>الحالة</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.Any())
+                                {
+                                    int counter = 1;
+                                    foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>@counter</td>
+                                            <td><strong>@item.Points</strong></td>
+                                            <td>@item.DiscountAmount.ToString("N2") دينار</td>
+                                            <td>
+                                                @if (item.IsActive)
+                                                {
+                                                    <span class="badge badge-success">نشط</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge badge-danger">غير نشط</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm">
+                                                    <a href="@Url.Action("Edit", new { id = item.Id })" class="btn btn-warning">
+                                                        <i class="fa fa-edit"></i>
+                                                    </a>
+                                                    <a href="javascript:deleteItem(@item.Id)" class="btn btn-danger">
+                                                        <i class="fa fa-trash"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        counter++;
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function deleteItem(id) {
+        if (confirm('هل أنت متأكد من حذف هذه القاعدة؟')) {
+            $.ajax({
+                url: '/LoyaltyRedeemRules/Delete/' + id,
+                type: 'POST',
+                success: function(data) {
+                    if (data.success) {
+                        alert(data.message);
+                        location.reload();
+                    } else {
+                        alert(data.message);
+                    }
+                }
+            });
+        }
+    }
+</script>

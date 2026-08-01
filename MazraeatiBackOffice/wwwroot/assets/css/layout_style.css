@@ -1,5 +1,383 @@
 ﻿body {
 }
+
+/* ==========================================
+      For Fields and Icons and Notifications 
+    ========================================== */
+
+/* استدعاء الأوزان المختلفة للخط */
+
+/* استدعاء الأوزان المختلفة للخط */
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
+
+.form-group {
+    font-size: 13px;
+}
+
+.textboxWidth {
+    width: 120px;
+}
+
+.form-label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.form-control {
+    border-radius: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    transition: 0.3s;
+}
+
+    .form-control:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 5px rgba(13, 110, 253, 0.3);
+    }
+
+.form-card {
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    padding: 25px;
+    background: #fff;
+}
+
+.section-title {
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #0d6efd;
+}
+
+.btn-custom {
+    border-radius: 25px;
+    padding: 8px 25px;
+}
+
+.input-group-box {
+    margin-bottom: 15px;
+}
+
+/*DDL*/
+
+.select2-container--default .select2-selection--single {
+    height: 45px;
+    border-radius: 10px;
+    padding: 8px;
+    border: 1px solid #ddd;
+}
+
+.select2-selection__rendered {
+    line-height: 28px !important;
+    font-weight: 500;
+}
+
+.select2-dropdown {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.select2-results__option {
+    padding: 10px;
+    font-size: 14px;
+}
+
+.select2-results__option--highlighted {
+    background: #0d6efd !important;
+    color: #fff;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 15px !important;
+}
+
+/* استهداف الـ Checkbox فقط */
+input[type="checkbox"] {
+    width: 20px !important; /* الحجم المناسب عشان يكون سهل الضغط */
+    height: 20px !important; /* الحجم المناسب */
+    display: inline-block !important; /* عشان يجي جنب النص وما ياخدش سطر لوحده */
+    cursor: pointer;
+    margin: 5px; /* مسافة بسيطة حول الزر */
+    -webkit-appearance: checkbox !important; /* لضمان ظهور شكل الـ checkbox الأصلي */
+}
+
+/* لو الـ Checkbox موجود جوه label أو div وعايزه يفضل في مكانه */
+.form-group input[type="checkbox"],
+.checkbox-inline input {
+    width: auto !important;
+    height: auto !important;
+}
+
+
+/* ==========================================
+      start For Enhanced Table in all System
+========================================== */
+
+/* Enhanced Table */
+.table {
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    width: 100% !important;
+}
+
+    /*.table thead th {
+        background: linear-gradient(135deg, #2d8027 0% 0%, #0a2811 100%) !important;
+        color: white !important;
+        font-weight: 600 !important;
+        font-size: 0.85rem !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.5px !important;
+        padding: 1rem !important;
+        border: none !important;
+    }
+
+    .table tbody td {
+        padding: 1rem !important;
+        vertical-align: middle !important;
+        border-bottom: 1px solid #e3e6f0 !important;
+    }*/
+
+    /* ==========================================
+      end For Enhanced Table in all System
+========================================== */
+
+
+
+
+
+
+
+    .table thead th {
+        vertical-align: bottom;
+        border-bottom: 1px solid #dee2e6;
+        background: linear-gradient(135deg, #2d8027 0% 0%, #0a2811 100%) !important;
+        color: white !important;
+        font-weight: 600 !important;
+        font-size: 0.85rem !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.5px !important;
+        padding: 1rem !important;
+        border: none !important;
+    }
+
+    .table tbody td {
+        max-width: 300px;
+        text-wrap: auto;
+        padding: 1rem !important;
+        vertical-align: middle !important;
+        border-bottom: 1px solid #e3e6f0 !important;
+    }
+
+.l-green {
+    background: linear-gradient( 45deg, #ffcd04, #ffcd04) !important;
+}
+
+.text-rainbow-animation {
+    font-family: arial black;
+    font-size: 70px;
+    background-image: linear-gradient(to right, red,orange,yellow,green,blue,indigo,violet, red);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: rainbow-animation 150s linear infinite;
+}
+
+@keyframes rainbow-animation {
+    to {
+        background-position: 4500vh;
+    }
+}
+
+table > thead {
+    background-color: #007500 !important;
+    color: white !important;
+}
+
+.notification-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.noti-btn {
+    font-size: 22px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    position: relative;
+}
+
+.noti-count {
+    position: absolute;
+    top: -5px;
+    right: -8px;
+    background: #ff3b3b;
+    color: #fff;
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 11px;
+    display: none;
+}
+
+.noti-dropdown {
+    position: absolute;
+    right: 0;
+    top: 40px;
+    width: 600px;
+    max-height: 400px;
+    overflow-y: auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+    pointer-events: none;
+    transition: all 0.3s ease;
+    z-index: 999;
+}
+
+    .noti-dropdown.active {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        pointer-events: auto;
+    }
+
+.noti-header {
+    padding: 10px;
+    font-weight: bold;
+    border-bottom: 1px solid #eee;
+    text-align: right;
+}
+
+#notiItems {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+    #notiItems li {
+        padding: 10px;
+        border-bottom: 1px solid #f1f1f1;
+        transition: 0.2s;
+        cursor: pointer;
+    }
+
+        #notiItems li:hover {
+            background: #f9f9f9;
+        }
+
+.noti-empty {
+    text-align: center;
+    color: #888;
+}
+
+.zmdi-notifications {
+    color: ghostwhite;
+    font-size: larger;
+}
+
+
+@media (max-width: 576px) {
+    .noti-dropdown {
+        width: 90vw; /* تأخذ 90% من عرض الشاشة */
+        position: fixed; /* لتتوسط الشاشة أو تظهر بشكل أوضح */
+        left: 5%;
+        right: 5%;
+        top: 60px; /* اترك مسافة للهيدر */
+    }
+}
+
+
+
+/*SideBar*/
+/* زر الهامبرجر */
+.hamburger-btn {
+    display: none;
+    font-size: 24px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin: 10px;
+}
+
+/* Overlay */
+#sidebarOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.4);
+    display: none;
+    z-index: 998;
+}
+
+/* Sidebar الأساسي */
+#leftsidebar {
+    transition: all 0.3s ease;
+}
+
+.sidebar {
+    height: 100vh;
+    overflow-y: auto;
+    position: fixed;
+    right: 0;
+    top: 0;
+}
+/* Mobile */
+@media (max-width: 768px) {
+
+    .hamburger-btn {
+        display: block;
+    }
+
+    #leftsidebar {
+        position: fixed;
+        right: -260px; /* مخفي */
+        top: 0;
+        height: 100%;
+        width: 260px;
+        z-index: 999;
+        background: #fff;
+    }
+
+        #leftsidebar.active {
+            right: 0; /* يظهر */
+        }
+
+    #sidebarOverlay.active {
+        display: block;
+    }
+}
+/*SideBar*/
+
+
+/* ==========================================
+      For Fields and Icons and Notifications 
+    ========================================== */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ==========================================
+      For Fields about input telephone ...
+    ========================================== */
+
 /* يخلي الحقل ياخد عرض كامل */
 .iti {
     width: 100%;
@@ -56,4 +434,193 @@
             transform: translateY(0);
         }
     }
+}
+
+/* ==========================================
+      For Fields about input telephone ...
+    ========================================== */
+
+
+
+
+
+
+/* ==========================================
+      For when No Data in any tables  ...
+    ========================================== */
+
+#All thead th {
+    position: sticky;
+    top: 0;
+    background: #007500;
+    color: #fff;
+    z-index: 10;
+    text-align: center;
+    background: linear-gradient(135deg, #2d8027 0% 0%, #0a2811 100%) !important;
+    color: white !important;
+    font-weight: 600 !important;
+    font-size: 0.85rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    padding: 1rem !important;
+    border: none !important;
+}
+#All tbody td {
+    max-width: 300px;
+    text-wrap: auto;
+    padding: 1rem !important;
+    vertical-align: middle !important;
+    border-bottom: 1px solid #e3e6f0 !important;
+}
+
+    /* ==========================================
+       تنسيق كارت "لا توجد بيانات" الاحترافي 
+    ========================================== */
+    .empty-state-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 60px 20px;
+    background: #f8fafc;
+    border: 2px dashed #cbd5e1;
+    border-radius: 16px;
+    margin: 20px auto;
+    max-width: 500px;
+}
+
+.empty-state-icon {
+    font-size: 55px;
+    color: #94a3b8;
+    margin-bottom: 20px;
+    display: inline-block;
+    animation: floatAnimation 3s ease-in-out infinite;
+}
+
+.empty-state-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #334155;
+    margin-bottom: 8px;
+}
+
+.empty-state-description {
+    font-size: 14px;
+    color: #64748b;
+    max-width: 320px;
+    line-height: 1.6;
+}
+
+
+@keyframes floatAnimation {
+    0% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+
+    100% {
+        transform: translateY(0px);
+    }
+}
+
+
+@media(max-width: 768px) {
+    .empty-state-container {
+        padding: 40px 15px;
+        margin: 10px;
+    }
+
+    .empty-state-icon {
+        font-size: 45px;
+    }
+
+    .empty-state-title {
+        font-size: 16px;
+    }
+}
+
+
+/* ==========================================
+      For when No Data in any tables  ...
+    ========================================== */
+
+
+
+
+
+
+
+/* ==========================================
+       For Scrolling on ant table and Overflow-y
+    ========================================== */
+.table-scroll {
+    /* التعديل السحري هنا: الارتفاع الأقصى بدلاً من الارتفاع الثابت */
+    max-height: 350px;
+    overflow-y: auto; /* يظهر السكرول فقط عند الحاجة */
+}
+
+    /* Sticky header */
+    .table-scroll thead th {
+        position: sticky;
+        top: 0;
+        background: #198754;
+        color: #fff;
+        z-index: 10;
+    }
+
+    /* Chrome / Edge / Safari */
+    .table-scroll::-webkit-scrollbar {
+        width: 8px; /* صغرت العرض شوية ليكون أشيك */
+    }
+
+    .table-scroll::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+
+    .table-scroll::-webkit-scrollbar-thumb {
+        background: #bbb;
+        border-radius: 10px;
+        border: 2px solid #f1f1f1;
+    }
+
+        .table-scroll::-webkit-scrollbar-thumb:hover {
+            background: #888;
+        }
+
+/* Firefox */
+.table-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: #bbb #f1f1f1;
+}
+
+    .table-scroll::-webkit-scrollbar-thumb {
+        border-radius: 5px;
+        border: 1.5px solid #eee;
+    }
+
+/* ==========================================
+       For Scrolling on ant table and Overflow-y
+========================================== */
+
+
+
+
+/* ==========================================
+       For Logout
+========================================== */
+#adminName {
+    cursor: pointer;
+    user-select: none;
+}
+
+#arrowIcon {
+    transition: transform 0.3s ease;
+}
+
+#arrowIcon.rotated {
+    transform: rotate(180deg);
 }

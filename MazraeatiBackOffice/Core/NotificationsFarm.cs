@@ -9,5 +9,6 @@ namespace MazraeatiBackOffice.Core
         public string FarmName { get; set; }
         public string LocationDescription { get; set; }
         public DateTime TimeDate { get; set; }
+
     }
 }

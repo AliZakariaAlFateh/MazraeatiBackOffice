@@ -1,0 +1,36 @@
+﻿@using MazraeatiBackOffice.Core
+@model List<SportType>
+
+@if (Model != null && Model.Any())
+{
+    <li>
+        <a href="javascript:void(0);" class="menu-toggle">
+            <i class="zmdi zmdi-landscape"></i>
+            <span>الأقسام الرياضية</span>
+        </a>
+        <ul class="ml-menu">
+            <li>
+                <a href="@Url.Action("Index", "Sports")">
+                    <i class="zmdi zmdi-view-list"></i>
+                    <span>جميع الأنشطة</span>
+                </a>
+            </li>
+            @foreach (var type in Model)
+            {
+                <li>
+                    <a href="@Url.Action("Index", "Sports", new { sportTypeId = type.Id })">
+                        @if (!string.IsNullOrEmpty(type.IconClass))
+                        {
+                            <i class="@type.IconClass"></i>
+                        }
+                        else
+                        {
+                            <i class="zmdi zmdi-tag"></i>
+                        }
+                        <span>@type.NameAr</span>
+                    </a>
+                </li>
+            }
+        </ul>
+    </li>
+}

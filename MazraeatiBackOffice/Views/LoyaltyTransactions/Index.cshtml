@@ -1,0 +1,328 @@
+﻿@using MazraeatiBackOffice.Configuration
+@using MazraeatiBackOffice.Core.LoyaltyPoints
+@model List<LoyaltyTransaction>
+
+@{
+    ViewBag.Title = "حركات النقاط";
+    ViewBag.activePage = "حركات النقاط";
+}
+
+<style>
+    .stat-card {
+        background: white;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        text-align: center;
+        margin-bottom: 15px;
+        cursor: default;
+        transition: transform 0.2s;
+    }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .stat-card .number {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .stat-card .label {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .stat-card.total {
+            border-left: 4px solid #007bff;
+        }
+
+        .stat-card.earn {
+            border-left: 4px solid #28a745;
+        }
+
+        .stat-card.redeem {
+            border-left: 4px solid #dc3545;
+        }
+
+    .filter-section {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+
+        .filter-section .form-group {
+            margin-bottom: 5px;
+        }
+
+        .filter-section label {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+    .table-scroll {
+        max-height: 500px;
+        overflow-y: auto;
+    }
+
+        .table-scroll thead th {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: #2c3e50;
+            color: white;
+            white-space: nowrap;
+            text-align: center;
+        }
+
+        .table-scroll tbody td {
+            vertical-align: middle;
+            text-align: center;
+        }
+
+    .transaction-amount-positive {
+        color: #28a745;
+        font-weight: bold;
+    }
+
+    .transaction-amount-negative {
+        color: #dc3545;
+        font-weight: bold;
+    }
+</style>
+
+<div class="container-fluid">
+    <div class="row clearfix">
+        <div class="col-lg-12 col-md-12 col-sm-12">
+            <div class="card">
+                <div class="header">
+                    <h2><strong>حركات</strong> النقاط</h2>
+                    <ul class="header-dropdown">
+                        <li>
+                            <a href="@Url.Action("Index", "CustomerLoyaltyAccounts")" class="btn btn-info btn-round">
+                                <i class="fa fa-users"></i> حسابات العملاء
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="body">
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show">
+                            <strong>تم!</strong> @TempData["SuccessMessage"]
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        </div>
+                    }
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show">
+                            <strong>خطأ!</strong> @TempData["ErrorMessage"]
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        </div>
+                    }
+
+                    <!-- ===== الإحصائيات ===== -->
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="stat-card total">
+                                <div class="number">@ViewBag.TotalTransactions</div>
+                                <div class="label">إجمالي الحركات</div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="stat-card earn">
+                                <div class="number">@ViewBag.TotalEarnPoints</div>
+                                <div class="label">إجمالي النقاط المضافة</div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="stat-card redeem">
+                                <div class="number">@ViewBag.TotalRedeemPoints</div>
+                                <div class="label">إجمالي النقاط المستخدمة</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ===== الفلتر ===== -->
+                    <div class="filter-section">
+                        <form method="post">
+                            @Html.AntiForgeryToken()
+                            <div class="row clearfix">
+                                <!-- بحث -->
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label>بحث</label>
+                                        <input type="text" name="search" value="@ViewBag.search"
+                                               placeholder="الوصف أو اسم العميل" class="form-control" />
+                                    </div>
+                                </div>
+
+                                <!-- العميل -->
+                                <div class="col-sm-2">
+                                    <div class="form-group">
+                                        <label>العميل</label>
+                                        <select class="form-control select2" name="customerId">
+                                            <option value="">-- الكل --</option>
+                                            @foreach (var item in ViewBag.Customers)
+                                            {
+                                                <option value="@item.Id" selected="@(item.Id == ViewBag.SelectedCustomerId)">@item.FullName</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- نوع الحركة -->
+                                <div class="col-sm-2">
+                                    <div class="form-group">
+                                        <label>نوع الحركة</label>
+                                        <select class="form-control select2" name="transactionType">
+                                            <option value="">-- الكل --</option>
+                                            @foreach (var item in ViewBag.TransactionTypes)
+                                            {
+                                                <option value="@item.Value" selected="@(item.Value == ViewBag.SelectedTransactionType?.ToString())">@item.Text</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- من تاريخ -->
+                                <div class="col-sm-2">
+                                    <div class="form-group">
+                                        <label>من تاريخ</label>
+                                        <input type="date" name="fromDate" value="@ViewBag.FromDate?.ToString("yyyy-MM-dd")" class="form-control" />
+                                    </div>
+                                </div>
+
+                                <!-- إلى تاريخ -->
+                                <div class="col-sm-2">
+                                    <div class="form-group">
+                                        <label>إلى تاريخ</label>
+                                        <input type="date" name="toDate" value="@ViewBag.ToDate?.ToString("yyyy-MM-dd")" class="form-control" />
+                                    </div>
+                                </div>
+
+                                <!-- أزرار -->
+                                <div class="col-sm-12" style="padding-top:10px;">
+                                    <button type="submit" class="btn btn-primary btn-round">
+                                        <i class="fa fa-search"></i> بحث
+                                    </button>
+                                    <a href="@Url.Action("Index")" class="btn btn-default btn-round">
+                                        <i class="fa fa-refresh"></i> تفريغ
+                                    </a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- ===== الجدول ===== -->
+                    <div class="table-scroll">
+                        <table class="table table-bordered table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>العميل</th>
+                                    <th>التاريخ</th>
+                                    <th>الوصف</th>
+                                    <th>النوع</th>
+                                    <th>النقاط</th>
+                                    <th>تاريخ الانتهاء</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.Any())
+                                {
+                                    int counter = 1;
+                                    foreach (var item in Model)
+                                    {
+                                        string transactionTypeClass = "";
+                                        string transactionTypeText = "";
+                                        switch (item.TransactionType)
+                                        {
+                                            case TransactionTypeEnum.Earn:
+                                                transactionTypeClass = "badge-success";
+                                                transactionTypeText = "إضافة";
+                                                break;
+                                            case TransactionTypeEnum.Redeem:
+                                                transactionTypeClass = "badge-danger";
+                                                transactionTypeText = "خصم";
+                                                break;
+                                            case TransactionTypeEnum.Expire:
+                                                transactionTypeClass = "badge-warning";
+                                                transactionTypeText = "انتهاء";
+                                                break;
+                                            case TransactionTypeEnum.Adjust:
+                                                transactionTypeClass = "badge-info";
+                                                transactionTypeText = "تعديل";
+                                                break;
+                                        }
+
+                                        string pointsClass = item.Points > 0 ? "transaction-amount-positive" : "transaction-amount-negative";
+                                        string pointsSign = item.Points > 0 ? "+" : "";
+
+                                        <tr>
+                                            <td>@counter</td>
+                                            <td>
+                                                <strong>@item.Customer?.FullName</strong>
+                                                <br /><small class="text-muted">@item.Customer?.MobileNumber</small>
+                                            </td>
+                                            <td>@item.TransactionDate.ToString("yyyy-MM-dd HH:mm")</td>
+                                            <td>
+                                                <strong>@item.Description</strong>
+                                                @if (!string.IsNullOrEmpty(item.ReferenceType) && item.ReferenceId.HasValue)
+                                                {
+                                                    <br />
+                                        
+                                                    <small class="text-muted">مرجع: @item.ReferenceType - @item.ReferenceId</small>
+                                                }
+                                            </td>
+                                            <td>
+                                                <span class="badge @transactionTypeClass">@transactionTypeText</span>
+                                            </td>
+                                            <td class="@pointsClass">
+                                                @pointsSign@item.Points
+                                            </td>
+                                            <td>
+                                                @(item.ExpireDate?.ToString("yyyy-MM-dd") ?? "غير محدد")
+                                            </td>
+                                        </tr>
+                                        counter++;
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="7" class="text-center">
+                                            <div class="alert alert-info">
+                                                <i class="fa fa-info-circle"></i> لا توجد حركات نقاط
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- ===== إجمالي النتائج ===== -->
+                    @if (Model != null && Model.Any())
+                    {
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <span class="text-muted">إجمالي النتائج: @Model.Count()</span>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" />
+}
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/i18n/ar.js"></script>
+}

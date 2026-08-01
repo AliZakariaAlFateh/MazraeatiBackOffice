@@ -1,0 +1,11 @@
+﻿@model SportFeatureModel
+
+@{
+    ViewBag.Title = "إضافة مرفق خاص";
+    ViewBag.activePage = "المرفقات الخاصة";
+}
+
+@using (Html.BeginForm("Create", "SportFeatures", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.Partial("_CreateOrUpdate", Model)
+}

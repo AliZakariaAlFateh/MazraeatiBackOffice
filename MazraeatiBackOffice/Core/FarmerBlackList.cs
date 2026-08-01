@@ -18,5 +18,7 @@ namespace MazraeatiBackOffice.Core
         public bool IsApprove { get; set; }
         public int? FarmerId { get; set; }
         public bool IsBlocked { get; set; }
+        //public long FarmNumber { get; set; }
+         
     }
 }

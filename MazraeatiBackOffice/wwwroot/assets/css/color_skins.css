@@ -171,7 +171,8 @@
     }
 
 .theme-cyan section.content:before {
-    background-color: #323332;
+    /*background-color: #323332;*/
+    background: linear-gradient(135deg, #2d8027 0% 0%, #0a2811 100%) !important;
     color: white;
 }
 

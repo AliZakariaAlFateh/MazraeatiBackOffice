@@ -1,0 +1,164 @@
+﻿@using MazraeatiBackOffice.Configuration
+@using MazraeatiBackOffice.Core.LoyaltyPoints
+@model List<LoyaltyTransaction>
+
+@{
+    ViewBag.Title = $"حركات نقاط - {ViewBag.CustomerName}";
+    ViewBag.activePage = "حركات النقاط";
+}
+
+<div class="container-fluid">
+    <div class="row clearfix">
+        <div class="col-lg-12 col-md-12 col-sm-12">
+            <div class="card">
+                <div class="header">
+                    <h2>
+                        <strong>حركات نقاط</strong>
+                        <small>@ViewBag.CustomerName</small>
+                    </h2>
+                    <ul class="header-dropdown">
+                        <li>
+                            <a href="@Url.Action("Index")" class="btn btn-default btn-round">
+                                <i class="fa fa-arrow-right"></i> العودة للقائمة
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("CustomerAccount", new { customerId = ViewBag.CustomerId })" class="btn btn-info btn-round">
+                                <i class="fa fa-user"></i> حساب العميل
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="body">
+                    <!-- ===== ملخص حساب العميل ===== -->
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <div class="alert alert-info text-center">
+                                <h4>@ViewBag.TotalPoints</h4>
+                                <p>إجمالي النقاط</p>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="alert alert-success text-center">
+                                <h4>@ViewBag.AvailablePoints</h4>
+                                <p>النقاط المتاحة</p>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="alert alert-warning text-center">
+                                <h4>@ViewBag.RedeemedPoints</h4>
+                                <p>النقاط المستخدمة</p>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="alert alert-danger text-center">
+                                <h4>@ViewBag.ExpiredPoints</h4>
+                                <p>النقاط المنتهية</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="alert alert-info">
+                                <i class="fa fa-star"></i>
+                                <strong>المستوى الحالي:</strong>
+                                <span class="badge badge-warning" style="font-size:14px;">
+                                    <i class="fa @ViewBag.CurrentTierIcon"></i>
+                                    @ViewBag.CurrentTier
+                                </span>
+                                @if (ViewBag.DiscountPercent > 0)
+                                {
+                                    <span class="badge badge-success">خصم @ViewBag.DiscountPercent%</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ===== الجدول ===== -->
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-hover">
+                            <thead class="bg-primary text-white">
+                                <tr>
+                                    <th>#</th>
+                                    <th>التاريخ</th>
+                                    <th>الوصف</th>
+                                    <th>النوع</th>
+                                    <th>النقاط</th>
+                                    <th>تاريخ الانتهاء</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.Any())
+                                {
+                                    int counter = 1;
+                                    foreach (var item in Model.OrderByDescending(t => t.TransactionDate))
+                                    {
+                                        string transactionTypeClass = "";
+                                        string transactionTypeText = "";
+                                        switch (item.TransactionType)
+                                        {
+                                            case TransactionTypeEnum.Earn:
+                                                transactionTypeClass = "badge-success";
+                                                transactionTypeText = "إضافة";
+                                                break;
+                                            case TransactionTypeEnum.Redeem:
+                                                transactionTypeClass = "badge-danger";
+                                                transactionTypeText = "خصم";
+                                                break;
+                                            case TransactionTypeEnum.Expire:
+                                                transactionTypeClass = "badge-warning";
+                                                transactionTypeText = "انتهاء";
+                                                break;
+                                            case TransactionTypeEnum.Adjust:
+                                                transactionTypeClass = "badge-info";
+                                                transactionTypeText = "تعديل";
+                                                break;
+                                        }
+
+                                        string pointsClass = item.Points > 0 ? "text-success" : "text-danger";
+                                        string pointsSign = item.Points > 0 ? "+" : "";
+
+                                        <tr>
+                                            <td>@counter</td>
+                                            <td>@item.TransactionDate.ToString("yyyy-MM-dd HH:mm")</td>
+                                            <td>
+                                                <strong>@item.Description</strong>
+                                                @if (!string.IsNullOrEmpty(item.ReferenceType) && item.ReferenceId.HasValue)
+                                                {
+                                                    <br />
+                                        
+                                                    <small class="text-muted">مرجع: @item.ReferenceType - @item.ReferenceId</small>
+                                                }
+                                            </td>
+                                            <td>
+                                                <span class="badge @transactionTypeClass">@transactionTypeText</span>
+                                            </td>
+                                            <td class="@pointsClass" style="font-weight:bold;">
+                                                @pointsSign@item.Points
+                                            </td>
+                                            <td>
+                                                @(item.ExpireDate?.ToString("yyyy-MM-dd") ?? "غير محدد")
+                                            </td>
+                                        </tr>
+                                        counter++;
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="6" class="text-center">
+                                            <div class="alert alert-info">
+                                                <i class="fa fa-info-circle"></i> لا توجد حركات نقاط لهذا العميل
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

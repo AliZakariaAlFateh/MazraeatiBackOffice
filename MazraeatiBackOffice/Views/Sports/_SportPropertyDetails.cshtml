@@ -1,0 +1,818 @@
+﻿@using MazraeatiBackOffice.Configuration
+@* @using MazraeatiBackOffice.Configuration
+<!--_SportProperty_1-->
+
+@model SportModel
+@{
+    int sportTypeId = Convert.ToInt32(ViewData["SelectedSportTypeId"] ?? 0);
+}
+
+<div class="row clearfix">
+    <div class="col-sm-12">
+        <h5 style="text-decoration:underline">تفاصيل العقار</h5>
+    </div>
+
+    @switch (sportTypeId)
+    {
+        case (int)UserTypeEnum.Football: // كرة قدم
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.FootballFloorType)
+                    @Html.TextBoxFor(a => a.FootballFloorType, new { @class = "form-control", @placeholder = "نوع الأرضية" })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.FootballCourtDimensions)
+                    @Html.TextBoxFor(a => a.FootballCourtDimensions, new { @class = "form-control", @placeholder = "مثال: 100x70" })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.FootballPlayerCount)
+                    @Html.TextBoxFor(a => a.FootballPlayerCount, new { @class = "form-control", type = "number" })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.FootballPitchType)
+                    <select class="form-control" name="FootballPitchType">
+                        <option value="">-- اختر --</option>
+                        <option value="5x5" selected="@(Model.FootballPitchType == "5x5")">5×5</option>
+                        <option value="7x7" selected="@(Model.FootballPitchType == "7x7")">7×7</option>
+                        <option value="11x11" selected="@(Model.FootballPitchType == "11x11")">11×11</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.FootballIsIndoor)
+                    <br />
+                    <input type="checkbox" name="FootballIsIndoor" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.FootballIsIndoor == true ? "checked" : "") />
+                    <input type="hidden" name="FootballIsIndoor" value="false" />
+                </div>
+            </div>
+                 <div class="col-sm-4">
+                     <div class="form-group">
+                         @Html.DisplayNameFor(a => a.FootballIsOutdoor)
+                         <br />
+                         <input type="checkbox" name="FootballIsOutdoor" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.FootballIsOutdoor == true ? "checked" : "") />
+                         <input type="hidden" name="FootballIsOutdoor" value="false" />
+                     </div>
+                 </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.FootballLightingSystem)
+                    @Html.TextBoxFor(a => a.FootballLightingSystem, new { @class = "form-control", @placeholder = "نظام الإضاءة" })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.FootballSuitableForOfficial)
+                    <br />
+                    <input type="checkbox" name="FootballSuitableForOfficial" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.FootballSuitableForOfficial == true ? "checked" : "") />
+                    <input type="hidden" name="FootballSuitableForOfficial" value="false" />
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.FootballSuitableForTraining)
+                    <br />
+                    <input type="checkbox" name="FootballSuitableForTraining" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.FootballSuitableForTraining == true ? "checked" : "") />
+                    <input type="hidden" name="FootballSuitableForTraining" value="false" />
+                </div>
+            </div>
+            break;
+
+        case (int)UserTypeEnum.Padel: // بادل
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.PadelPitchType)
+                    @Html.TextBoxFor(a => a.PadelPitchType, new { @class = "form-control", @placeholder = "نوع الملعب" })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.PadelNumberOfCourts)
+                    @Html.TextBoxFor(a => a.PadelNumberOfCourts, new { @class = "form-control", type = "number" })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.PadelHasCeiling)
+                    <br />
+                    <input type="checkbox" name="PadelHasCeiling" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.PadelHasCeiling == true ? "checked" : "") />
+                    <input type="hidden" name="PadelHasCeiling" value="false" />
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.PadelNightLighting)
+                    <br />
+                    <input type="checkbox" name="PadelNightLighting" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.PadelNightLighting == true ? "checked" : "") />
+                    <input type="hidden" name="PadelNightLighting" value="false" />
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.PadelGlassType)
+                    @Html.TextBoxFor(a => a.PadelGlassType, new { @class = "form-control", @placeholder = "نوع الزجاج" })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.PadelCourtLevel)
+                    <select class="form-control" name="PadelCourtLevel">
+                        <option value="">-- اختر --</option>
+                        <option value="احترافي" selected="@(Model.PadelCourtLevel == "احترافي")">احترافي</option>
+                        <option value="ترفيهي" selected="@(Model.PadelCourtLevel == "ترفيهي")">ترفيهي</option>
+                    </select>
+                </div>
+            </div>
+            break;
+
+        case (int)UserTypeEnum.Tennis: // تنس
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.TennisPitchType)
+                    @Html.TextBoxFor(a => a.TennisPitchType, new { @class = "form-control", @placeholder = "نوع الملعب" })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.TennisNumberOfCourts)
+                    @Html.TextBoxFor(a => a.TennisNumberOfCourts, new { @class = "form-control", type = "number" })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.TennisNightLighting)
+                    <br />
+                    <input type="checkbox" name="TennisNightLighting" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.TennisNightLighting == true ? "checked" : "") />
+                    <input type="hidden" name="TennisNightLighting" value="false" />
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.TennisIsSingles)
+                    <br />
+                    <input type="checkbox" name="TennisIsSingles" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.TennisIsSingles == true ? "checked" : "") />
+                    <input type="hidden" name="TennisIsSingles" value="false" />
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.TennisIsDoubles)
+                    <br />
+                    <input type="checkbox" name="TennisIsDoubles" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.TennisIsDoubles == true ? "checked" : "") />
+                    <input type="hidden" name="TennisIsDoubles" value="false" />
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.TennisSuitableForTournaments)
+                    <br />
+                    <input type="checkbox" name="TennisSuitableForTournaments" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.TennisSuitableForTournaments == true ? "checked" : "") />
+                    <input type="hidden" name="TennisSuitableForTournaments" value="false" />
+                </div>
+            </div>
+            break;
+
+        case (int)UserTypeEnum.Basketball: // كرة سلة
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.BasketBallNumberOfBaskets)
+                    @Html.TextBoxFor(a => a.BasketBallNumberOfBaskets, new { @class = "form-control", type = "number" })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.BasketBallCourtSize)
+                    @Html.TextBoxFor(a => a.BasketBallCourtSize, new { @class = "form-control", @placeholder = "المقاس" })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.BasketballIndoor)
+                    <br />
+                    <input type="checkbox" name="BasketballIndoor" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.BasketballIndoor == true ? "checked" : "") />
+                    <input type="hidden" name="BasketballIndoor" value="false" />
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.BasketballOutdoor)
+                    <br />
+                    <input type="checkbox" name="BasketballOutdoor" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.BasketballOutdoor == true ? "checked" : "") />
+                    <input type="hidden" name="BasketballOutdoor" value="false" />
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.BasketballLighting)
+                    <br />
+                    <input type="checkbox" name="BasketballLighting" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.BasketballLighting == true ? "checked" : "") />
+                    <input type="hidden" name="BasketballLighting" value="false" />
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.BasketballStands)
+                    <br />
+                    <input type="checkbox" name="BasketballStands" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.BasketballStands == true ? "checked" : "") />
+                    <input type="hidden" name="BasketballStands" value="false" />
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.BasketballScoreboard)
+                    <br />
+                    <input type="checkbox" name="BasketballScoreboard" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.BasketballScoreboard == true ? "checked" : "") />
+                    <input type="hidden" name="BasketballScoreboard" value="false" />
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.BasketballBalls)
+                    <br />
+                    <input type="checkbox" name="BasketballBalls" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.BasketballBalls == true ? "checked" : "") />
+                    <input type="hidden" name="BasketballBalls" value="false" />
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.BasketballTraining)
+                    <br />
+                    <input type="checkbox" name="BasketballTraining" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.BasketballTraining == true ? "checked" : "") />
+                    <input type="hidden" name="BasketballTraining" value="false" />
+                </div>
+            </div>
+            break;
+
+        case (int)UserTypeEnum.Volleyball: // كرة طائرة
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.VollyBallIsIndoor)
+                    <br />
+                    <input type="checkbox" name="VollyBallIsIndoor" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.VollyBallIsIndoor == true ? "checked" : "") />
+                    <input type="hidden" name="VollyBallIsIndoor" value="false" />
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.VollyBallIsOutdoor)
+                    <br />
+                    <input type="checkbox" name="VollyBallIsOutdoor" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.VollyBallIsOutdoor == true ? "checked" : "") />
+                    <input type="hidden" name="VollyBallIsOutdoor" value="false" />
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.VollyBallNightLighting)
+                    <br />
+                    <input type="checkbox" name="VollyBallNightLighting" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.VollyBallNightLighting == true ? "checked" : "") />
+                    <input type="hidden" name="VollyBallNightLighting" value="false" />
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.VollyBallPitchType)
+                    @Html.TextBoxFor(a => a.VollyBallPitchType, new { @class = "form-control", @placeholder = "نوع الملعب" })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.VollyBallNumberOfCourts)
+                    @Html.TextBoxFor(a => a.VollyBallNumberOfCourts, new { @class = "form-control", type = "number" })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.VollyBallNetHeightAdjustable)
+                    <br />
+                    <input type="checkbox" name="VollyBallNetHeightAdjustable" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.VollyBallNetHeightAdjustable == true ? "checked" : "") />
+                    <input type="hidden" name="VollyBallNetHeightAdjustable" value="false" />
+                </div>
+            </div>
+            break;
+
+        case (int)UserTypeEnum.Swimming: // سباحة
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.SwimmingPoolType)
+                    @Html.TextBoxFor(a => a.SwimmingPoolType, new { @class = "form-control", @placeholder = "نوع المسبح" })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.SwimmingPoolLength)
+                    @Html.TextBoxFor(a => a.SwimmingPoolLength, new { @class = "form-control", type = "number", step = "0.5" })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.SwimmingPoolWidth)
+                    @Html.TextBoxFor(a => a.SwimmingPoolWidth, new { @class = "form-control", type = "number", step = "0.5" })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.SwimmingPoolDepth)
+                    @Html.TextBoxFor(a => a.SwimmingPoolDepth, new { @class = "form-control", type = "number", step = "0.1" })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.SwimmingPoolNumberOfPools)
+                    @Html.TextBoxFor(a => a.SwimmingPoolNumberOfPools, new { @class = "form-control", type = "number" })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.SwimmingPoolWaterTemperature)
+                    @Html.TextBoxFor(a => a.SwimmingPoolWaterTemperature, new { @class = "form-control", type = "number", step = "0.5" })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.SwimmingPoolSterilizationSystem)
+                    @Html.TextBoxFor(a => a.SwimmingPoolSterilizationSystem, new { @class = "form-control", @placeholder = "نظام التعقيم" })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.SwimmingPoolHasChildrenPool)
+                    <br />
+                    <input type="checkbox" name="SwimmingPoolHasChildrenPool" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.SwimmingPoolHasChildrenPool == true ? "checked" : "") />
+                    <input type="hidden" name="SwimmingPoolHasChildrenPool" value="false" />
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.SwimmingPoolHasAdultsPool)
+                    <br />
+                    <input type="checkbox" name="SwimmingPoolHasAdultsPool" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.SwimmingPoolHasAdultsPool == true ? "checked" : "") />
+                    <input type="hidden" name="SwimmingPoolHasAdultsPool" value="false" />
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.SwimmingPoolHasWaterSlides)
+                    <br />
+                    <input type="checkbox" name="SwimmingPoolHasWaterSlides" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.SwimmingPoolHasWaterSlides == true ? "checked" : "") />
+                    <input type="hidden" name="SwimmingPoolHasWaterSlides" value="false" />
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.SwimmingPoolHasJacuzzi)
+                    <br />
+                    <input type="checkbox" name="SwimmingPoolHasJacuzzi" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.SwimmingPoolHasJacuzzi == true ? "checked" : "") />
+                    <input type="hidden" name="SwimmingPoolHasJacuzzi" value="false" />
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.SwimmingPoolSuitableForTraining)
+                    <br />
+                    <input type="checkbox" name="SwimmingPoolSuitableForTraining" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.SwimmingPoolSuitableForTraining == true ? "checked" : "") />
+                    <input type="hidden" name="SwimmingPoolSuitableForTraining" value="false" />
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.SwimmingPoolSuitableForEvents)
+                    <br />
+                    <input type="checkbox" name="SwimmingPoolSuitableForEvents" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.SwimmingPoolSuitableForEvents == true ? "checked" : "") />
+                    <input type="hidden" name="SwimmingPoolSuitableForEvents" value="false" />
+                </div>
+            </div>
+            break;
+
+        case (int)UserTypeEnum.Equestrian: // فروسية
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.EquestrianismActivityType)
+                    @Html.TextBoxFor(a => a.EquestrianismActivityType, new { @class = "form-control", @placeholder = "نوع النشاط" })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.EquestrianismNumberOfHorses)
+                    @Html.TextBoxFor(a => a.EquestrianismNumberOfHorses, new { @class = "form-control", type = "number" })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.EquestrianismTrainingLevel)
+                    @Html.TextBoxFor(a => a.EquestrianismTrainingLevel, new { @class = "form-control", @placeholder = "مستوى التدريب" })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.EquestrianismTourDuration)
+                    @Html.TextBoxFor(a => a.EquestrianismTourDuration, new { @class = "form-control", type = "number" })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.EquestrianismAllowedAge)
+                    @Html.TextBoxFor(a => a.EquestrianismAllowedAge, new { @class = "form-control", type = "number" })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.EquestrianismAllowedWeight)
+                    @Html.TextBoxFor(a => a.EquestrianismAllowedWeight, new { @class = "form-control", type = "number" })
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.EquestrianismHasAccompanyingTrainer)
+                    <br />
+                    <input type="checkbox" name="EquestrianismHasAccompanyingTrainer" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.EquestrianismHasAccompanyingTrainer == true ? "checked" : "") />
+                    <input type="hidden" name="EquestrianismHasAccompanyingTrainer" value="false" />
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.EquestrianismTrackIndoor)
+                    <br />
+                    <input type="checkbox" name="EquestrianismTrackIndoor" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.EquestrianismTrackIndoor == true ? "checked" : "") />
+                    <input type="hidden" name="EquestrianismTrackIndoor" value="false" />
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.EquestrianismTrackOutdoor)
+                    <br />
+                    <input type="checkbox" name="EquestrianismTrackOutdoor" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.EquestrianismTrackOutdoor == true ? "checked" : "") />
+                    <input type="hidden" name="EquestrianismTrackOutdoor" value="false" />
+                </div>
+            </div>
+            break;
+
+        case (int)UserTypeEnum.Shooting: // رماية
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.ShootingIndoor)
+                    <br />
+                    <input type="checkbox" name="ShootingIndoor" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.ShootingIndoor == true ? "checked" : "") />
+                    <input type="hidden" name="ShootingIndoor" value="false" />
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.ShootingOutdoor)
+                    <br />
+                    <input type="checkbox" name="ShootingOutdoor" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.ShootingOutdoor == true ? "checked" : "") />
+                    <input type="hidden" name="ShootingOutdoor" value="false" />
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.ShootingAirShooting)
+                    <br />
+                    <input type="checkbox" name="ShootingAirShooting" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.ShootingAirShooting == true ? "checked" : "") />
+                    <input type="hidden" name="ShootingAirShooting" value="false" />
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.ShootingFireShooting)
+                    <br />
+                    <input type="checkbox" name="ShootingFireShooting" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.ShootingFireShooting == true ? "checked" : "") />
+                    <input type="hidden" name="ShootingFireShooting" value="false" />
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.ShootingBowAndArrow)
+                    <br />
+                    <input type="checkbox" name="ShootingBowAndArrow" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.ShootingBowAndArrow == true ? "checked" : "") />
+                    <input type="hidden" name="ShootingBowAndArrow" value="false" />
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.ShootingShootingTrainer)
+                    <br />
+                    <input type="checkbox" name="ShootingShootingTrainer" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.ShootingShootingTrainer == true ? "checked" : "") />
+                    <input type="hidden" name="ShootingShootingTrainer" value="false" />
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.ShootingEquipmentAvailable)
+                    <br />
+                    <input type="checkbox" name="ShootingEquipmentAvailable" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.ShootingEquipmentAvailable == true ? "checked" : "") />
+                    <input type="hidden" name="ShootingEquipmentAvailable" value="false" />
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.ShootingEquipmentRental)
+                    <br />
+                    <input type="checkbox" name="ShootingEquipmentRental" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.ShootingEquipmentRental == true ? "checked" : "") />
+                    <input type="hidden" name="ShootingEquipmentRental" value="false" />
+                </div>
+            </div>
+            break;
+
+        case (int)UserTypeEnum.Pickleball: // Pickleball
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.PickleballIndoor)
+                    <br />
+                    <input type="checkbox" name="PickleballIndoor" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.PickleballIndoor == true ? "checked" : "") />
+                    <input type="hidden" name="PickleballIndoor" value="false" />
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.PickleballOutdoor)
+                    <br />
+                    <input type="checkbox" name="PickleballOutdoor" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.PickleballOutdoor == true ? "checked" : "") />
+                    <input type="hidden" name="PickleballOutdoor" value="false" />
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.PickleballPaddles)
+                    <br />
+                    <input type="checkbox" name="PickleballPaddles" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.PickleballPaddles == true ? "checked" : "") />
+                    <input type="hidden" name="PickleballPaddles" value="false" />
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.PickleballBalls)
+                    <br />
+                    <input type="checkbox" name="PickleballBalls" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.PickleballBalls == true ? "checked" : "") />
+                    <input type="hidden" name="PickleballBalls" value="false" />
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.PickleballLighting)
+                    <br />
+                    <input type="checkbox" name="PickleballLighting" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.PickleballLighting == true ? "checked" : "") />
+                    <input type="hidden" name="PickleballLighting" value="false" />
+                </div>
+            </div>
+            break;
+
+        case (int)UserTypeEnum.TableTennis: // تنس طاولة
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.TableTennisProfessional)
+                    <br />
+                    <input type="checkbox" name="TableTennisProfessional" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.TableTennisProfessional == true ? "checked" : "") />
+                    <input type="hidden" name="TableTennisProfessional" value="false" />
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.TableTennisPaddles)
+                    <br />
+                    <input type="checkbox" name="TableTennisPaddles" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.TableTennisPaddles == true ? "checked" : "") />
+                    <input type="hidden" name="TableTennisPaddles" value="false" />
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.TableTennisBalls)
+                    <br />
+                    <input type="checkbox" name="TableTennisBalls" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.TableTennisBalls == true ? "checked" : "") />
+                    <input type="hidden" name="TableTennisBalls" value="false" />
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.TableTennisTraining)
+                    <br />
+                    <input type="checkbox" name="TableTennisTraining" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.TableTennisTraining == true ? "checked" : "") />
+                    <input type="hidden" name="TableTennisTraining" value="false" />
+                </div>
+            </div>
+            break;
+
+        case (int)UserTypeEnum.Squash: // اسكواش
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.SquashGlassCourt)
+                    <br />
+                    <input type="checkbox" name="SquashGlassCourt" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.SquashGlassCourt == true ? "checked" : "") />
+                    <input type="hidden" name="SquashGlassCourt" value="false" />
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.SquashNormalCourt)
+                    <br />
+                    <input type="checkbox" name="SquashNormalCourt" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.SquashNormalCourt == true ? "checked" : "") />
+                    <input type="hidden" name="SquashNormalCourt" value="false" />
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.SquashPaddles)
+                    <br />
+                    <input type="checkbox" name="SquashPaddles" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.SquashPaddles == true ? "checked" : "") />
+                    <input type="hidden" name="SquashPaddles" value="false" />
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.SquashBalls)
+                    <br />
+                    <input type="checkbox" name="SquashBalls" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.SquashBalls == true ? "checked" : "") />
+                    <input type="hidden" name="SquashBalls" value="false" />
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.SquashTraining)
+                    <br />
+                    <input type="checkbox" name="SquashTraining" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.SquashTraining == true ? "checked" : "") />
+                    <input type="hidden" name="SquashTraining" value="false" />
+                </div>
+            </div>
+            break;
+
+        case (int)UserTypeEnum.Badminton: // ريشة طائرة
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.BadmintonIndoor)
+                    <br />
+                    <input type="checkbox" name="BadmintonIndoor" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.BadmintonIndoor == true ? "checked" : "") />
+                    <input type="hidden" name="BadmintonIndoor" value="false" />
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.BadmintonProfessionalFloor)
+                    <br />
+                    <input type="checkbox" name="BadmintonProfessionalFloor" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.BadmintonProfessionalFloor == true ? "checked" : "") />
+                    <input type="hidden" name="BadmintonProfessionalFloor" value="false" />
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.BadmintonPaddles)
+                    <br />
+                    <input type="checkbox" name="BadmintonPaddles" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.BadmintonPaddles == true ? "checked" : "") />
+                    <input type="hidden" name="BadmintonPaddles" value="false" />
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.BadmintonShuttlecocks)
+                    <br />
+                    <input type="checkbox" name="BadmintonShuttlecocks" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.BadmintonShuttlecocks == true ? "checked" : "") />
+                    <input type="hidden" name="BadmintonShuttlecocks" value="false" />
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DisplayNameFor(a => a.BadmintonTraining)
+                    <br />
+                    <input type="checkbox" name="BadmintonTraining" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" @(Model.BadmintonTraining == true ? "checked" : "") />
+                    <input type="hidden" name="BadmintonTraining" value="false" />
+                </div>
+            </div>
+            break;
+
+        default: // باقي الأنواع
+            <div class="col-sm-12">
+                <div class="alert alert-info">
+                    <i class="fa fa-info-circle"></i> لا توجد تفاصيل إضافية لهذا النوع
+                </div>
+            </div>
+            break;
+    }
+</div> *@
+
+
+@model SportModel
+
+<div class="row clearfix">
+    <div class="col-sm-12">
+        <h5 style="text-decoration:underline">تفاصيل العقار</h5>
+    </div>
+
+    @if (Model.PropertyTemplates != null && Model.PropertyTemplates.Any())
+    {
+        int index = 0;
+        foreach (var template in Model.PropertyTemplates)
+        {
+            var value = Model.PropertyValues.FirstOrDefault(v => v.PropertyTemplateId == template.Id);
+
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label>
+                        @template.PropertyLabelAr
+                        @if (template.IsRequired)
+                        {
+                            <span class="text-danger">*</span>
+                        }
+                    </label>
+
+                    @switch ((PropertyTypeEnum)template.PropertyType)
+                    {
+                        case PropertyTypeEnum.Text:
+                            <input type="text"
+                                   name="PropertyValues[@index].ValueText"
+                                   value="@value?.ValueText"
+                                   class="form-control"
+                                   @(template.IsRequired ? "required" : "") />
+                            break;
+
+                        case PropertyTypeEnum.Number:
+                            <input type="number"
+                                   step="any"
+                                   name="PropertyValues[@index].ValueText"
+                                   value="@value?.ValueText"
+                                   class="form-control"
+                                   @(template.IsRequired ? "required" : "") />
+                            break;
+
+                        case PropertyTypeEnum.TextArea:
+                            <textarea name="PropertyValues[@index].ValueText"
+                      class="form-control"
+                      rows="3"
+                      @(template.IsRequired ? "required" : "")>@value?.ValueText</textarea>
+                            break;
+
+                        case PropertyTypeEnum.Checkbox:
+                            <br />
+                            <input type="checkbox"
+                                   name="PropertyValues[@index].ValueBool"
+                                   value="true"
+                                   class="form-control"
+                                   style="width:20px;height:20px;margin-top:5px;"
+                                   @(value?.ValueBool == true ? "checked" : "") />
+                            <input type="hidden" name="PropertyValues[@index].ValueBool" value="false" />
+                            break;
+
+                        case PropertyTypeEnum.RadioButton:
+                            if (template.Options != null && template.Options.Any())
+                            {
+                                foreach (var option in template.Options)
+                                {
+                                    <div class="form-check">
+                                        <input type="radio"
+                                               name="PropertyValues[@index].ValueOptionId"
+                                               value="@option.Id"
+                                               class="form-check-input"
+                                               style="width:16px;height:16px;margin-top:5px;"
+                                               @(value?.ValueOptionId == option.Id ? "checked" : "")
+                                               @(template.IsRequired ? "required" : "") />
+                                        <label class="form-check-label">@option.OptionTextAr</label>
+                                    </div>
+                                }
+                            }
+                            break;
+
+                        case PropertyTypeEnum.Dropdown:
+                            <select name="PropertyValues[@index].ValueOptionId"
+                                    class="form-control"
+                                    @(template.IsRequired ? "required" : "")>
+                                <option value="">-- اختر --</option>
+                                @foreach (var option in template.Options)
+                                {
+                                    <option value="@option.Id" selected="@(value?.ValueOptionId == option.Id)">
+                                        @option.OptionTextAr
+                                    </option>
+                                }
+                            </select>
+                            break;
+                    }
+
+                    <!-- Hidden Fields -->
+                    <input type="hidden" name="PropertyValues[@index].PropertyTemplateId" value="@template.Id" />
+                    <input type="hidden" name="PropertyValues[@index].SportId" value="@Model.Id" />
+                    <input type="hidden" name="PropertyValues[@index].PropertyType" value="@template.PropertyType" />
+                </div>
+            </div>
+
+            index++;
+        }
+    }
+    else
+    {
+        <div class="col-sm-12">
+            <div class="alert alert-info">
+                <i class="fa fa-info-circle"></i>
+                @if (Model.SportTypeId > 0)
+                {
+                    <span>لا توجد تفاصيل عقار محددة لهذا النوع</span>
+                }
+                else
+                {
+                    <span>من فضلك اختر نوع الرياضة أولاً</span>
+                }
+            </div>
+        </div>
+    }
+</div>

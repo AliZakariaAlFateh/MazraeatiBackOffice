@@ -1,252 +1,16 @@
 ﻿let BaseUrl_Dev = 'http://localhost:62550'
-let BaseUrl_Pro ='http://5.189.180.190/MazraeatiBackOffice'
+let BaseUrl_Pro = 'http://5.189.180.190/MazraeatiBackOffice'
+
+
+var BaseUrl = window.location.hostname === 'localhost'
+    ? 'http://localhost:62550'
+    : 'http://5.189.180.190/MazraeatiBackOffice';
+
+
 $(function () {
     //start for region
     debugger
 
-
-
-    //function fillLocationsFromSelectedRegion() {
-    //    var $selected = $("#RegionId").find("option:selected");
-    //    var descAr = $selected.data("descar") || "";
-    //    var descEn = $selected.data("descen") || "";
-
-    //    $("#LocationDesc").val(descAr);
-    //    $("#LocationDescEn").val(descEn);
-    //}
-
-    //$("#CityId").on("change", function () {
-    //    var cityId = $(this).val();
-    //    var $region = $("#RegionId");
-
-    //    // Reset
-    //    $region.empty().append(
-    //        $('<option/>', { text: '--الرجاء اختيار المنطقة--', disabled: true, selected: true })
-    //    ).prop("disabled", true);
-
-    //    if (!cityId) {
-    //        $region.selectpicker('refresh');
-    //        return;
-    //    }
-
-    //    $.ajax({
-    //        url: `${BaseUrl_Dev}/Farmers/GetRegionsByCityId`,
-    //        type: 'GET',
-    //        data: { cityId: cityId },
-    //        success: function (data) {
-
-    //            $region.empty().append(
-    //                $('<option/>', { text: '--الرجاء اختيار المنطقة--', disabled: true })
-    //            );
-
-    //            if (data && data.length > 0) {
-    //                $.each(data, function (i, item) {
-    //                    var $opt = $('<option/>', {
-    //                        value: item.id,
-    //                        text: item.descAr
-    //                    });
-
-    //                    // data-*
-    //                    $opt.attr("data-descar", item.descAr);
-    //                    $opt.attr("data-descen", item.descEn);
-
-    //                    $region.append($opt);
-    //                });
-
-    //                $region.prop("disabled", false);
-    //            } else {
-    //                $region.append($('<option/>', { text: 'لا يوجد مناطق لهذه المدينة', disabled: true }));
-    //            }
-
-    //            // ✅ لو Edit: اعمل Selected بعد ما options اتضافت
-    //            if (window.editRegionId && window.editRegionId > 0) {
-    //                // الأفضل مع bootstrap-select
-    //                $region.selectpicker('val', String(window.editRegionId));
-
-    //                // احتياطي لو val فوق فشل لأي سبب
-    //                if (!$region.val()) {
-    //                    $region.val(String(window.editRegionId));
-    //                }
-
-    //                // املى LocationDesc/En
-    //                fillLocationsFromSelectedRegion();
-    //            }
-
-    //            // 🔥 مهم جدًا
-    //            $region.selectpicker('refresh');
-    //        },
-    //        error: function () {
-    //            Swal.fire({
-    //                icon: 'error',
-    //                title: 'خطأ',
-    //                text: 'حدث خطأ أثناء تحميل المناطق'
-    //            });
-    //        }
-    //    });
-    //});
-
-    //// Event بتاع bootstrap-select (اختيار المستخدم)
-    //$("#RegionId").on("changed.bs.select", function () {
-    //    fillLocationsFromSelectedRegion();
-    //});
-
-    //// ✅ عند فتح صفحة Edit: حمّل المناطق واختر Region تلقائي
-    //if (window.editCityId && window.editCityId > 0) {
-    //    $("#CityId").val(String(window.editCityId)).trigger("change");
-    //}
-
-
-
-    //On Change City ...
-    //$("#CityId").on("change", function () {
-    //    debugger
-    //    var cityId = $(this).val();
-    //    var $region = $("#RegionId");
-
-    //    // Reset
-    //    $region.empty()
-    //        .append('<option selected disabled>--الرجاء اختيار المنطقة--</option>')
-    //        .prop("disabled", true);
-
-    //    if (!cityId) return;
-    //    debugger
-    //    $.ajax({
-    //        url: `${BaseUrl_Dev}/Farmers/GetRegionsByCityId`,
-    //        type: 'GET',
-    //        data: { cityId: cityId },
-    //        success: function (data) {
-    //            debugger
-    //            var $region = $("#RegionId");
-
-    //            $region.empty().append(
-    //                $('<option/>', {
-    //                    text: '--الرجاء اختيار المنطقة--',
-    //                    disabled: true,
-    //                    selected: true
-    //                })
-    //            );
-
-    //            if (data && data.length > 0) {
-    //                //$region.append('<option value="' + item.id + '">' + item.descAr + '</option>');
-    //                $.each(data, function (i, item) {
-
-    //                    var $opt = $('<option/>', {
-    //                        value: item.id,
-    //                        text: item.descAr
-    //                    });
-
-    //                    debugger
-    //                    $opt.attr("data-descar", item.descAr);
-    //                    $opt.attr("data-descen", item.descEn);
-
-    //                    $region.append($opt);
-    //                });
-
-    //                $region.prop("disabled", false);
-    //            }
-
-    //            // 🔥 مهم جدًا مع bootstrap-select
-    //            $region.selectpicker('refresh');
-    //        },
-    //        error: function () {
-    //            // Optional: SweetAlert
-    //            Swal.fire({
-    //                icon: 'error',
-    //                title: 'خطأ',
-    //                text: 'حدث خطأ أثناء تحميل المناطق'
-    //            });
-    //        }
-    //    });
-    //});
-    //On Change City ...
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    //second or third code comented ...
-    //$("#CityId").on("change", function () {
-    //    var cityId = $(this).val();
-    //    var $region = $("#RegionId");
-
-    //    // Reset
-    //    $region.empty()
-    //        .append('<option selected disabled>--الرجاء اختيار المنطقة--</option>')
-    //        .prop("disabled", true)
-    //        .selectpicker('refresh'); // تحديث الشكل فوراً
-
-    //    if (!cityId) return;
-
-    //    $.ajax({
-    //        url: `${BaseUrl_Dev}/Farmers/GetRegionsByCityId`,
-    //        type: 'GET',
-    //        data: { cityId: cityId },
-    //        success: function (data) {
-    //            var $region = $("#RegionId");
-    //            $region.empty().append(
-    //                $('<option/>', {
-    //                    text: '--الرجاء اختيار المنطقة--',
-    //                    disabled: true,
-    //                    selected: true
-    //                })
-    //            );
-
-    //            if (data && data.length > 0) {
-    //                $.each(data, function (i, item) {
-    //                    var $opt = $('<option/>', {
-    //                        value: item.id,
-    //                        text: item.descAr
-    //                    });
-    //                    $opt.attr("data-descar", item.descAr);
-    //                    $opt.attr("data-descen", item.descEn);
-    //                    $region.append($opt);
-    //                });
-    //                $region.prop("disabled", false);
-    //            }
-
-    //            // تحديث المكتبة
-    //            $region.selectpicker('refresh');
-
-    //            // 🔥 الإضافة هنا: إطلاق حدث مخصص لإعلام الأكواد الأخرى بالانتهاء
-    //            $region.trigger('regions:loaded');
-    //        },
-    //        error: function () {
-    //            Swal.fire({
-    //                icon: 'error',
-    //                title: 'خطأ',
-    //                text: 'حدث خطأ أثناء تحميل المناطق'
-    //            });
-    //        }
-    //    });
-    //});
-
-
-
-
-
-
-
-    //start for region
-
-    //set values in Locations for selectpicker
-    //$("#RegionId").on("changed.bs.select", function () {
-    //    var $selected = $(this).find("option:selected");
-    //    var descAr = $selected.attr("data-descar") || "";
-    //    var descEn = $selected.attr("data-descen") || "";
-
-    //    $("#LocationDesc").val(descAr);
-    //    $("#LocationDescEn").val(descEn);
-    //});
 
 
     //this for select2
@@ -352,7 +116,11 @@ $(function () {
 
 
     // alertHandler.js
-    $(document).ready(function () {
+    //$(document).ready(function () {
+
+
+
+
         const $alertElement = $('#errorMessageAlert');
 
         if ($alertElement.length) { // Check if the alert element exists on the page
@@ -370,7 +138,7 @@ $(function () {
 
             }, 5000); // 5000 milliseconds = 5 seconds
         }
-    });
+    /*});*/
 
 
 
@@ -418,7 +186,286 @@ $(function () {
 
 
 
+    //For SelectOption Of Region and City
+
+
+    var BaseUrl = window.location.hostname === 'localhost'
+        ? 'http://localhost:62550'
+        : 'http://5.189.180.190/MazraeatiBackOffice';
+
+    // ============================================================
+    // 2. REGION LOADER - Dynamic Dropdown Based on City Selection
+    // ============================================================
+    // When a city is selected, this function fetches associated regions
+    // from the server and populates the region dropdown.
+    // ============================================================
+
+    /**
+     * IMPORTANT: Get the selected RegionId from server-side ViewBag
+     * This value is rendered into the page by ASP.NET MVC
+     * and used to preselect the correct region after loading
+     */
+    var selectedCityId = $('#CityId').val();        // Current city ID from dropdown
+    var selectedRegionId = $('#SelectedRegionId').val() || '0';     // ✅ Preselected region ID from ViewBag
+
+    // --- Event Handler: City Dropdown Change ---
+    $("#CityId").on("change", function () {
+        var cityId = $(this).val();
+        var $region = $("#RegionId");
+
+        // Reset and disable region dropdown while loading
+        $region.empty()
+            .append('<option selected disabled>--الرجاء اختيار المنطقة--</option>')
+            .prop("disabled", true);
+        $region.trigger('change');
+
+        // Exit if no city is selected
+        if (!cityId || cityId === "0") return;
+
+        // --- AJAX Request: Fetch Regions by City ID ---
+        $.ajax({
+            url: BaseUrl + '/Farmers/GetRegionsByCityId',
+            type: 'GET',
+            data: { cityId: cityId },
+            success: function (data) {
+                // Reset dropdown with placeholder option
+                $region.empty().append($('<option/>', {
+                    text: '--الرجاء اختيار المنطقة--',
+                    disabled: true,
+                    selected: true
+                }));
+
+                // Populate regions if data exists
+                if (data && data.length > 0) {
+                    $.each(data, function (i, item) {
+                        var $opt = $('<option/>', {
+                            value: item.id,
+                            text: item.descAr
+                        });
+                        // Add data attributes for potential future use
+                        $opt.attr("data-descar", item.descAr);
+                        $opt.attr("data-descen", item.descEn);
+                        $region.append($opt);
+                    });
+
+                    // Enable the dropdown
+                    $region.prop("disabled", false);
+                }
+
+                // Trigger change event for any dependent logic
+                $region.trigger('change');
+
+                /**
+                 * ✅ CRITICAL: Preselect the region from ViewBag
+                 * After loading regions, check if we have a preselected region ID
+                 * from the ViewBag and select it automatically.
+                 * This ensures the previously saved region is shown correctly.
+                 */
+                if (selectedRegionId && selectedRegionId !== "0") {
+                    $region.val(selectedRegionId);
+                    $region.trigger('change');
+
+                    // Reset the variable to prevent re-selection on subsequent manual changes
+                    selectedRegionId = "0";
+                }
+            },
+            error: function () {
+                console.error("خطأ في جلب المناطق");
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'حدث خطأ أثناء تحميل المناطق. يرجى المحاولة مرة أخرى.'
+                });
+            }
+        });
+    });
+
+    // --- Auto-trigger on page load if city is preselected ---
+    if (selectedCityId && selectedCityId !== "0") {
+        $("#CityId").trigger('change');
+    }
+
+    // ============================================================
+    // 3. INTERNATIONAL PHONE VALIDATION
+    // ============================================================
+    // Initializes intl-tel-input for phone number validation
+    // Supports multiple countries with auto-detection
+    // ============================================================
+
+    /**
+     * Initialize international telephone input
+     * @param {string} inputId - CSS selector for the input element
+     * @returns {object} intlTelInput instance
+     */
+    
+
+    // --- Initialize Phone Input ---
+    var iti1 = initPhone("#phone1");
+
+    // ============================================================
+    // 4. FORM SUBMISSION HANDLER
+    // ============================================================
+    // Validates phone number before form submission
+    // Prevents submission if phone number is invalid
+    // ============================================================
+
+    $("form").on("submit", function () {
+        // Validate phone number before submitting
+        if (!iti1.isValidNumber()) {
+            Swal.fire({
+                icon: 'error',
+                title: 'خطأ',
+                text: 'رقم الموبايل غير صحيح. يرجى إدخال رقم صحيح مع مفتاح الدولة.'
+            });
+            return false; // Prevent form submission
+        }
+
+        // Update hidden input with full international number
+        $("#phone1").val(iti1.getNumber());
+
+        // Form will submit normally
+        return true;
+    });
+
+    // ============================================================
+    // 5. CLEANUP AND ADDITIONAL FEATURES (Optional)
+    // ============================================================
+    // Handle any additional UI interactions or cleanup tasks
+    // ============================================================
+
+    // Example: Reset region dropdown when city is cleared
+    // You can add additional functionality here as needed
+
+
+
+
+
+
+    // ===== تحديث الـ Person لكل الأيام في نفس المجموعة =====
+    // لما يتغير الـ Person في أي TextBox
+    $('input[type="number"][id^="person_"]').on('change', function () {
+        var newPerson = $(this).val();
+
+        // لو القيمة فاضية، اخرج
+        if (newPerson === '') {
+            return;
+        }
+
+        // خد الصف الحالي (اللي فيه الـ Person)
+        var parentRow = $(this).closest('tr');
+
+        // خد كل الصفوف اللي بعد الصف الحالي لحد ما نوصل لصف جديد بنفس الـ Person
+        var nextRows = parentRow.nextUntil('tr[style*="background:#e9f7ef"]');
+
+        // غير الـ Hidden في الصف الحالي
+        parentRow.find('input.person-hidden').val(newPerson);
+
+        // غير الـ Hidden في الصفوف التالية (كل الأيام)
+        nextRows.each(function () {
+            $(this).find('input.person-hidden').val(newPerson);
+        });
+    });
+
+    // ===== عند إرسال الفورم، اتأكد من تطابق الـ Person =====
+    $('form').on('submit', function () {
+        var allPersonHidden = $(this).find('input.person-hidden');
+
+        // لو في أي Hidden مختلف، غير الكل لأول قيمة
+        if (allPersonHidden.length > 0) {
+            var firstValue = allPersonHidden.first().val();
+            allPersonHidden.each(function () {
+                $(this).val(firstValue);
+            });
+        }
+    });
+
+
 });
+
+
+// ===== دالة لحذف قائمة أسعار =====
+function DeletePriceList_Full(farmerId) {
+    Swal.fire({
+        title: 'هل أنت متأكد؟',
+        text: "سيتم حذف جميع الأسعار الخاصة بهذه المزرعة!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'نعم، احذف',
+        cancelButtonText: 'إلغاء'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire({
+                title: 'جاري الحذف...',
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                didOpen: () => Swal.showLoading()
+            });
+
+            $.ajax({
+                url: BaseUrl + '/Farmers/DeletePriceList_Full',
+                type: 'POST',
+                data: { farmerId: farmerId },
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'تم الحذف بنجاح',
+                            confirmButtonText: 'حسناً'
+                        }).then(() => location.reload());
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'حدث خطأ',
+                            text: response.message || 'فشل الحذف',
+                            confirmButtonText: 'حسناً'
+                        });
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'خطأ في الاتصال',
+                        text: 'حدث خطأ في الاتصال بالخادم',
+                        confirmButtonText: 'حسناً'
+                    });
+                }
+            });
+        }
+    });
+}
+
+
+function initPhone(inputId) {
+    var input = document.querySelector(inputId);
+
+    var iti = window.intlTelInput(input, {
+        initialCountry: "auto",
+        geoIpLookup: function (callback) {
+            $.get("https://ipapi.co/json/", function (data) {
+                callback(data.country_code.toLowerCase());
+            }).fail(function () {
+                callback("eg"); // Fallback to Egypt if geo lookup fails
+            });
+        },
+        separateDialCode: true,
+        preferredCountries: ["eg", "sa", "ae", "jo"], // Egypt, Saudi Arabia, UAE, Jordan
+        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"
+    });
+
+    // Set existing value if present (e.g., from database)
+    var existingValue = $(inputId).val();
+    if (existingValue) {
+        iti.setNumber(existingValue);
+    }
+
+    return iti;
+}
+
+
+
+
 
 
 //For Delete Price List ....
@@ -485,7 +532,7 @@ function DeleteFarmerImage(imageId) {
             console.log("Attempting to delete image with ID:", imageId);
 
             // AJAX call to delete the image
-            $.post(`${BaseUrl_Pro}/Farmers/DeleteFarmerImage`, { imageId: imageId }, function (response) {
+            $.post(`${BaseUrl}/Farmers/DeleteFarmerImage`, { imageId: imageId }, function (response) {
                 if (response.success) {
                     console.log("تم حذف الصورة بنجاح:", response.message);
                     // Remove the element directly for better UX
@@ -535,7 +582,7 @@ function DeleteFarmerVideo(videoId) {
             console.log("Attempting to delete video with ID:", videoId);
 
             // AJAX call to delete the video
-            $.post(`${BaseUrl_Pro}/Farmers/DeleteFarmerVideo`, { videoId: videoId }, function (response) {
+            $.post(`${BaseUrl}/Farmers/DeleteFarmerVideo`, { videoId: videoId }, function (response) {
                 if (response.success) {
                     console.log("تم حذف الفيديو بنجاح:", response.message);
                     // Remove the element directly for better UX

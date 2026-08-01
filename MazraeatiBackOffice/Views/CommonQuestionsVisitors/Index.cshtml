@@ -1,0 +1,69 @@
+﻿@model IEnumerable<CommonQuestionsVisitorsModel>
+@{
+    ViewData["Title"] = "Users Management";
+    int row = 1;
+}
+<div class="col-md-12">
+    <div class="card patients-list">
+        <div class="header">
+            <h2><strong>قائمة</strong>الأسئلة الشائعه الخاصة بالزوار </h2>
+            <ul class="header-dropdown">
+            </ul>
+        </div>
+        <div class="body">
+            <!-- Nav tabs -->
+            @Html.Partial("_search")
+            <!-- Tab panes -->
+            @if (Model.Any())
+            {
+                <div class="tab-content m-t-10">
+                    <div class="tab-pane table-responsive active table-scroll table table-bordered" id="All">
+                        <table class="table m-b-0 table-hover">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>@Html.DisplayNameFor(a => a.QuestAr)</th>
+                                    <th>@Html.DisplayNameFor(a => a.AnswerAr)</th>
+                                    <th>@Html.DisplayNameFor(a => a.QuestEn)</th>
+                                    <th>@Html.DisplayNameFor(a => a.AnswerEn)</th>
+                                    <th>@Html.DisplayNameFor(a => a.ImageUrl)</th>
+                                    <th>تفاصيل</th>
+                                    <th>حذف</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>@row</td>
+                                        <td>@item.QuestAr</td>
+                                        <td>@item.AnswerAr</td>
+                                        <td>@item.QuestEn</td>
+                                        <td>@item.AnswerEn</td>
+                                        <td><a href="@Url.Content("~/images/")@item.ImageUrl" style="color:black" target="_blank"><i class="zmdi zmdi-eye"></i></a></td>
+                                        <td><a href="@Url.Content("~/CommonQuestionsVisitors/Edit/")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
+                                        <td><a href="javascript:Delete('CommonQuestionsVisitors',@item.Id,'Delete','Index')" style="height: 25px;" class="btn btn-danger btn-round"><i class="zmdi zmdi-delete" style="color: white;margin-top: -10px;"></i></a></td>
+                                    </tr>
+                                    row += 1;
+                                }
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+            else
+            {
+
+                <div class="empty-state-container">
+                    <div class="empty-state-icon">
+                        <i class="zmdi zmdi-search-for-wild"></i> 
+
+                    </div>
+                    <div class="empty-state-title">لا توجد بيانات حالياً</div>
+                    <div class="empty-state-description">لا توجد بيانات ليتم عرضها يمكنك اضافة بيانات ليتم عرضها هنا </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

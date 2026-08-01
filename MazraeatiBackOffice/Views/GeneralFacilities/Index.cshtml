@@ -1,0 +1,132 @@
+﻿@model IEnumerable<GeneralFacilityModel>
+
+@{
+    ViewBag.Title = "المرافق العامة";
+    ViewBag.activePage = "المرافق العامة";
+}
+
+<div class="container-fluid">
+    <div class="row clearfix">
+        <div class="col-lg-12 col-md-12 col-sm-12">
+            <div class="card">
+                <div class="header">
+                    <h2><strong>المرافق</strong> العامة</h2>
+                    <ul class="header-dropdown">
+                        <li>
+                            <a href="@Url.Action("Create")" class="btn btn-primary btn-round">
+                                <i class="fa fa-plus"></i> إضافة مرفق جديد
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="body">
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show">
+                            <strong>تم!</strong> @TempData["SuccessMessage"]
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        </div>
+                    }
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show">
+                            <strong>خطأ!</strong> @TempData["ErrorMessage"]
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        </div>
+                    }
+
+                    <!-- فلتر البحث (مثل Country) -->
+                    <form action="" method="post">
+                        <div class="row clearfix">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <input id="searchInput" type="text" name="search" value="@ViewBag.search"
+                                           placeholder="الكلمة المفتاحية" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group" style="margin-top: -10px;">
+                                    <button type="submit" class="btn btn-primary btn-round">بحث</button>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group" style="margin-top: -10px;">
+                                    <a href="@Url.Action("Index")" class="btn btn-primary btn-round">تفضية الحقول</a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- جدول المرافق -->
+                    <div class="tab-pane table-responsive active table-scroll table table-bordered" id="All" style="height:270px; overflow-y:auto;">
+                        <table class="table table-bordered table-striped table-hover">
+                            <thead class="bg-success text-white">
+                                <tr>
+                                    <th>#</th>
+                                    <th>المرفق (عربي)</th>
+                                    <th>المرفق (إنجليزي)</th>
+                                    <th>الأيقونة</th>
+                                    <th>الحالة</th>
+                                    <th>تعديل</th>
+                                    <th>حذف</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.Any())
+                                {
+                                    int counter = 1;
+                                    foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>@counter</td>
+                                            <td><strong>@item.FacilityTextAr</strong></td>
+                                            <td>@item.FacilityTextEn</td>
+                                            <td>
+                                                @if (!string.IsNullOrEmpty(item.IconClass))
+                                                {
+                                                    <i class="@item.IconClass"></i>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (item.IsActive)
+                                                {
+                                                    <span class="badge badge-success">نشط</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge badge-danger">غير نشط</span>
+                                                }
+                                            </td>
+                                            
+                                            <td><a href="@Url.Content("~/GeneralFacilities/Edit/")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
+                                            <td>
+                                                @* onclick="return confirm('هل أنت متأكد؟')" *@
+                                                <a href="javascript:Delete('GeneralFacilities',@item.Id,'Delete','Index')" class="btn btn-danger"><i class="zmdi zmdi-delete" style="color: white;margin-top: -10px;"></i></a>
+                                            </td>
+                                              
+                                        </tr>
+                                        counter++;
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="6" class="text-center">
+                                            <div class="alert alert-info">
+                                                لا توجد مرافق عامة
+                                                <br />
+                                                <a href="@Url.Action("Create")" class="btn btn-primary btn-sm mt-2">
+                                                    <i class="fa fa-plus"></i> أضف مرفق جديد
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

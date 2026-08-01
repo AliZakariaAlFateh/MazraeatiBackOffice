@@ -1,13 +1,14 @@
 ﻿@model UserModel
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.min.css" />
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+
 <style>
     .form-group {
         font-size: 13px;
     }
 
-    /* شكل البوكس */
     .select2-container--default .select2-selection--multiple {
         min-height: 45px;
         border-radius: 10px;
@@ -15,7 +16,6 @@
         padding: 5px;
     }
 
-        /* شكل العنصر المختار */
         .select2-container--default .select2-selection--multiple .select2-selection__choice {
             background-color: #2196f3;
             border: none;
@@ -26,269 +26,460 @@
             font-size: 13px;
         }
 
-    /* زر الحذف */
     .select2-selection__choice__remove {
         color: white !important;
         margin-left: 5px;
     }
 
-    /* عند الفوكس */
     .select2-container--default.select2-container--focus .select2-selection--multiple {
         border-color: #2196f3;
         box-shadow: 0 0 5px rgba(33,150,243,0.3);
     }
 
-    /* dropdown */
     .select2-dropdown {
         border-radius: 10px;
         overflow: hidden;
     }
 
-    /* hover */
     .select2-results__option--highlighted {
         background-color: #2196f3 !important;
     }
-
-    .select2-container--default[dir="rtl"] .select2-selection--multiple .select2-selection__choice__display {
-        background: #4b4b67;
-    }
-
-    .select2-container--default[dir="rtl"] .select2-selection--multiple .select2-selection__choice__remove {
-        background: #f00
-    }
-
-    .select2-container--default[dir="rtl"] .select2-selection--multiple .select2-selection__choice {
-        background: #f00
-    }
-
-    /* .iti__country-list {
-        right: -236px !important
-    } */
-
-
-
-
-
-
-   /*  .iti__search-input {
-        position: sticky;
-        top: 0;
-        background: #fff;
-        z-index: 2;
-    }
-
-
-    .iti__search-input {
-        width: 95%;
-        margin: 8px auto;
-        display: block;
-        padding: 8px 10px;
-        border-radius: 8px;
-        border: 1px solid #ddd;
-        outline: none;
-    }
-
-
-        .iti__search-input:focus {
-            border-color: #007bff;
-        }
-
-    .iti__country-list {
-        padding-top: 5px;
-    } */
 </style>
+
 <link href="~/assets/css/appuser.css" rel="stylesheet" />
-<!-- 1. jQuery -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-
-
-<!-- 3. كودك -->
-<script>
-    $(document).ready(function () {
-        $('.select2').select2({
-            placeholder: "اختر المزارع",
-            width: '100%',
-            dir: "rtl",
-            closeOnSelect: false
-        });
-    });
-    // $(document).on("click", ".iti__selected-flag", function () {
-
-    //     setTimeout(function () {
-
-    //         var list = $(".iti__country-list");
-
-    //         // لو already موجود متعملش حاجة
-    //         if (list.find(".iti__search-input").length === 0) {
-
-    //             var searchBox = $('<input type="text" class="iti__search-input" placeholder="ابحث عن الدولة...">');
-
-    //             // 👇 مهم جدا: يمنع القفلة
-    //             searchBox.on("click", function (e) {
-    //                 e.stopPropagation();
-    //             });
-
-    //             searchBox.on("keyup", function () {
-    //                 var value = $(this).val().toLowerCase();
-
-    //                 $(".iti__country").each(function () {
-    //                     var text = $(this).text().toLowerCase();
-    //                     $(this).toggle(text.includes(value));
-    //                 });
-    //             });
-
-    //             list.prepend(searchBox);
-    //         }
-
-    //         // focus بدون مشاكل
-    //         $(".iti__search-input").focus();
-
-    //     }, 100);
-    // });
-</script>
 @Html.HiddenFor(a => a.Id)
+
 <div class="container-fluid">
     <div class="row clearfix">
         <div class="col-lg-12 col-md-12 col-sm-12">
             <div class="card">
                 <div class="header">
                     <h2><strong>معالجة </strong> السجل</h2>
-                    <ul class="header-dropdown">
-                    </ul>
+                    <ul class="header-dropdown"></ul>
                 </div>
                 <div class="body">
                     <div class="row clearfix">
+                        <!-- ID مخفي -->
                         <div class="col-sm-12 d-none">
                             <div class="form-group">
                                 @Html.DisplayNameFor(a => a.Id)
-                                @Html.TextBoxFor(a => a.Id, new { @class = "form-control", @autocomplete = "off", @readonly = "readonly" })
-                                @Html.ValidationMessageFor(a => a.Id, "", new { @style = "color:red;font-size:10px" })
+                                @Html.TextBoxFor(a => a.Id, new { @class = "form-control", @readonly = "readonly" })
                             </div>
                         </div>
+
+                        <!-- اسم المستخدم -->
                         <div class="col-sm-6">
                             <div class="form-group">
                                 @Html.DisplayNameFor(a => a.UserName)
+                                <span class="text-danger">*</span>
                                 @Html.TextBoxFor(a => a.UserName, new { @class = "form-control", @autocomplete = "off" })
                                 @Html.ValidationMessageFor(a => a.UserName, "", new { @style = "color:red;font-size:10px" })
                             </div>
                         </div>
+
+                        <!-- رقم الواتساب -->
                         <div class="col-sm-6">
                             <div class="form-group">
                                 @Html.DisplayNameFor(a => a.MobilePhone)
-                                @Html.TextBoxFor(a => a.MobilePhone, new { @class = "form-control", @autocomplete = "off", @id = "phone1", @dir = "ltr" })
+                                <span class="text-danger">*</span>
+                                @Html.TextBoxFor(a => a.MobilePhone, new { @class = "form-control", @id = "phone1", @dir = "ltr" })
                                 @Html.ValidationMessageFor(a => a.MobilePhone, "", new { @style = "color:red;font-size:10px" })
                             </div>
                         </div>
+
+                        <!-- رقم الجوال -->
                         <div class="col-sm-6">
                             <div class="form-group">
                                 @Html.DisplayNameFor(a => a.MobileNumber)
-                                @Html.TextBoxFor(a => a.MobileNumber, new { @class = "form-control", @autocomplete = "off", @id = "phone2", @dir = "ltr" })
+                                <span class="text-danger">*</span>
+                                @Html.TextBoxFor(a => a.MobileNumber, new { @class = "form-control", @id = "phone2", @dir = "ltr" })
                                 @Html.ValidationMessageFor(a => a.MobileNumber, "", new { @style = "color:red;font-size:10px" })
                             </div>
                         </div>
+
+                        <!-- كلمة المرور -->
                         <div class="col-sm-6">
                             <div class="form-group">
                                 @Html.DisplayNameFor(a => a.PasswordHash)
+                                <span class="text-danger">*</span>
                                 @Html.TextBoxFor(a => a.PasswordHash, new { @class = "form-control", @autocomplete = "off" })
                                 @Html.ValidationMessageFor(a => a.PasswordHash, "", new { @style = "color:red;font-size:10px" })
                             </div>
                         </div>
+
+                        <!-- ===== نوع العقار (MultiSelect Dropdown) ===== -->
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label>المزارع</label>
+                                <label>نوع العقار <span class="text-danger">*</span></label>
+                                @Html.ListBoxFor(model => model.UserTypeListSelected,
+                                Model.UserTypeList,
+                                                                new
+                                                                {
+                                                                    @class = "form-control select2",
+                                                                    multiple = "multiple",
+                                                                    style = "width:100%"
+                                                                })
+                                @Html.ValidationMessageFor(a => a.UserType, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
 
-                                @* @Html.ListBoxFor(model => model.FarmIds,
-                                         Model.Farms,
-                                         new { @class = "form-control select2", multiple = "multiple" }) *@
+                        <!-- ===== المزارع ===== -->
+                        <div class="col-sm-6" id="farmsContainer">
+                            <div class="form-group">
+                                <label>المزارع</label>
                                 @Html.ListBoxFor(model => model.FarmIds,
-                                         Model.Farms,
-                                         new
-                                         {
-                                             @class = "form-control select2",
-                                             multiple = "multiple",
-                                             style = "width:100%"
-                                         })
+                                                                Model.Farms,
+                                                                new
+                                                                {
+                                                                    @class = "form-control select2",
+                                                                    multiple = "multiple",
+                                                                    style = "width:100%"
+                                                                })
                                 @Html.ValidationMessageFor(a => a.FarmIds, "", new { @style = "color:red;font-size:10px" })
                             </div>
                         </div>
+
+                        <!-- ===== العقار الرياضي ===== -->
+                        <div class="col-sm-6" id="sportsContainer">
+                            <div class="form-group">
+                                <label>العقار الرياضي</label>
+                                @Html.ListBoxFor(model => model.SportIds,
+                                                                Model.Sports,
+                                                                new
+                                                                {
+                                                                    @class = "form-control select2",
+                                                                    multiple = "multiple",
+                                                                    style = "width:100%"
+                                                                })
+                                @Html.ValidationMessageFor(a => a.SportIds, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+
+                        <!-- نشط -->
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.IsActive)
+                                <br />
+                                @Html.CheckBoxFor(a => a.IsActive, new { @class = "form-control", style = "margin-top: 10px; width:20px !important; height:20px;" })
+                            </div>
+                        </div>
+
+                        <!-- أزرار -->
                         <div class="col-sm-12">
                             <button type="submit" class="btn btn-primary btn-round">حفظ</button>
                             <button type="button" onclick="window.location.href='@Url.Content("~/AppUser/index/")'" class="btn btn-default btn-round btn-simple">رجوع</button>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
     </div>
 </div>
-@* <script src="~/assets/js/multipeselect.js"></script> *@
+
 <script>
-    $(document).ready(function () {
+    // $(document).ready(function () {
+    //     // ===== تهيئة الـ Select2 =====
+    //     $('.select2').select2({
+    //         placeholder: "اختر من القائمة",
+    //         width: '100%',
+    //         dir: "rtl",
+    //         closeOnSelect: false
+    //     });
 
+    //     // ===== دالة إظهار/إخفاء المزارع والعقار الرياضي =====
+    //     function toggleFarmsAndSports() {
+    //         var selectedTypes = $('#UserTypeListSelected').val() || [];
+
+    //         // المزارع (0)
+    //         if (selectedTypes.includes('0')) {
+    //             $('#farmsContainer').show();
+    //         } else {
+    //             $('#farmsContainer').hide();
+    //             $('#FarmIds').val(null).trigger('change');
+    //         }
+
+    //         // العقار الرياضي (أي قيمة غير 0)
+    //         var hasSports = selectedTypes.some(function (val) { return val !== '0'; });
+    //         if (hasSports) {
+    //             $('#sportsContainer').show();
+    //         } else {
+    //             $('#sportsContainer').hide();
+    //             $('#SportIds').val(null).trigger('change');
+    //         }
+    //     }
+
+    //     // ===== عند تغيير نوع العقار =====
+    //     $('#UserTypeListSelected').on('change', function () {
+    //         toggleFarmsAndSports();
+    //     });
+
+    //     // ===== عند تحميل الصفحة =====
+    //     toggleFarmsAndSports();
+
+    //     // ===== دالة تهيئة رقم الهاتف =====
+    //     function initPhone(inputId) {
+    //         var input = document.querySelector(inputId);
+    //         var iti = window.intlTelInput(input, {
+    //             initialCountry: "auto",
+    //             geoIpLookup: function (callback) {
+    //                 $.get("https://ipapi.co/json/", function (data) {
+    //                     callback(data.country_code.toLowerCase());
+    //                 }).fail(function () {
+    //                     callback("eg");
+    //                 });
+    //             },
+    //             separateDialCode: true,
+    //             preferredCountries: ["eg", "sa", "ae", "jo"],
+    //             utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"
+    //         });
+
+    //         var existingValue = $(inputId).val();
+    //         if (existingValue) {
+    //             iti.setNumber(existingValue);
+    //         }
+    //         return iti;
+    //     }
+
+    //     var iti1 = initPhone("#phone1");
+    //     var iti2 = initPhone("#phone2");
+
+    //     // ===== عند إرسال النموذج =====
+    //     $("form").on("submit", function () {
+    //         if (!iti1.isValidNumber()) {
+    //             Swal.fire({
+    //                 icon: 'error',
+    //                 title: 'خطأ',
+    //                 text: 'رقم الموبايل الأول غير صحيح'
+    //             });
+    //             return false;
+    //         }
+
+    //         if (!iti2.isValidNumber()) {
+    //             Swal.fire({
+    //                 icon: 'error',
+    //                 title: 'خطأ',
+    //                 text: 'رقم الموبايل الثاني غير صحيح'
+    //             });
+    //             return false;
+    //         }
+
+    //         $("#phone1").val(iti1.getNumber());
+    //         $("#phone2").val(iti2.getNumber());
+
+    //         // ===== دمج القيم المختارة في string =====
+    //         var selectedTypes = $('#UserTypeListSelected').val() || [];
+    //         $('#UserType').val(selectedTypes.join(','));
+    //     });
+    // });
+
+            $(document).ready(function () {
+        // ===== تهيئة الـ Select2 =====
+        $('.select2').select2({
+            placeholder: "اختر من القائمة",
+            width: '100%',
+            dir: "rtl",
+            closeOnSelect: false
+        });
+
+        // ===== دالة جلب العقارات الرياضية حسب النوع =====
+        function loadSportsByType(sportTypeId, callback) {
+            if (!sportTypeId) {
+                if (callback) callback([]);
+                return;
+            }
+
+            $.ajax({
+                url: '@Url.Action("GetSportsByUserType", "AppUser")',
+                type: 'GET',
+                data: { userType: sportTypeId },
+                success: function (data) {
+                    if (callback) callback(data);
+                },
+                error: function () {
+                    if (callback) callback([]);
+                }
+            });
+        }
+
+        // ===== دالة جلب المزارع =====
+        function loadFarms(callback) {
+            $.ajax({
+                url: '@Url.Action("GetFarmsByUserType", "AppUser")',
+                type: 'GET',
+                data: { userType: "0" },
+                success: function (data) {
+                    if (callback) callback(data);
+                },
+                error: function () {
+                    if (callback) callback([]);
+                }
+            });
+        }
+
+        // ===== دالة إضافة العقارات إلى الليست (من غير selected) =====
+        function addSportsToList(newItems) {
+            var select = $('#SportIds');
+
+            // إضافة العناصر الجديدة (اللي مش موجودة)
+            $.each(newItems, function (index, item) {
+                var exists = select.find('option[value="' + item.id + '"]').length > 0;
+                if (!exists) {
+                    select.append('<option value="' + item.id + '">' + (item.nameAr || item.name) + '</option>');
+                }
+            });
+
+            // ===== مهم جداً: من غير ما نختارهم =====
+            // خلينا القيم المختارة زي ما هي من غير تغيير
+            // select.val(select.val()).trigger('change');
+        }
+
+        // ===== دالة إزالة العقارات حسب النوع =====
+        function removeSportsByType(sportTypeId) {
+            var select = $('#SportIds');
+            var currentValues = select.val() || [];
+
+            $.ajax({
+                url: '@Url.Action("GetSportsByUserType", "AppUser")',
+                type: 'GET',
+                data: { userType: sportTypeId },
+                success: function (data) {
+                    var idsToRemove = data.map(function (item) { return item.id.toString(); });
+
+                    // حذف الخيارات
+                    $.each(idsToRemove, function (index, id) {
+                        select.find('option[value="' + id + '"]').remove();
+                    });
+
+                    // حذف القيم المختارة (لو كانت موجودة)
+                    var newValues = currentValues.filter(function (val) {
+                        return !idsToRemove.includes(val);
+                    });
+
+                    select.val(newValues).trigger('change');
+                }
+            });
+        }
+
+        // ===== دالة تحديث قائمة المزارع =====
+        function updateFarmsList(newItems) {
+            var select = $('#FarmIds');
+            select.find('option').remove();
+            select.val(null).trigger('change');
+
+            $.each(newItems, function (index, item) {
+                select.append('<option value="' + item.id + '">' + (item.name || item.nameAr) + '</option>');
+            });
+        }
+
+        // ===== دالة التعامل مع تغيير نوع العقار =====
+        function handleUserTypeChange() {
+            var selectedTypes = $('#UserTypeListSelected').val() || [];
+
+            // ===== 1. المزارع =====
+            if (selectedTypes.includes('0')) {
+                $('#farmsContainer').show();
+                loadFarms(function (data) {
+                    updateFarmsList(data);
+                });
+            } else {
+                $('#farmsContainer').hide();
+                $('#FarmIds').val(null).trigger('change');
+            }
+
+            // ===== 2. العقارات الرياضية (تراكمي) =====
+            var sportTypes = selectedTypes.filter(function (val) { return val !== '0'; });
+
+            if (sportTypes.length > 0) {
+                $('#sportsContainer').show();
+
+                // جلب الأنواع الموجودة حالياً في الليست
+                var select = $('#SportIds');
+                var existingOptions = [];
+                select.find('option').each(function () {
+                    existingOptions.push($(this).val());
+                });
+
+                // حذف الخيارات اللي مش موجودة في الأنواع المختارة
+                // جلب كل العقارات من كل الأنواع المختارة
+                $.ajax({
+                    url: '@Url.Action("GetAllSportsByTypes", "AppUser")',
+                    type: 'GET',
+                    data: { sportTypeIds: sportTypes.join(',') },
+                    success: function (data) {
+                        // إعادة بناء الليست
+                        select.find('option').remove();
+                        select.val(null).trigger('change');
+
+                        // إضافة كل العقارات من الأنواع المختارة
+                        $.each(data, function (index, item) {
+                            select.append('<option value="' + item.id + '">' + (item.nameAr || item.name) + '</option>');
+                        });
+
+                        // ===== من غير ما نختار أي حاجة =====
+                        // خلينا الـ selected فاضي
+                        select.val([]).trigger('change');
+                    }
+                });
+
+            } else {
+                $('#sportsContainer').hide();
+                $('#SportIds').val(null).trigger('change');
+            }
+        }
+
+        // ===== ربط الأحداث =====
+        $('#UserTypeListSelected').on('change', function () {
+            handleUserTypeChange();
+        });
+
+        // ===== عند تحميل الصفحة =====
+        handleUserTypeChange();
+
+        // ===== دالة رقم الهاتف =====
         function initPhone(inputId) {
-
             var input = document.querySelector(inputId);
-
             var iti = window.intlTelInput(input, {
-
                 initialCountry: "auto",
-
                 geoIpLookup: function (callback) {
                     $.get("https://ipapi.co/json/", function (data) {
                         callback(data.country_code.toLowerCase());
                     }).fail(function () {
-                        callback("eg"); // fallback
+                        callback("eg");
                     });
                 },
-
                 separateDialCode: true,
                 preferredCountries: ["eg", "sa", "ae", "jo"],
-
                 utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"
             });
 
-            // لو فيه رقم جاى من DB
             var existingValue = $(inputId).val();
             if (existingValue) {
                 iti.setNumber(existingValue);
             }
-
             return iti;
         }
 
-        // Initialize الاتنين
         var iti1 = initPhone("#phone1");
         var iti2 = initPhone("#phone2");
 
-        // ============================
-        // Submit
-        // ============================
+        // ===== عند إرسال النموذج =====
         $("form").on("submit", function () {
-
-            // تأكد إن utils اتحمل
             if (!iti1.isValidNumber()) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'خطأ',
-                    text: 'رقم الموبايل الأول غير صحيح'
-                });
+                Swal.fire({ icon: 'error', title: 'خطأ', text: 'رقم الموبايل الأول غير صحيح' });
                 return false;
             }
 
             if (!iti2.isValidNumber()) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'خطأ',
-                    text: 'رقم الموبايل الثاني غير صحيح'
-                });
+                Swal.fire({ icon: 'error', title: 'خطأ', text: 'رقم الموبايل الثاني غير صحيح' });
                 return false;
             }
 
             $("#phone1").val(iti1.getNumber());
             $("#phone2").val(iti2.getNumber());
-        });
 
+            var selectedTypes = $('#UserTypeListSelected').val() || [];
+            $('#UserType').val(selectedTypes.join(','));
+        });
     });
 </script>

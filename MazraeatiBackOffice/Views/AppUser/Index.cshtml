@@ -1,94 +1,1475 @@
-﻿<style>
-    .table-scroll {
-        height: 350px;
-        overflow-y: scroll;
+﻿@* @using MazraeatiBackOffice.Configuration
+@model IEnumerable<UserModel>
+
+@{
+    ViewBag.Title = "المستخدمين";
+    ViewBag.activePage = "المستخدمين";
+}
+
+<style>
+    /* ============================================================
+           الإحصائيات (Cards)
+           ============================================================ */
+    .stat-card {
+        background: white;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        text-align: center;
+        margin-bottom: 15px;
+        cursor: default;
+        transition: transform 0.2s;
     }
 
-        /* Sticky header */
+        .stat-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .stat-card .number {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .stat-card .label {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .stat-card.total {
+            border-left: 4px solid #007bff;
+        }
+
+        .stat-card.active {
+            border-left: 4px solid #28a745;
+        }
+
+        .stat-card.inactive {
+            border-left: 4px solid #dc3545;
+        }
+
+        .stat-card.blocked {
+            border-left: 4px solid #6c757d;
+        }
+
+
+
+    /* ============================================================
+           الفلتر
+           ============================================================ */
+    .filter-section {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+
+        .filter-section .form-group {
+            margin-bottom: 5px;
+        }
+
+        .filter-section label {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+    /* ============================================================
+           الجدول
+           ============================================================ */
+    .table-scroll {
+        max-height: 500px;
+        overflow-y: auto;
+    }
+
         .table-scroll thead th {
             position: sticky;
             top: 0;
-            background: #198754;
-            color: #fff;
             z-index: 10;
+            background: #2c3e50;
+            color: white;
+            white-space: nowrap;
+            text-align: center;
         }
 
-        /* Chrome / Edge */
-        .table-scroll::-webkit-scrollbar {
-            width: 12px;
+        .table-scroll tbody td {
+            vertical-align: middle;
+            text-align: center;
         }
 
-        .table-scroll::-webkit-scrollbar-track {
-            background: #eee;
+    /* ============================================================
+           الحالة (Active/Inactive Badge)
+           ============================================================ */
+    .status-badge {
+        display: inline-block;
+        padding: 5px 14px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 12px;
+        min-width: 80px;
+        text-align: center;
+        letter-spacing: 0.3px;
+    }
+
+    .status-active {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #28a745;
+    }
+
+    .status-inactive {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #dc3545;
+    }
+
+    /* ============================================================
+           User Type Badge
+           ============================================================ */
+    .user-type-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 500;
+        background: #e9ecef;
+        color: #495057;
+    }
+
+        .user-type-badge.farmer {
+            background: #28a745;
+            color: #fff;
         }
 
-        .table-scroll::-webkit-scrollbar-thumb {
-            background: #999;
-            border-radius: 10px;
-            border: 2px solid #eee;
+        .user-type-badge.football {
+            background: #007bff;
+            color: #fff;
         }
 
-            .table-scroll::-webkit-scrollbar-thumb:hover {
-                background: #666;
-            }
+        .user-type-badge.padel {
+            background: #6f42c1;
+            color: #fff;
+        }
 
-    /* Firefox */
-    .table-scroll {
-        scrollbar-width: auto;
-        scrollbar-color: #999 #eee;
+        .user-type-badge.tennis {
+            background: #fd7e14;
+            color: #fff;
+        }
+
+        .user-type-badge.basketball {
+            background: #e83e8c;
+            color: #fff;
+        }
+
+        .user-type-badge.volleyball {
+            background: #20c997;
+            color: #fff;
+        }
+
+        .user-type-badge.swimming {
+            background: #17a2b8;
+            color: #fff;
+        }
+
+        .user-type-badge.equestrian {
+            background: #8B4513;
+            color: #fff;
+        }
+
+        .user-type-badge.shooting {
+            background: #343a40;
+            color: #fff;
+        }
+
+        .user-type-badge.pickleball {
+            background: #ff6b6b;
+            color: #fff;
+        }
+
+        .user-type-badge.tabletennis {
+            background: #4ecdc4;
+            color: #fff;
+        }
+
+        .user-type-badge.squash {
+            background: #45b7d1;
+            color: #fff;
+        }
+
+        .user-type-badge.badminton {
+            background: #f9ca24;
+            color: #000;
+        }
+
+    /* ============================================================
+           أزرار الإجراءات (تصميم احترافي)
+           ============================================================ */
+    .btn-group-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-action {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 5px 12px;
+        font-size: 11px;
+        font-weight: 600;
+        border: none;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        min-width: 55px;
+        height: 30px;
+        gap: 4px;
+        color: #fff;
+    }
+
+        .btn-action i {
+            font-size: 12px;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            text-decoration: none;
+            color: #fff;
+        }
+
+    /* زر التفعيل (Active) */
+    .btn-toggle-active {
+        background: #28a745;
+        color: #fff;
+    }
+
+        .btn-toggle-active:hover {
+            background: #218838;
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+        }
+
+    /* زر التعطيل (Inactive) */
+    .btn-toggle-inactive {
+        background: #6c757d;
+        color: #fff;
+    }
+
+        .btn-toggle-inactive:hover {
+            background: #5a6268;
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(108, 117, 125, 0.4);
+        }
+
+    /* زر التعديل */
+    .btn-edit {
+        background: #ffc107;
+        color: #000;
+    }
+
+        .btn-edit:hover {
+            background: #e0a800;
+            color: #000;
+            box-shadow: 0 4px 15px rgba(255, 193, 7, 0.4);
+        }
+
+    /* زر المزارع */
+    .btn-farms {
+        background: #17a2b8;
+        color: #fff;
+    }
+
+        .btn-farms:hover {
+            background: #138496;
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(23, 162, 184, 0.4);
+        }
+
+    /* زر الحذف */
+    .btn-delete {
+        background: #dc3545;
+        color: #fff;
+    }
+
+        .btn-delete:hover {
+            background: #c82333;
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
+        }
+
+    /* حالة الزر عند التحميل */
+    .btn-action.loading {
+        opacity: 0.6;
+        pointer-events: none;
     }
 </style>
-@model IEnumerable<UserModel>
-<div class="col-md-12">
-    <div class="card patients-list">
-        <div class="header">
-            <h2><strong>قائمة</strong> المستخدمين ( أصحاب المزارع)</h2>
-            <ul class="header-dropdown">
-            </ul>
-        </div>
-        <div class="body">
-            <!-- Nav tabs -->
-            @Html.Partial("_search")
-            <!-- Tab panes -->
-            <div class="tab-content m-t-10">
-                <div class="tab-pane table-responsive active table-scroll" id="All">
-                    <table class="table m-b-0 table-hover">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>@Html.DisplayNameFor(a => a.UserName)</th>
-                                <th>@Html.DisplayNameFor(a => a.MobilePhone)</th>
-                                <th>@Html.DisplayNameFor(a => a.MobileNumber)</th>
-                                <th>تفاصيل</th>
-                                <th>المزارع</th>
-                                <th>حذف</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @{
-                                int count = 1;
-                            }
-                            @foreach (var item in Model)
-                            {
-                                <tr>
-                                    <td>@count</td>
-                                    <td>@item.UserName</td>
-                                    <td>@item.MobilePhone</td>
-                                    <td>@item.MobileNumber</td>
-                                    <td><a href="@Url.Content("~/AppUser/edit/")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
-                                    <td><a href="@Url.Content("~/AppUser/UserFarms/")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-view-list" style="color: white;margin-top: -10px;"></i></a></td>
-                                    <td>
-                                        @if (@item.Id !=1 ) {
-                                            <a href="javascript:Delete('AppUser',@item.Id,'Delete','Index')" class="btn btn-danger btn-sm">حذف</a>
+
+<div class="container-fluid">
+    <div class="row clearfix">
+        <div class="col-lg-12 col-md-12 col-sm-12">
+            <div class="card">
+                <div class="header">
+                    <h2><strong>قائمة</strong> المستخدمين</h2>
+                    <ul class="header-dropdown">
+                        <li>
+                            <a href="@Url.Action("Create")" class="btn btn-primary btn-round">
+                                <i class="fa fa-plus"></i> إضافة مستخدم جديد
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="body">
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show">
+                            <strong>تم!</strong> @TempData["SuccessMessage"]
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        </div>
+                    }
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show">
+                            <strong>خطأ!</strong> @TempData["ErrorMessage"]
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        </div>
+                    }
+
+                    <!-- ===== الإحصائيات (Cards) ===== -->
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <div class="stat-card total">
+                                <div class="number">@ViewBag.TotalUsers</div>
+                                <div class="label">إجمالي المستخدمين</div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="stat-card active">
+                                <div class="number">@ViewBag.ActiveUsers</div>
+                                <div class="label">نشطون</div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="stat-card inactive">
+                                <div class="number">@ViewBag.InactiveUsers</div>
+                                <div class="label">غير نشطون</div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="stat-card blocked">
+                                <div class="number">@ViewBag.BlockedUsers</div>
+                                <div class="label">محظورون</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ===== الفلتر ===== -->
+                    <div class="filter-section">
+                        <form method="post" action="@Url.Action("Index", "AppUser")">
+                            @Html.AntiForgeryToken()
+                            <div class="row clearfix">
+                                <!-- بحث -->
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label>بحث</label>
+                                        <input type="text" name="search" value="@ViewBag.search"
+                                               placeholder="اسم المستخدم أو رقم الجوال" class="form-control" />
+                                    </div>
+                                </div>
+
+                                <!-- نوع العقار -->
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label>نوع العقار</label>
+                                        <select class="form-control select2" name="userType">
+                                            <option value="">-- الكل --</option>
+                                            @foreach (var item in ViewBag.UserTypes as SelectList)
+                                            {
+                                                <option value="@item.Value" selected="@item.Selected">@item.Text</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- الحالة -->
+                                <div class="col-sm-2">
+                                    <div class="form-group">
+                                        <label>الحالة</label>
+                                        <select class="form-control select2" name="isActive">
+                                            <option value="">-- الكل --</option>
+                                            <option value="true" selected="@(ViewBag.SelectedIsActive == true)">نشط</option>
+                                            <option value="false" selected="@(ViewBag.SelectedIsActive == false)">غير نشط</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- أزرار -->
+                                <div class="col-sm-3" style="padding-top:22px;">
+                                    <button type="submit" class="btn btn-primary btn-round">
+                                        <i class="fa fa-search"></i> بحث
+                                    </button>
+                                    <a href="@Url.Action("Index")" class="btn btn-default btn-round">
+                                        <i class="fa fa-refresh"></i> تفريغ
+                                    </a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- ===== جدول المستخدمين ===== -->
+                    @if (Model != null && Model.Any())
+                    {
+                        <div class="table-scroll" style="max-height:300px">
+                            <table class="table table-bordered table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>اسم المستخدم</th>
+                                        <th>نوع العقار</th>
+                                        <th>رقم الواتساب</th>
+                                        <th>رقم الجوال</th>
+                                        <th>الحالة</th>
+                                        <th>الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        int count = 1;
+                                    }
+                                    @foreach (var item in Model)
+                                    {
+                                        string userTypeClass = "";
+                                        string userTypeName = "";
+                                        switch ((UserTypeEnum)item.UserType)
+                                        {
+                                            case UserTypeEnum.Farmer: userTypeClass = "farmer"; userTypeName = "مالك مزرعة"; break;
+                                            case UserTypeEnum.Football: userTypeClass = "football"; userTypeName = "كرة قدم"; break;
+                                            case UserTypeEnum.Padel: userTypeClass = "padel"; userTypeName = "بادل"; break;
+                                            case UserTypeEnum.Tennis: userTypeClass = "tennis"; userTypeName = "تنس"; break;
+                                            case UserTypeEnum.Basketball: userTypeClass = "basketball"; userTypeName = "كرة سلة"; break;
+                                            case UserTypeEnum.Volleyball: userTypeClass = "volleyball"; userTypeName = "كرة طائرة"; break;
+                                            case UserTypeEnum.Swimming: userTypeClass = "swimming"; userTypeName = "سباحة"; break;
+                                            case UserTypeEnum.Equestrian: userTypeClass = "equestrian"; userTypeName = "فروسية"; break;
+                                            case UserTypeEnum.Shooting: userTypeClass = "shooting"; userTypeName = "رماية"; break;
+                                            case UserTypeEnum.Pickleball: userTypeClass = "pickleball"; userTypeName = "Pickleball"; break;
+                                            case UserTypeEnum.TableTennis: userTypeClass = "tabletennis"; userTypeName = "تنس طاولة"; break;
+                                            case UserTypeEnum.Squash: userTypeClass = "squash"; userTypeName = "اسكواش"; break;
+                                            case UserTypeEnum.Badminton: userTypeClass = "badminton"; userTypeName = "ريشة طائرة"; break;
+                                            default: userTypeClass = ""; userTypeName = "عام"; break;
                                         }
-                                    </td>
-                                </tr>
-                                count++;
-                            }
-                        </tbody>
-                    </table>
+
+                                        <tr>
+                                            <td>@count</td>
+                                            <td>
+                                                <strong>@item.UserName</strong>
+                                                <br /><small class="text-muted">@item.MobilePhone</small>
+                                            </td>
+                                            <td>
+                                                <span class="user-type-badge @userTypeClass">@userTypeName</span>
+                                            </td>
+                                            <td>@item.MobilePhone</td>
+                                            <td>@item.MobileNumber</td>
+                                            <td>
+                                                @if (item.IsActive)
+                                                {
+                                                    <span class="status-badge status-active">نشط</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="status-badge status-inactive">غير نشط</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <div class="btn-group-actions">
+                                                    <!-- ===== زر تبديل الحالة (Toggle) ===== -->
+                                                    @if (item.IsActive)
+                                                    {
+                                                        <a href="javascript:toggleUserActive(@item.Id)"
+                                                           class="btn-action btn-toggle-active"
+                                                           title="تعطيل المستخدم">
+                                                            <i class="fa fa-toggle-on"></i> نشط
+                                                        </a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <a href="javascript:toggleUserActive(@item.Id)"
+                                                           class="btn-action btn-toggle-inactive"
+                                                           title="تفعيل المستخدم">
+                                                            <i class="fa fa-toggle-off"></i> غير نشط
+                                                        </a>
+                                                    }
+
+                                                    <!-- ===== زر التعديل ===== -->
+                                                    <a href="@Url.Action("Edit", new { id = item.Id })" class="btn-action btn-edit" title="تعديل">
+                                                        <i class="fa fa-edit"></i>تعديل
+                                                    </a>
+
+                                                    <!-- ===== زر المزارع ===== -->
+                                                    <a href="@Url.Content("~/AppUser/UserFarms/")@item.Id" class="btn-action btn-farms" title="المزارع">
+                                                        <i class="fa fa-list"></i>المزارع
+                                                    </a>
+
+                                                    <!-- ===== زر الحذف ===== -->
+                                                    @if (item.Id != 1)
+                                                    {
+                                                        <a href="javascript:Delete('AppUser', @item.Id, 'Delete', 'Index')" class="btn-action btn-delete" title="حذف">
+                                                            <i class="fa fa-trash"></i>حذف
+                                                        </a>
+                                                    }
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        count++;
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- ===== إجمالي النتائج ===== -->
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <span class="text-muted">إجمالي النتائج: @Model.Count()</span>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="empty-state-container text-center">
+                            <div class="empty-state-icon">
+                                <i class="zmdi zmdi-accounts" style="font-size: 60px; color: #ccc;"></i>
+                            </div>
+                            <div class="empty-state-title" style="font-size: 20px; font-weight: bold; margin-top: 15px;">لا توجد بيانات حالياً</div>
+                            <div class="empty-state-description" style="color: #999; margin-top: 10px;">
+                                لا توجد بيانات ليتم عرضها، يمكنك إضافة مستخدم جديد
+                            </div>
+                            <a href="@Url.Action("Create")" class="btn btn-primary btn-round mt-3">
+                                <i class="fa fa-plus"></i> إضافة مستخدم جديد
+                            </a>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" />
+}
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/i18n/ar.js"></script>
+}
+
+<script>
+    $(document).ready(function() {
+        $('.select2').select2();
+    });
+
+    // ============================================================
+    // SweetAlert Configuration
+    // ============================================================
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer);
+            toast.addEventListener('mouseleave', Swal.resumeTimer);
+        }
+    });
+
+    // ============================================================
+    // تبديل حالة المستخدم (نشط/غير نشط) - مع تحديث فوري
+    // ============================================================
+    function toggleUserActive(id) {
+        var btn = $('a[href*="toggleUserActive(' + id + ')"]');
+        var isActive = btn.hasClass('btn-toggle-active');
+        var actionText = isActive ? 'تعطيل' : 'تفعيل';
+        var confirmText = isActive ? 'هل أنت متأكد من تعطيل هذا المستخدم؟' : 'هل أنت متأكد من تفعيل هذا المستخدم؟';
+
+        Swal.fire({
+            title: actionText + ' المستخدم',
+            text: confirmText,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: isActive ? '#dc3545' : '#28a745',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: isActive ? 'نعم، تعطيل' : 'نعم، تفعيل',
+            cancelButtonText: 'إلغاء',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // إضافة حالة تحميل
+                btn.addClass('loading');
+
+                $.ajax({
+                    url: '@Url.Action("ToggleActive", "AppUser")',
+                    type: 'POST',
+                    data: { id: id },
+                    success: function(data) {
+                        if (data.success) {
+                            // ===== تحديث الزر والـ Badge فورياً بدون ريفرش =====
+                            updateUserStatus(id, data.isActive);
+
+                            Toast.fire({
+                                icon: 'success',
+                                title: data.message
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'خطأ',
+                                text: data.message
+                            });
+                        }
+                    },
+                    error: function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'خطأ',
+                            text: 'حدث خطأ في الاتصال بالخادم'
+                        });
+                    },
+                    complete: function() {
+                        btn.removeClass('loading');
+                    }
+                });
+            }
+        });
+    }
+
+    // ===== دالة تحديث حالة المستخدم في الجدول فورياً =====
+    function updateUserStatus(id, isActive) {
+        // 1. تحديث الـ Badge
+        var row = $('tr').find('a[href*="toggleUserActive(' + id + ')"]').closest('tr');
+        if (row.length === 0) return;
+
+        var statusCell = row.find('td:eq(5)');
+        if (isActive) {
+            statusCell.html('<span class="status-badge status-active">نشط</span>');
+        } else {
+            statusCell.html('<span class="status-badge status-inactive">غير نشط</span>');
+        }
+
+        // 2. تحديث الزر
+        var btn = row.find('.btn-action.btn-toggle-active, .btn-action.btn-toggle-inactive');
+        if (isActive) {
+            btn.removeClass('btn-toggle-inactive').addClass('btn-toggle-active');
+            btn.html('<i class="fa fa-toggle-on"></i> نشط');
+            btn.attr('title', 'تعطيل المستخدم');
+        } else {
+            btn.removeClass('btn-toggle-active').addClass('btn-toggle-inactive');
+            btn.html('<i class="fa fa-toggle-off"></i> غير نشط');
+            btn.attr('title', 'تفعيل المستخدم');
+        }
+
+        // 3. تحديث الإحصائيات
+        updateStatistics(isActive);
+    }
+
+    // ===== دالة تحديث الإحصائيات =====
+    function updateStatistics(newStatus) {
+        // الحالة القديمة (نعرفها من الزر)
+        var oldStatus = !newStatus;
+
+        // تقليل العداد القديم
+        var oldCard = oldStatus ? $('.stat-card.active') : $('.stat-card.inactive');
+        if (oldCard.length) {
+            var oldNumber = parseInt(oldCard.find('.number').text()) || 0;
+            oldCard.find('.number').text(Math.max(0, oldNumber - 1));
+        }
+
+        // زيادة العداد الجديد
+        var newCard = newStatus ? $('.stat-card.active') : $('.stat-card.inactive');
+        if (newCard.length) {
+            var newNumber = parseInt(newCard.find('.number').text()) || 0;
+            newCard.find('.number').text(newNumber + 1);
+        }
+    }
+
+    // ============================================================
+    // حذف السجل
+    // ============================================================
+    function Delete(controller, id, action, view) {
+        Swal.fire({
+            title: 'هل أنت متأكد؟',
+            text: 'لا يمكنك التراجع عن هذا الإجراء!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'نعم، احذف',
+            cancelButtonText: 'إلغاء',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/' + controller + '/' + action + '/' + id,
+                    type: 'POST',
+                    success: function(data) {
+                        if (data === 1) {
+                            Toast.fire({
+                                icon: 'success',
+                                title: 'تم الحذف بنجاح'
+                            }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'خطأ',
+                                text: data || 'حدث خطأ أثناء الحذف'
+                            });
+                        }
+                    },
+                    error: function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'خطأ',
+                            text: 'حدث خطأ في الاتصال بالخادم'
+                        });
+                    }
+                });
+            }
+        });
+    }
+</script> *@
+
+
+@using MazraeatiBackOffice.Configuration
+@model IEnumerable<UserModel>
+
+@{
+    ViewBag.Title = "المستخدمين";
+    ViewBag.activePage = "المستخدمين";
+}
+
+<style>
+    /* ============================================================
+               الإحصائيات (Cards)
+               ============================================================ */
+    .stat-card {
+        background: white;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        text-align: center;
+        margin-bottom: 15px;
+        cursor: default;
+        transition: transform 0.2s;
+    }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .stat-card .number {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .stat-card .label {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .stat-card.total {
+            border-left: 4px solid #007bff;
+        }
+
+        .stat-card.active {
+            border-left: 4px solid #28a745;
+        }
+
+        .stat-card.inactive {
+            border-left: 4px solid #dc3545;
+        }
+
+        .stat-card.blocked {
+            border-left: 4px solid #6c757d;
+        }
+
+    /* ============================================================
+               الفلتر
+               ============================================================ */
+    .filter-section {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+
+        .filter-section .form-group {
+            margin-bottom: 5px;
+        }
+
+        .filter-section label {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+    /* ============================================================
+               الجدول
+               ============================================================ */
+    .table-scroll {
+        max-height: 500px;
+        overflow-y: auto;
+    }
+
+        .table-scroll thead th {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: #2c3e50;
+            color: white;
+            white-space: nowrap;
+            text-align: center;
+        }
+
+        .table-scroll tbody td {
+            vertical-align: middle;
+            text-align: center;
+        }
+
+    /* ============================================================
+               الحالة (Active/Inactive Badge)
+               ============================================================ */
+    .status-badge {
+        display: inline-block;
+        padding: 5px 14px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 12px;
+        min-width: 80px;
+        text-align: center;
+        letter-spacing: 0.3px;
+    }
+
+    .status-active {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #28a745;
+    }
+
+    .status-inactive {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #dc3545;
+    }
+
+    /* ============================================================
+               User Type Badge (متعددة)
+               ============================================================ */
+    .user-type-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 500;
+        background: #e9ecef;
+        color: #495057;
+        margin: 2px 3px;
+    }
+
+        .user-type-badge.farmer {
+            background: #28a745;
+            color: #fff;
+        }
+
+        .user-type-badge.football {
+            background: #007bff;
+            color: #fff;
+        }
+
+        .user-type-badge.padel {
+            background: #6f42c1;
+            color: #fff;
+        }
+
+        .user-type-badge.tennis {
+            background: #fd7e14;
+            color: #fff;
+        }
+
+        .user-type-badge.basketball {
+            background: #e83e8c;
+            color: #fff;
+        }
+
+        .user-type-badge.volleyball {
+            background: #20c997;
+            color: #fff;
+        }
+
+        .user-type-badge.swimming {
+            background: #17a2b8;
+            color: #fff;
+        }
+
+        .user-type-badge.equestrian {
+            background: #8B4513;
+            color: #fff;
+        }
+
+        .user-type-badge.shooting {
+            background: #343a40;
+            color: #fff;
+        }
+
+        .user-type-badge.pickleball {
+            background: #ff6b6b;
+            color: #fff;
+        }
+
+        .user-type-badge.tabletennis {
+            background: #4ecdc4;
+            color: #fff;
+        }
+
+        .user-type-badge.squash {
+            background: #45b7d1;
+            color: #fff;
+        }
+
+        .user-type-badge.badminton {
+            background: #f9ca24;
+            color: #000;
+        }
+
+    /* ============================================================
+               أزرار الإجراءات
+               ============================================================ */
+    .btn-group-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-action {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 5px 12px;
+        font-size: 11px;
+        font-weight: 600;
+        border: none;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        min-width: 55px;
+        height: 30px;
+        gap: 4px;
+        color: #fff;
+    }
+
+        .btn-action i {
+            font-size: 12px;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            text-decoration: none;
+            color: #fff;
+        }
+
+    .btn-toggle-active {
+        background: #28a745;
+        color: #fff;
+    }
+
+        .btn-toggle-active:hover {
+            background: #218838;
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+        }
+
+    .btn-toggle-inactive {
+        background: #6c757d;
+        color: #fff;
+    }
+
+        .btn-toggle-inactive:hover {
+            background: #5a6268;
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(108, 117, 125, 0.4);
+        }
+
+    .btn-edit {
+        background: #ffc107;
+        color: #000;
+    }
+
+        .btn-edit:hover {
+            background: #e0a800;
+            color: #000;
+            box-shadow: 0 4px 15px rgba(255, 193, 7, 0.4);
+        }
+
+    .btn-farms {
+        background: #17a2b8;
+        color: #fff;
+    }
+
+        .btn-farms:hover {
+            background: #138496;
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(23, 162, 184, 0.4);
+        }
+
+    .btn-delete {
+        background: #dc3545;
+        color: #fff;
+    }
+
+        .btn-delete:hover {
+            background: #c82333;
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
+        }
+
+    .btn-action.loading {
+        opacity: 0.6;
+        pointer-events: none;
+    }
+</style>
+
+<div class="container-fluid">
+    <div class="row clearfix">
+        <div class="col-lg-12 col-md-12 col-sm-12">
+            <div class="card">
+                <div class="header">
+                    <h2><strong>قائمة</strong> المستخدمين</h2>
+                    <ul class="header-dropdown">
+                        <li>
+                            <a href="@Url.Action("Create")" class="btn btn-primary btn-round">
+                                <i class="fa fa-plus"></i> إضافة مستخدم جديد
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="body">
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show">
+                            <strong>تم!</strong> @TempData["SuccessMessage"]
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        </div>
+                    }
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show">
+                            <strong>خطأ!</strong> @TempData["ErrorMessage"]
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        </div>
+                    }
+
+                    <!-- ===== الإحصائيات (Cards) ===== -->
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <div class="stat-card total">
+                                <div class="number">@ViewBag.TotalUsers</div>
+                                <div class="label">إجمالي المستخدمين</div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="stat-card active">
+                                <div class="number">@ViewBag.ActiveUsers</div>
+                                <div class="label">نشطون</div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="stat-card inactive">
+                                <div class="number">@ViewBag.InactiveUsers</div>
+                                <div class="label">غير نشطون</div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="stat-card blocked">
+                                <div class="number">@ViewBag.BlockedUsers</div>
+                                <div class="label">محظورون</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ===== الفلتر ===== -->
+                    <div class="filter-section">
+                        <form method="post" action="@Url.Action("Index", "AppUser")">
+                            @Html.AntiForgeryToken()
+                            <div class="row clearfix">
+                                <!-- بحث -->
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label>بحث</label>
+                                        <input type="text" name="search" value="@ViewBag.search"
+                                               placeholder="اسم المستخدم أو رقم الجوال" class="form-control" />
+                                    </div>
+                                </div>
+
+                                <!-- نوع العقار -->
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label>نوع العقار</label>
+                                        <select class="form-control select2" name="userType" id="userTypeFilter">
+                                            <option value="">-- الكل --</option>
+                                            @foreach (var item in ViewBag.UserTypes as SelectList)
+                                            {
+                                                <option value="@item.Value" selected="@item.Selected">@item.Text</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- الحالة -->
+                                <div class="col-sm-2">
+                                    <div class="form-group">
+                                        <label>الحالة</label>
+                                        <select class="form-control select2" name="isActive">
+                                            <option value="">-- الكل --</option>
+                                            <option value="true" selected="@(ViewBag.SelectedIsActive == true)">نشط</option>
+                                            <option value="false" selected="@(ViewBag.SelectedIsActive == false)">غير نشط</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- أزرار -->
+                                <div class="col-sm-3" style="padding-top:22px;">
+                                    <button type="submit" class="btn btn-primary btn-round">
+                                        <i class="fa fa-search"></i> بحث
+                                    </button>
+                                    <a href="@Url.Action("Index")" class="btn btn-default btn-round">
+                                        <i class="fa fa-refresh"></i> تفريغ
+                                    </a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- ===== جدول المستخدمين ===== -->
+                    @if (Model != null && Model.Any())
+                    {
+                        <div class="table-scroll">
+                            <table class="table table-bordered table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>اسم المستخدم</th>
+                                        <th>نوع العقار</th>
+                                        <th>رقم الواتساب</th>
+                                        <th>رقم الجوال</th>
+                                        <th>الحالة</th>
+                                        <th>الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        int count = 1;
+                                    }
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>@count</td>
+                                            <td>
+                                                <strong>@item.UserName</strong>
+                                                <br /><small class="text-muted">@item.MobilePhone</small>
+                                            </td>
+                                            <td>
+                                                @if (!string.IsNullOrEmpty(item.UserType))
+                                                {
+                                                    var types = item.UserType.Split(',', StringSplitOptions.RemoveEmptyEntries);
+                                                    foreach (var type in types)
+                                                    {
+                                                        string userTypeClass = "";
+                                                        string userTypeName = "";
+                                                        switch (type)
+                                                        {
+                                                            case "0": userTypeClass = "farmer"; userTypeName = "مزرعة"; break;
+                                                            case "1": userTypeClass = "football"; userTypeName = "كرة قدم"; break;
+                                                            case "2": userTypeClass = "padel"; userTypeName = "بادل"; break;
+                                                            case "3": userTypeClass = "tennis"; userTypeName = "تنس"; break;
+                                                            case "4": userTypeClass = "basketball"; userTypeName = "كرة سلة"; break;
+                                                            case "5": userTypeClass = "volleyball"; userTypeName = "كرة طائرة"; break;
+                                                            case "6": userTypeClass = "swimming"; userTypeName = "سباحة"; break;
+                                                            case "7": userTypeClass = "equestrian"; userTypeName = "فروسية"; break;
+                                                            case "8": userTypeClass = "shooting"; userTypeName = "رماية"; break;
+                                                            case "9": userTypeClass = "pickleball"; userTypeName = "Pickleball"; break;
+                                                            case "10": userTypeClass = "tabletennis"; userTypeName = "تنس طاولة"; break;
+                                                            case "11": userTypeClass = "squash"; userTypeName = "اسكواش"; break;
+                                                            case "12": userTypeClass = "badminton"; userTypeName = "ريشة طائرة"; break;
+                                                            default: userTypeClass = ""; userTypeName = type; break;
+                                                        }
+                                                        <span class="user-type-badge @userTypeClass">@userTypeName</span>
+                                                    }
+                                                }
+                                            </td>
+                                            <td>@item.MobilePhone</td>
+                                            <td>@item.MobileNumber</td>
+                                            <td>
+                                                @if (item.IsActive)
+                                                {
+                                                    <span class="status-badge status-active">نشط</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="status-badge status-inactive">غير نشط</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <div class="btn-group-actions">
+                                                    <!-- ===== زر تبديل الحالة (Toggle) ===== -->
+                                                    @if (item.IsActive)
+                                                    {
+                                                        <a href="javascript:toggleUserActive(@item.Id)"
+                                                           class="btn-action btn-toggle-active"
+                                                           title="تعطيل المستخدم">
+                                                            <i class="fa fa-toggle-on"></i> نشط
+                                                        </a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <a href="javascript:toggleUserActive(@item.Id)"
+                                                           class="btn-action btn-toggle-inactive"
+                                                           title="تفعيل المستخدم">
+                                                            <i class="fa fa-toggle-off"></i> غير نشط
+                                                        </a>
+                                                    }
+
+                                                    <!-- ===== زر التعديل ===== -->
+                                                    <a href="@Url.Action("Edit", new { id = item.Id })" class="btn-action btn-edit" title="تعديل">
+                                                        <i class="fa fa-edit"></i>تعديل
+                                                    </a>
+
+                                                    <!-- ===== زر المزارع ===== -->
+                                                    <a href="@Url.Content("~/AppUser/UserFarms/")@item.Id" class="btn-action btn-farms" title="المزارع">
+                                                        <i class="fa fa-list"></i>المزارع
+                                                    </a>
+
+                                                    <!-- ===== زر الحذف ===== -->
+                                                    @if (item.Id != 1)
+                                                    {
+                                                        <a href="javascript:Delete('AppUser', @item.Id, 'Delete', 'Index')" class="btn-action btn-delete" title="حذف">
+                                                            <i class="fa fa-trash"></i>حذف
+                                                        </a>
+                                                    }
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        count++;
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- ===== إجمالي النتائج ===== -->
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <span class="text-muted">إجمالي النتائج: @Model.Count()</span>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="empty-state-container text-center">
+                            <div class="empty-state-icon">
+                                <i class="zmdi zmdi-accounts" style="font-size: 60px; color: #ccc;"></i>
+                            </div>
+                            <div class="empty-state-title" style="font-size: 20px; font-weight: bold; margin-top: 15px;">لا توجد بيانات حالياً</div>
+                            <div class="empty-state-description" style="color: #999; margin-top: 10px;">
+                                لا توجد بيانات ليتم عرضها، يمكنك إضافة مستخدم جديد
+                            </div>
+                            <a href="@Url.Action("Create")" class="btn btn-primary btn-round mt-3">
+                                <i class="fa fa-plus"></i> إضافة مستخدم جديد
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" />
+}
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/i18n/ar.js"></script>
+}
+
+<script>
+    $(document).ready(function() {
+        $('.select2').select2();
+    });
+
+    // ============================================================
+    // SweetAlert Configuration
+    // ============================================================
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer);
+            toast.addEventListener('mouseleave', Swal.resumeTimer);
+        }
+    });
+
+    // ============================================================
+    // تبديل حالة المستخدم (نشط/غير نشط) - مع تحديث فوري
+    // ============================================================
+    function toggleUserActive(id) {
+        var btn = $('a[href*="toggleUserActive(' + id + ')"]');
+        var isActive = btn.hasClass('btn-toggle-active');
+        var actionText = isActive ? 'تعطيل' : 'تفعيل';
+        var confirmText = isActive ? 'هل أنت متأكد من تعطيل هذا المستخدم؟' : 'هل أنت متأكد من تفعيل هذا المستخدم؟';
+
+        Swal.fire({
+            title: actionText + ' المستخدم',
+            text: confirmText,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: isActive ? '#dc3545' : '#28a745',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: isActive ? 'نعم، تعطيل' : 'نعم، تفعيل',
+            cancelButtonText: 'إلغاء',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                btn.addClass('loading');
+
+                $.ajax({
+                    url: '@Url.Action("ToggleActive", "AppUser")',
+                    type: 'POST',
+                    data: { id: id },
+                    success: function(data) {
+                        if (data.success) {
+                            updateUserStatus(id, data.isActive);
+
+                            Toast.fire({
+                                icon: 'success',
+                                title: data.message
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'خطأ',
+                                text: data.message
+                            });
+                        }
+                    },
+                    error: function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'خطأ',
+                            text: 'حدث خطأ في الاتصال بالخادم'
+                        });
+                    },
+                    complete: function() {
+                        btn.removeClass('loading');
+                    }
+                });
+            }
+        });
+    }
+
+    // ===== دالة تحديث حالة المستخدم في الجدول فورياً =====
+    function updateUserStatus(id, isActive) {
+        var row = $('tr').find('a[href*="toggleUserActive(' + id + ')"]').closest('tr');
+        if (row.length === 0) return;
+
+        var statusCell = row.find('td:eq(5)');
+        if (isActive) {
+            statusCell.html('<span class="status-badge status-active">نشط</span>');
+        } else {
+            statusCell.html('<span class="status-badge status-inactive">غير نشط</span>');
+        }
+
+        var btn = row.find('.btn-action.btn-toggle-active, .btn-action.btn-toggle-inactive');
+        if (isActive) {
+            btn.removeClass('btn-toggle-inactive').addClass('btn-toggle-active');
+            btn.html('<i class="fa fa-toggle-on"></i> نشط');
+            btn.attr('title', 'تعطيل المستخدم');
+        } else {
+            btn.removeClass('btn-toggle-active').addClass('btn-toggle-inactive');
+            btn.html('<i class="fa fa-toggle-off"></i> غير نشط');
+            btn.attr('title', 'تفعيل المستخدم');
+        }
+
+        updateStatistics(isActive);
+    }
+
+    // ===== دالة تحديث الإحصائيات =====
+    function updateStatistics(newStatus) {
+        var oldStatus = !newStatus;
+
+        var oldCard = oldStatus ? $('.stat-card.active') : $('.stat-card.inactive');
+        if (oldCard.length) {
+            var oldNumber = parseInt(oldCard.find('.number').text()) || 0;
+            oldCard.find('.number').text(Math.max(0, oldNumber - 1));
+        }
+
+        var newCard = newStatus ? $('.stat-card.active') : $('.stat-card.inactive');
+        if (newCard.length) {
+            var newNumber = parseInt(newCard.find('.number').text()) || 0;
+            newCard.find('.number').text(newNumber + 1);
+        }
+    }
+
+    // ============================================================
+    // حذف السجل
+    // ============================================================
+    function Delete(controller, id, action, view) {
+        Swal.fire({
+            title: 'هل أنت متأكد؟',
+            text: 'لا يمكنك التراجع عن هذا الإجراء!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'نعم، احذف',
+            cancelButtonText: 'إلغاء',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/' + controller + '/' + action + '/' + id,
+                    type: 'POST',
+                    success: function(data) {
+                        if (data === 1) {
+                            Toast.fire({
+                                icon: 'success',
+                                title: 'تم الحذف بنجاح'
+                            }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'خطأ',
+                                text: data || 'حدث خطأ أثناء الحذف'
+                            });
+                        }
+                    },
+                    error: function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'خطأ',
+                            text: 'حدث خطأ في الاتصال بالخادم'
+                        });
+                    }
+                });
+            }
+        });
+    }
+</script>

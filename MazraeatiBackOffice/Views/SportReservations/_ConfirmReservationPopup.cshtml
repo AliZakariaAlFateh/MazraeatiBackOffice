@@ -1,0 +1,387 @@
+﻿@using MazraeatiBackOffice.Models.LoyaltyPoints
+@model ConfirmReservationSportViewModel
+
+<!-- ===== Modal ===== -->
+<div class="modal fade" id="confirmReservationModal" tabindex="-1" role="dialog" aria-labelledby="confirmReservationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background: #28a745; color: white;">
+                <h5 class="modal-title" id="confirmReservationModalLabel">
+                    <i class="fa fa-check-circle"></i> تأكيد الحجز
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: white;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- ===== بيانات الحجز ===== -->
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label><strong>العميل:</strong></label>
+                            <p>@Model.CustomerName</p>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label><strong>رقم الجوال:</strong></label>
+                            <p>@Model.CustomerPhone</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label><strong>القسم الرياضي:</strong></label>
+                            <p>@Model.SportTypeName</p>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label><strong>العقار:</strong></label>
+                            <p>@Model.SportName</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label><strong>التاريخ:</strong></label>
+                            <p>@Model.ReservationDate.ToString("yyyy-MM-dd")</p>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label><strong>الوقت:</strong></label>
+                            <p>@Model.StartTime.ToString(@"hh\:mm") - @Model.EndTime.ToString(@"hh\:mm")</p>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label><strong>عدد الساعات:</strong></label>
+                            <p>@Model.TotalHours</p>
+                        </div>
+                    </div>
+                </div>
+
+                <hr />
+
+                <!-- ===== نظام النقاط ===== -->
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h5 style="text-decoration:underline; color:#28a745;">
+                            <i class="fa fa-star" style="color:#ffc107;"></i> نظام النقاط
+                        </h5>
+                    </div>
+                </div>
+
+                <!-- نقاط العميل -->
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="points-box" style="background: #f8f9fa; padding: 10px 15px; border-radius: 5px; border: 1px solid #ffc107; margin: 10px 0;">
+                            <i class="fa fa-star" style="color:#ffc107;"></i>
+                            <strong>نقاط العميل المتاحة:</strong>
+                            <span class="points-number" id="popupCustomerPoints" style="font-size: 24px; font-weight: bold; color: #28a745;">@Model.CustomerAvailablePoints</span>
+                            نقطة
+                            <span id="popupPointsStatusBadge" class="badge @(Model.CustomerAvailablePoints > 0 ? "badge-success" : "badge-secondary")">
+                                @(Model.CustomerAvailablePoints > 0 ? "متاحة للخصم" : "لا توجد نقاط")
+                            </span>
+                            <br />
+                            <strong>المستوى الحالي:</strong>
+                            <span class="badge badge-info" style="font-size: 14px; padding: 5px 15px;">
+                                <i class="fa fa-trophy"></i> @Model.CurrentTierName
+                            </span>
+                            @if (!string.IsNullOrEmpty(Model.TierIcon))
+                            {
+                                <span style="font-size: 20px;">@Model.TierIcon</span>
+                            }
+                            <br />
+                            <!-- ✅ النقاط المستحقة بعد التأكيد -->
+                            <strong>نقاط الحجز المستحقة:</strong>
+                            <span class="badge badge-success" style="font-size: 16px; padding: 5px 15px;">
+                                <i class="fa fa-plus-circle"></i> +@Model.EarnedPoints نقطة
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- استخدام النقاط -->
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="popupUsePoints" value="true" />
+                                استخدام نقاط الولاء
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-4" id="popupPointsRedeemSection" style="display:none;">
+                        <div class="form-group">
+                            <label>عدد النقاط للخصم</label>
+                            <input type="number" id="popupRedeemPoints"
+                                   class="form-control" min="0" max="@Model.CustomerAvailablePoints" value="0" />
+                            <small class="text-muted">الحد الأقصى: <strong id="popupMaxPoints">@Model.CustomerAvailablePoints</strong></small>
+                            <div id="popupPointsValidationMessage" style="display:none;color:red;font-size:12px;margin-top:5px;"></div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-4" id="popupDiscountResults" style="display:none;">
+                        <div class="discount-result" style="background: #e8f4fd; padding: 10px 15px; border-radius: 5px; border: 1px solid #b8daff;">
+                            <div><strong>قيمة الخصم:</strong> <span class="discount-amount" id="popupDiscountAmount" style="color: #dc3545; font-weight: bold; font-size: 18px;">0.00 دينار</span></div>
+                            <div><strong>المبلغ الجديد:</strong> <span class="new-total" id="popupNewTotal" style="color: #28a745; font-weight: bold; font-size: 18px;">0.00 دينار</span></div>
+                            <div><strong>النقاط المتبقية:</strong> <span id="popupRemainingPoints">0</span> نقطة</div>
+                            <small class="text-muted" id="popupDiscountRule"></small>
+                        </div>
+                    </div>
+                </div>
+
+                <hr />
+
+                <!-- ===== ملخص المبلغ ===== -->
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label><strong>المبلغ الكلي المطلوب:</strong></label>
+                            <p id="popupOriginalAmount">@Model.OriginalAmount.ToString("N2") دينار</p>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label><strong>المبلغ بعد الخصم:</strong></label>
+                            <p id="popupFinalAmount" style="color: #28a745; font-weight: bold;">@Model.OriginalAmount.ToString("N2") دينار</p>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label><strong>الربح (العمولة):</strong></label>
+                            <p id="popupNetProfit" style="color: #007bff; font-weight: bold;">@Model.NetProfit.ToString("N2") دينار</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== رسوم إضافية ===== -->
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="popupIsReceiveCommission" value="true" />
+                                استلام العمولة
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <input type="hidden" id="popupReservationId" value="@Model.ReservationId" />
+                <input type="hidden" id="popupCustomerId" value="@Model.CustomerId" />
+                <input type="hidden" id="popupOriginalAmountHidden" value="@Model.OriginalAmount" />
+                <input type="hidden" id="popupDiscountAmountHidden" value="0" />
+                <input type="hidden" id="popupNewTotalHidden" value="@Model.OriginalAmount" />
+                <input type="hidden" id="popupPointsUsedHidden" value="0" />
+                <input type="hidden" id="popupNetProfitHidden" value="@Model.NetProfit" />
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    <i class="fa fa-times"></i> إلغاء
+                </button>
+                <button type="button" class="btn btn-success" id="popupConfirmBtn">
+                    <i class="fa fa-check"></i> تأكيد الحجز نهائياً
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== JavaScript للـ Popup ===== -->
+<script>
+    $(document).ready(function() {
+        var popupCustomerPoints = @Model.CustomerAvailablePoints;
+        var popupOriginalAmount = parseFloat(@Model.OriginalAmount) || 0;
+        var popupNetProfit = parseFloat(@Model.NetProfit) || 0;
+        var popupRedeemRules = @Html.Raw(Json.Serialize(ViewBag.RedeemRules));
+        var isUpdating = false;
+
+        // ===== حساب الخصم =====
+        function calculatePopupDiscount(points) {
+            if (!popupRedeemRules || popupRedeemRules.length === 0) {
+                return { discount: 0, rule: null, canRedeem: false };
+            }
+
+            var sortedRules = popupRedeemRules.slice().sort(function(a, b) {
+                return b.points - a.points;
+            });
+
+            for (var i = 0; i < sortedRules.length; i++) {
+                if (points >= sortedRules[i].points) {
+                    var ratio = points / sortedRules[i].points;
+                    var discount = ratio * sortedRules[i].discountAmount;
+                    discount = Math.round(discount * 1000) / 1000;
+                    return {
+                        discount: discount,
+                        rule: sortedRules[i],
+                        canRedeem: true
+                    };
+                }
+            }
+            return { discount: 0, rule: null, canRedeem: false };
+        }
+
+        // ===== تحديث الحسابات في الـ Popup =====
+        function updatePopupCalculations(pointsToRedeem) {
+            if (isUpdating) return;
+            isUpdating = true;
+
+            var usePoints = $('#popupUsePoints').is(':checked');
+            var points = pointsToRedeem || parseInt($('#popupRedeemPoints').val()) || 0;
+
+            if (!usePoints || points <= 0) {
+                $('#popupDiscountResults').hide();
+                $('#popupFinalAmount').text(popupOriginalAmount.toFixed(2) + ' دينار');
+                $('#popupNetProfit').text(popupNetProfit.toFixed(2) + ' دينار');
+                $('#popupDiscountAmountHidden').val(0);
+                $('#popupNewTotalHidden').val(popupOriginalAmount);
+                $('#popupPointsUsedHidden').val(0);
+                $('#popupNetProfitHidden').val(popupNetProfit);
+                isUpdating = false;
+                return;
+            }
+
+            if (points > popupCustomerPoints) {
+                points = popupCustomerPoints;
+                $('#popupRedeemPoints').val(points);
+            }
+
+            var result = calculatePopupDiscount(points);
+            var discount = result.discount;
+            var newTotal = popupOriginalAmount - discount;
+            var remainingPoints = popupCustomerPoints - points;
+            var newNetProfit = popupNetProfit - discount;
+
+            if (result.canRedeem && discount > 0) {
+                $('#popupDiscountResults').show();
+                $('#popupDiscountAmount').text(discount.toFixed(3) + ' دينار');
+                $('#popupRemainingPoints').text(remainingPoints + ' نقطة');
+                $('#popupNewTotal').text(newTotal.toFixed(3) + ' دينار');
+                $('#popupFinalAmount').text(newTotal.toFixed(3) + ' دينار');
+                $('#popupNetProfit').text(newNetProfit.toFixed(3) + ' دينار');
+                if (result.rule) {
+                    $('#popupDiscountRule').text(result.rule.points + ' نقطة = ' + result.rule.discountAmount + ' دينار');
+                }
+                $('#popupDiscountAmountHidden').val(discount);
+                $('#popupNewTotalHidden').val(newTotal);
+                $('#popupPointsUsedHidden').val(points);
+                $('#popupNetProfitHidden').val(newNetProfit);
+                $('#popupPointsValidationMessage').hide();
+            } else {
+                $('#popupDiscountResults').hide();
+                $('#popupFinalAmount').text(popupOriginalAmount.toFixed(2) + ' دينار');
+                $('#popupNetProfit').text(popupNetProfit.toFixed(2) + ' دينار');
+                $('#popupDiscountAmountHidden').val(0);
+                $('#popupNewTotalHidden').val(popupOriginalAmount);
+                $('#popupPointsUsedHidden').val(0);
+                $('#popupNetProfitHidden').val(popupNetProfit);
+            }
+
+            isUpdating = false;
+        }
+
+        // ===== أحداث الـ Popup =====
+        $('#popupUsePoints').change(function() {
+            if ($(this).is(':checked')) {
+                $('#popupPointsRedeemSection').show();
+                $('#popupRedeemPoints').val(0);
+                updatePopupCalculations(0);
+            } else {
+                $('#popupPointsRedeemSection').hide();
+                $('#popupRedeemPoints').val(0);
+                $('#popupDiscountResults').hide();
+                $('#popupPointsValidationMessage').hide();
+                updatePopupCalculations(0);
+            }
+        });
+
+        $('#popupRedeemPoints').on('input', function() {
+            var points = parseInt($(this).val()) || 0;
+            if (points > popupCustomerPoints) {
+                $(this).val(popupCustomerPoints);
+            }
+            updatePopupCalculations(points);
+        });
+
+        // ===== تأكيد الحجز نهائياً =====
+        $('#popupConfirmBtn').on('click', function() {
+            var reservationId = $('#popupReservationId').val();
+            var customerId = $('#popupCustomerId').val();
+            var pointsUsed = parseInt($('#popupPointsUsedHidden').val()) || 0;
+            var discountAmount = parseFloat($('#popupDiscountAmountHidden').val()) || 0;
+            var newTotal = parseFloat($('#popupNewTotalHidden').val()) || 0;
+            var netProfit = parseFloat($('#popupNetProfitHidden').val()) || 0;
+            var isReceiveCommission = $('#popupIsReceiveCommission').is(':checked');
+
+            // ===== التحقق من صحة البيانات =====
+            if (!reservationId || reservationId <= 0) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'معرف الحجز غير صحيح'
+                });
+                return;
+            }
+
+            // ===== إظهار مؤشر التحميل =====
+            Swal.fire({
+                title: 'جاري تأكيد الحجز...',
+                text: 'الرجاء الانتظار',
+                allowOutsideClick: false,
+                didOpen: function() {
+                    Swal.showLoading();
+                }
+            });
+
+            // ===== إرسال طلب التأكيد =====
+            $.ajax({
+                url: '@Url.Action("ConfirmReservation", "SportReservations")',
+                type: 'POST',
+                data: {
+                    reservationId: reservationId,
+                    customerId: customerId,
+                    pointsUsed: pointsUsed,
+                    discountAmount: discountAmount,
+                    newTotal: newTotal,
+                    netProfit: netProfit,
+                    isReceiveCommission: isReceiveCommission
+                },
+                success: function(data) {
+                    Swal.close();
+                    if (data.success) {
+                        Toast.fire({
+                            icon: 'success',
+                            title: data.message || 'تم تأكيد الحجز بنجاح'
+                        }).then(function() {
+                            $('#confirmReservationModal').modal('hide');
+                            // ===== تحديث الصفحة =====
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'خطأ',
+                            text: data.message || 'حدث خطأ أثناء تأكيد الحجز'
+                        });
+                    }
+                },
+                error: function(xhr) {
+                    Swal.close();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'خطأ',
+                        text: xhr.responseJSON?.message || 'حدث خطأ في الاتصال بالخادم'
+                    });
+                }
+            });
+        });
+    });
+</script>

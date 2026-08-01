@@ -1,4 +1,7 @@
 ﻿@model IEnumerable<OnboardingModel>
+@{
+    int row = 1;
+}
 <div class="col-md-12">
     <div class="card patients-list">
         <div class="header">
@@ -11,7 +14,7 @@
             @Html.Partial("_search")
             <!-- Tab panes -->
             <div class="tab-content m-t-10">
-                <div class="tab-pane table-responsive active" id="All">
+                <div class="tab-pane table-responsive active table-scroll table table-bordered" id="All">
                     <table class="table m-b-0 table-hover">
                         <thead>
                             <tr>
@@ -28,7 +31,7 @@
                             @foreach (var item in Model)
                             {
                             <tr>
-                                <td>@item.Id</td>
+                                <td>@row</td>
                                 <td>@item.CountryDesc</td>
                                 <td><a href="@Url.Content("~/images/")@item.Url" style="color:black" target="_blank"><i class="zmdi zmdi-eye"></i></a></td>
                                 <td>@item.ExtraText</td>
@@ -36,7 +39,8 @@
                                 <td><a href="@Url.Content("~/Onboarding/Edit/")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
                                 <td><a href="javascript:Delete('Onboarding',@item.Id)" style="height: 25px;" class="btn btn-danger btn-round"><i class="zmdi zmdi-delete" style="color: white;margin-top: -10px;"></i></a></td>
 
-                            </tr>
+                                </tr>
+                                row += 1;
                             }
 
                         </tbody>

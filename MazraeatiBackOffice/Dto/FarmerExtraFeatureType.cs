@@ -15,6 +15,11 @@ namespace MazraeatiBackOffice.Core
         public string ExtraText { get; set; }
         public string ExtraTextDescriptionAr { get; set; }
         public string ExtraTextDescriptionEn { get; set; }
+        public string Code { get; set; }
+        public string SwimmingPoolLength { get; set; }
+        public string SwimmingPoolWidth { get; set; }
+        public string SwimmingPoolDepth { get; set; }
+
         public bool IsCheck { get; set; }
     }
 }

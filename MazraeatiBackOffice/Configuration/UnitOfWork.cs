@@ -1,10 +1,16 @@
 ﻿using MazraeatiBackOffice.Core;
+using MazraeatiBackOffice.Core.LoyaltyPoints;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
+using System.Data;
+using System.Threading.Tasks;
 
 namespace MazraeatiBackOffice.Configuration
 {
     public class UnitOfWork : IUnitOfWork
     {
         private readonly DataContext Context;
+        private IDbContextTransaction _transaction;
         public IRepository<Farmer> FarmerRepository { get; }
         public IRepository<FarmerExtraFeatureType> FarmerExtraFeatureTypeRepository { get; }
         public IRepository<FarmerPriceList> FarmerPriceListRepository { get; }
@@ -34,10 +40,52 @@ namespace MazraeatiBackOffice.Configuration
         public IRepository<AppUser> UserRepository { get; }
         public IRepository<AppUserBlackList> AppUserBlackListRepository { get; }
         public IRepository<CommonQuestions> CommonQuestionsRepository { get; }
+        public IRepository<CommonQuestionsVisitors> CommonQuestionsVisitorsRepository { get; }
         public IRepository<Customer> CustomerRepository { get; }
-        public UnitOfWork(DataContext context, IRepository<Farmer> farmerRepository, 
+
+        #region Sport Deparments
+        public IRepository<SportType> SportTypeRepository { get; }
+        public IRepository<Sport> SportRepository { get; }
+        public IRepository<AdditionalService> AdditionalServiceRepository { get; }
+        public IRepository<SportAdditionalService> SportAdditionalServiceRepository { get; }
+        public IRepository<SportFeature> SportFeatureRepository { get; }
+        public IRepository<SportSportFeature> SportSportFeatureRepository { get; }
+        public IRepository<GeneralFacility> GeneralFacilityRepository { get; }
+        public IRepository<SportGeneralFacility> SportGeneralFacilityRepository { get; }
+        public IRepository<SportPriceList> SportPriceListRepository { get; }
+        public IRepository<SportImage> SportImageRepository { get; }
+        public IRepository<SportVideo> SportVideoRepository { get; }
+        public IRepository<SafetyFeature> SafetyFeatureRepository { get; }
+        public IRepository<SportSafetyFeature> SportSafetyFeatureRepository { get; }
+        public IRepository<SportReservation> SportReservationRepository { get; }
+
+        //public IRepository<SportVideoBlackList> CustomerRepository { get; }
+        public IRepository<SportPropertyValue> SportPropertyValueRepository { get; }
+        public IRepository<SportPropertyOption> SportPropertyOptionRepository { get; }
+        public IRepository<SportPropertyTemplate> SportPropertyTemplateRepository { get; }
+
+        #endregion
+        #region LoyaltyPoints
+        public IRepository<CustomerLoyaltyAccount> CustomerLoyaltyAccountRepository { get; set; }
+        public IRepository<LoyaltyActivityType> LoyaltyActivityTypeRepository { get; set; }
+        public IRepository<LoyaltyBookingActivity> LoyaltyBookingActivityRepository { get; set; }
+        public IRepository<LoyaltyPointRuleFarm> LoyaltyPointRuleFarmRepository { get; set; }
+        public IRepository<LoyaltyPointRuleGeneral> LoyaltyPointRuleGeneralRepository { get; set; }
+        public IRepository<LoyaltyPointRuleSport> LoyaltyPointRuleSportRepository { get; set; }
+        public IRepository<LoyaltyRedeemRule> LoyaltyRedeemRuleRepository { get; set; }
+        public IRepository<LoyaltyTier> LoyaltyTierRepository { get; set; }
+        public IRepository<LoyaltyTransaction> LoyaltyTransactionRepository { get; set; }
+        public IRepository<ReservationLoyaltyDiscount> ReservationLoyaltyDiscountRepository { get; set; }
+        public IRepository<LoyaltyPointRule> LoyaltyPointRuleRepository { get; set; }
+
+        #endregion
+
+
+
+
+        public UnitOfWork(DataContext context, IRepository<Farmer> farmerRepository,
             IRepository<FarmerExtraFeatureType> farmerExtraFeatureTypeRepository,
-            IRepository<FarmerPriceList> farmerPriceListRepository, 
+            IRepository<FarmerPriceList> farmerPriceListRepository,
             IRepository<FarmerImage> farmerImageRepository,
             IRepository<FarmerVideo> farmerVideoRepository,
             IRepository<Setting> settingRepository,
@@ -64,7 +112,37 @@ namespace MazraeatiBackOffice.Configuration
             IRepository<AppUser> userRepository,
             IRepository<AppUserBlackList> appUserBlackListRepository,
             IRepository<CommonQuestions> commonQuestionsRepository,
-            IRepository<Customer> customerRepository
+            IRepository<CommonQuestionsVisitors> commonQuestionsVisitorsRepository,
+            IRepository<Customer> customerRepository,
+            IRepository<SportType> sportTypeRepository,
+            IRepository<Sport> sportRepository,
+            IRepository<AdditionalService> additionalServiceRepository,
+            IRepository<SportAdditionalService> sportAdditionalServiceRepository,
+            IRepository<SportFeature> sportFeatureRepository,
+            IRepository<SportSportFeature> sportSportFeatureRepository,
+            IRepository<GeneralFacility> generalFacilityRepository,
+            IRepository<SportGeneralFacility> sportGeneralFacilityRepository,
+            IRepository<SportPriceList> sportPriceListRepository,
+            IRepository<SportImage> sportImageRepository,
+            IRepository<SportVideo> sportVideoRepository,
+            IRepository<SafetyFeature> safetyFeatureRepository,
+            IRepository<SportSafetyFeature> sportSafetyFeatureRepository,
+            IRepository<SportReservation> sportReservationRepository,
+            IRepository<SportPropertyValue> sportPropertyValueRepository,
+            IRepository<SportPropertyOption> sportPropertyOptionRepository,
+            IRepository<SportPropertyTemplate> sportPropertyTemplateRepository,
+            IRepository<CustomerLoyaltyAccount> customerLoyaltyAccountRepository,
+            IRepository<LoyaltyActivityType> loyaltyActivityTypeRepository,
+            IRepository<LoyaltyBookingActivity> loyaltyBookingActivityRepository,
+            IRepository<LoyaltyPointRuleFarm> loyaltyPointRuleFarmRepository,
+            IRepository<LoyaltyPointRuleGeneral> loyaltyPointRuleGeneralRepository,
+            IRepository<LoyaltyPointRuleSport> loyaltyPointRuleSportRepository,
+            IRepository<LoyaltyTier> loyaltyTierRepository,
+            IRepository<LoyaltyTransaction> loyaltyTransactionRepository,
+            IRepository<ReservationLoyaltyDiscount> reservationLoyaltyDiscountRepository,
+            IRepository<LoyaltyPointRule> loyaltyPointRuleRepository,
+            IRepository<LoyaltyRedeemRule> loyaltyRedeemRuleRepository
+
             )
         {
             Context = context;
@@ -97,7 +175,36 @@ namespace MazraeatiBackOffice.Configuration
             UserRepository = userRepository;
             AppUserBlackListRepository = appUserBlackListRepository;
             CommonQuestionsRepository = commonQuestionsRepository;
+            CommonQuestionsVisitorsRepository = commonQuestionsVisitorsRepository;
             CustomerRepository = customerRepository;
+            SportTypeRepository = sportTypeRepository;
+            SportRepository = sportRepository;
+            AdditionalServiceRepository = additionalServiceRepository;
+            SportAdditionalServiceRepository = sportAdditionalServiceRepository;
+            SportFeatureRepository = sportFeatureRepository;
+            SportSportFeatureRepository = sportSportFeatureRepository;
+            GeneralFacilityRepository = generalFacilityRepository;
+            SportGeneralFacilityRepository = sportGeneralFacilityRepository;
+            SportPriceListRepository = sportPriceListRepository;
+            SportImageRepository = sportImageRepository;
+            SportVideoRepository = sportVideoRepository;
+            SafetyFeatureRepository = safetyFeatureRepository;
+            SportSafetyFeatureRepository = sportSafetyFeatureRepository;
+            SportReservationRepository = sportReservationRepository;
+            SportPropertyValueRepository = sportPropertyValueRepository;
+            SportPropertyOptionRepository = sportPropertyOptionRepository;
+            SportPropertyTemplateRepository = sportPropertyTemplateRepository;
+            CustomerLoyaltyAccountRepository = customerLoyaltyAccountRepository;
+            LoyaltyActivityTypeRepository = loyaltyActivityTypeRepository;
+            LoyaltyBookingActivityRepository = loyaltyBookingActivityRepository;
+            LoyaltyPointRuleFarmRepository = loyaltyPointRuleFarmRepository;
+            LoyaltyPointRuleGeneralRepository = loyaltyPointRuleGeneralRepository;
+            LoyaltyPointRuleSportRepository = loyaltyPointRuleSportRepository;
+            LoyaltyTierRepository = loyaltyTierRepository;
+            LoyaltyTransactionRepository = loyaltyTransactionRepository;
+            ReservationLoyaltyDiscountRepository = reservationLoyaltyDiscountRepository;
+            LoyaltyPointRuleRepository = loyaltyPointRuleRepository;
+            LoyaltyRedeemRuleRepository = loyaltyRedeemRuleRepository;
         }
 
         public void Dispose()
@@ -109,5 +216,18 @@ namespace MazraeatiBackOffice.Configuration
         {
             return Context.SaveChanges();
         }
+
+        public IDbContextTransaction BeginTransaction(IsolationLevel isolationLevel = IsolationLevel.ReadCommitted)
+        {
+            _transaction = Context.Database.BeginTransaction(isolationLevel);
+            return _transaction;
+        }
+
+        public async Task<IDbContextTransaction> BeginTransactionAsync(IsolationLevel isolationLevel = IsolationLevel.ReadCommitted)
+        {
+            _transaction = await Context.Database.BeginTransactionAsync(isolationLevel);
+            return _transaction;
+        }
+
     }
 }

@@ -1,0 +1,139 @@
+﻿@using MazraeatiBackOffice.Configuration
+@using MazraeatiBackOffice.Core
+@model List<SportPropertyTemplate>
+
+@{
+    ViewBag.Title = "قوالب تفاصيل العقار";
+    ViewBag.activePage = "قوالب تفاصيل العقار";
+}
+
+<div class="container-fluid">
+    <div class="row clearfix">
+        <div class="col-lg-12 col-md-12 col-sm-12">
+            <div class="card">
+                <div class="header">
+                    <h2>
+                        <strong>قوالب</strong> تفاصيل العقار
+                        @if (ViewBag.SelectedSportTypeName != null)
+                        {
+                            <small>- @ViewBag.SelectedSportTypeName</small>
+                        }
+                    </h2>
+                    <ul class="header-dropdown">
+                        <li>
+                            <a href="@Url.Action("Create", new { sportTypeId = ViewBag.SelectedSportTypeId })" class="btn btn-primary btn-round">
+                                <i class="fa fa-plus"></i> إضافة قالب جديد
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="body">
+                    <!-- الفلتر -->
+                    <form method="post">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <label>نوع الرياضة</label>
+                                    <select class="form-control select2" name="sportTypeId">
+                                        <option value="">-- الكل --</option>
+                                        @foreach (var item in ViewBag.SportTypes)
+                                        {
+                                            <option value="@item.Id" selected="@(item.Id == ViewBag.SelectedSportTypeId)">@item.NameAr</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-3" style="padding-top:22px;">
+                                <button type="submit" class="btn btn-primary">بحث</button>
+                                <a href="@Url.Action("Index")" class="btn btn-default">تفريغ</a>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- الجدول -->
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-hover">
+                            <thead class="bg-primary text-white">
+                                <tr>
+                                    <th>#</th>
+                                    <th>المفتاح</th>
+                                    <th>التسمية (عربي)</th>
+                                    <th>التسمية (إنجليزي)</th>
+                                    <th>النوع</th>
+                                    <th>إلزامي</th>
+                                    <th>الترتيب</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.Any())
+                                {
+                                    int counter = 1;
+                                    foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>@counter</td>
+                                            <td><code>@item.PropertyKey</code></td>
+                                            <td>@item.PropertyLabelAr</td>
+                                            <td>@item.PropertyLabelEn</td>
+                                            <td>
+                                                <span class="badge badge-info">
+                                                    @(((PropertyTypeEnum)item.PropertyType).GetDisplayName())
+                                                </span>
+                                            </td>
+                                            <td>
+                                                @if (item.IsRequired)
+                                                {
+                                                    <span class="badge badge-danger">إلزامي</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge badge-primary">اختياري</span>
+                                                }
+                                            </td>
+                                            <td>@item.SortOrder</td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm">
+                                                    <a href="@Url.Action("Edit", new { id = item.Id })" class="btn btn-warning">
+                                                        <i class="fa fa-edit"></i>
+                                                    </a>
+                                                    <a href="javascript:deleteTemplate(@item.Id)" class="btn btn-danger">
+                                                        <i class="fa fa-trash"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        counter++;
+                                    }
+                                }
+                                else
+                                {
+                                    <tr><td colspan="8" class="text-center">لا توجد قوالب</td></tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function deleteTemplate(id) {
+        if (confirm('هل أنت متأكد من حذف هذا القالب؟')) {
+            $.ajax({
+                url: '/SportPropertyTemplates/Delete/' + id,
+                type: 'POST',
+                success: function(data) {
+                    if (data.success) {
+                        alert(data.message);
+                        location.reload();
+                    } else {
+                        alert(data.message);
+                    }
+                }
+            });
+        }
+    }
+</script>

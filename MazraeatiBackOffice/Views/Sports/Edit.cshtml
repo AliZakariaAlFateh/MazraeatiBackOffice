@@ -1,0 +1,5 @@
+﻿@model SportModel
+@using (Html.BeginForm("Edit", "Sports", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.Partial("_CreateOrUpdate", Model)
+}

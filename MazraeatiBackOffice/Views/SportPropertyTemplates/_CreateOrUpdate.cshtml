@@ -1,0 +1,197 @@
+﻿@using MazraeatiBackOffice.Configuration
+@using MazraeatiBackOffice.Core
+@model SportPropertyTemplate
+
+@{
+    ViewBag.Title = Model.Id > 0 ? "تعديل قالب" : "إضافة قالب جديد";
+    ViewBag.activePage = "قوالب تفاصيل العقار";
+    var isEdit = Model.Id > 0;
+}
+
+<style>
+    .options-container {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 10px;
+    }
+
+    .option-row {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+
+        .option-row input {
+            flex: 1;
+        }
+
+        .option-row .btn-remove {
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+        }
+
+    .btn-add-option {
+        margin-top: 10px;
+    }
+</style>
+
+<div class="container-fluid">
+    <div class="row clearfix">
+        <div class="col-lg-12 col-md-12 col-sm-12">
+            <div class="card">
+                <div class="header">
+                    <h2><strong>@(isEdit ? "تعديل" : "إضافة")</strong> قالب</h2>
+                    <ul class="header-dropdown">
+                        <li><a href="@Url.Action("Index")" class="btn btn-default"><i class="fa fa-arrow-right"></i> رجوع</a></li>
+                    </ul>
+                </div>
+                <div class="body">
+                    <form method="post">
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(a => a.Id)
+                        @Html.HiddenFor(a => a.CreatedDate)
+
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    @Html.DisplayNameFor(a => a.SportTypeId)
+                                    <select class="form-control" name="SportTypeId" required>
+                                        <option value="">-- اختر --</option>
+                                        @foreach (var item in ViewBag.SportTypes)
+                                        {
+                                            <option value="@item.Id" selected="@(item.Id == Model.SportTypeId)">@item.NameAr</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    @Html.DisplayNameFor(a => a.PropertyKey)
+                                    @Html.TextBoxFor(a => a.PropertyKey, new { @class = "form-control", required = "required" })
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    @Html.DisplayNameFor(a => a.PropertyLabelAr)
+                                    @Html.TextBoxFor(a => a.PropertyLabelAr, new { @class = "form-control", required = "required" })
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    @Html.DisplayNameFor(a => a.PropertyLabelEn)
+                                    @Html.TextBoxFor(a => a.PropertyLabelEn, new { @class = "form-control" })
+                                </div>
+                            </div>
+
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.DisplayNameFor(a => a.PropertyType)
+                                    <select class="form-control" name="PropertyType" id="PropertyType" required>
+                                        @foreach (PropertyTypeEnum type in Enum.GetValues(typeof(PropertyTypeEnum)))
+                                        {
+                                            <option value="@((int)type)" selected="@((int)type == (int)Model.PropertyType)">
+                                                @type.GetDisplayName()
+                                            </option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.DisplayNameFor(a => a.IsRequired)
+                                    <br />
+                                    @Html.CheckBoxFor(a => a.IsRequired, new { @class = "form-control", style = "width:20px;height:20px;margin-top:5px;" })
+                                </div>
+                            </div>
+
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.DisplayNameFor(a => a.SortOrder)
+                                    @Html.TextBoxFor(a => a.SortOrder, new { @class = "form-control", type = "number" })
+                                </div>
+                            </div>
+
+                            <!-- خيارات الـ Dropdown و RadioButton -->
+                            <div class="col-sm-12" id="optionsSection" style="display: @(Model.PropertyType == PropertyTypeEnum.Dropdown || Model.PropertyType == PropertyTypeEnum.RadioButton ? "block" : "none")">
+                                <div class="options-container">
+                                    <h5>الخيارات</h5>
+                                    <div id="optionsList">
+                                        @if (ViewBag.Options != null)
+                                        {
+                                            var options = ViewBag.Options as List<SportPropertyOption>;
+                                            int idx = 0;
+                                            foreach (var opt in options)
+                                            {
+                                                <div class="option-row">
+                                                    <input type="text" name="optionTextAr" value="@opt.OptionTextAr" placeholder="النص (عربي)" class="form-control" />
+                                                    <input type="text" name="optionTextEn" value="@opt.OptionTextEn" placeholder="النص (إنجليزي)" class="form-control" />
+                                                    <input type="text" name="optionValue" value="@opt.OptionValue" placeholder="القيمة" class="form-control" />
+                                                    <input type="hidden" name="optionId" value="@opt.Id" />
+                                                    <button type="button" class="btn-remove" onclick="removeOption(this)">×</button>
+                                                </div>
+                                                idx++;
+                                            }
+                                        }
+                                    </div>
+                                    <button type="button" class="btn btn-primary btn-sm btn-add-option" onclick="addOption()">
+                                        <i class="fa fa-plus"></i> إضافة خيار
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-12">
+                                <button type="submit" class="btn btn-primary">حفظ</button>
+                                <a href="@Url.Action("Index")" class="btn btn-default">إلغاء</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('#PropertyType').change(function() {
+            var type = parseInt($(this).val());
+            if (type === 4 || type === 6) { // Dropdown or RadioButton
+                $('#optionsSection').show();
+            } else {
+                $('#optionsSection').hide();
+            }
+        });
+    });
+
+    function addOption() {
+        var html = `
+            <div class="option-row">
+                <input type="text" name="optionTextAr" placeholder="النص (عربي)" class="form-control" />
+                <input type="text" name="optionTextEn" placeholder="النص (إنجليزي)" class="form-control" />
+                <input type="text" name="optionValue" placeholder="القيمة" class="form-control" />
+                <input type="hidden" name="optionId" value="0" />
+                <button type="button" class="btn-remove" onclick="removeOption(this)">×</button>
+            </div>
+        `;
+        $('#optionsList').append(html);
+    }
+
+    function removeOption(btn) {
+        if ($('#optionsList .option-row').length > 1) {
+            $(btn).closest('.option-row').remove();
+        } else {
+            alert('يجب أن يكون هناك خيار واحد على الأقل');
+        }
+    }
+</script>

@@ -1,0 +1,6 @@
+﻿@using MazraeatiBackOffice.Models.LoyaltyPoints
+@model LoyaltyRedeemRuleModel
+@using (Html.BeginForm("Create", "LoyaltyRedeemRules", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.Partial("_CreateOrUpdate",Model)
+}

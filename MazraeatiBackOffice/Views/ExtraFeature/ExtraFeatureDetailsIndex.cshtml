@@ -1,42 +1,5 @@
 ﻿<style>
-    .table-scroll {
-        height: 350px;
-        overflow-y: scroll;
-    }
-
-        /* Sticky header */
-        .table-scroll thead th {
-            position: sticky;
-            top: 0;
-            background: #198754;
-            color: #fff;
-            z-index: 10;
-        }
-
-        /* Chrome / Edge */
-        .table-scroll::-webkit-scrollbar {
-            width: 12px;
-        }
-
-        .table-scroll::-webkit-scrollbar-track {
-            background: #eee;
-        }
-
-        .table-scroll::-webkit-scrollbar-thumb {
-            background: #999;
-            border-radius: 10px;
-            border: 2px solid #eee;
-        }
-
-            .table-scroll::-webkit-scrollbar-thumb:hover {
-                background: #666;
-            }
-
-    /* Firefox */
-    .table-scroll {
-        scrollbar-width: auto;
-        scrollbar-color: #999 #eee;
-    }
+   
 </style>
 @model IEnumerable<LookupValueModel>
 <div class="col-md-12">
@@ -67,37 +30,54 @@
                     </div>
                 </div>
             </form>
-            <!-- Tab panes -->
-            <div class="tab-content m-t-10">
-                <div class="tab-pane table-responsive active table-scroll" id="All">
-                    <table class="table m-b-0 table-hover">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>@Html.DisplayNameFor(a => a.LookupId)</th>
-                                <th>@Html.DisplayNameFor(a => a.Code)</th>
-                                <th>@Html.DisplayNameFor(a => a.ValueEn)</th>
-                                <th>@Html.DisplayNameFor(a => a.ValueAr)</th>
-                                <th>تعديل</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model)
-                            {
-                                <tr>
-                                    <td>@item.Id</td>
-                                    <td>@item.LookupDesc</td>
-                                    <td>@item.Code</td>
-                                    <td>@item.ValueEn</td>
-                                    <td>@item.ValueAr</td>
-                                    <td><a href="@Url.Content("~/ExtraFeature/Edit/")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
-                                </tr>
-                            }
 
-                        </tbody>
-                    </table>
+
+            <!-- Tab panes -->
+            @if (Model.Any())
+            {
+                <div class="tab-content m-t-10">
+                    <div class="tab-pane table-responsive active table-scroll" id="All">
+                        <table class="table m-b-0 table-hover">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>@Html.DisplayNameFor(a => a.LookupId)</th>
+                                    <th>@Html.DisplayNameFor(a => a.Code)</th>
+                                    <th>@Html.DisplayNameFor(a => a.ValueEn)</th>
+                                    <th>@Html.DisplayNameFor(a => a.ValueAr)</th>
+                                    <th>تعديل</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>@item.Id</td>
+                                        <td>@item.LookupDesc</td>
+                                        <td>@item.Code</td>
+                                        <td>@item.ValueEn</td>
+                                        <td>@item.ValueAr</td>
+                                        <td><a href="@Url.Content("~/ExtraFeature/Edit/")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
+                                    </tr>
+                                }
+
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
+            }
+            else
+            {
+
+                <div class="empty-state-container">
+                    <div class="empty-state-icon">
+                        <i class="zmdi zmdi-search-for-wild"></i> 
+
+                    </div>
+                    <div class="empty-state-title">لا توجد بيانات حالياً</div>
+                    <div class="empty-state-description">لا توجد بيانات ليتم عرضها يمكنك اضافة بيانات ليتم عرضها هنا </div>
+                </div>
+            }
         </div>
     </div>
 </div>

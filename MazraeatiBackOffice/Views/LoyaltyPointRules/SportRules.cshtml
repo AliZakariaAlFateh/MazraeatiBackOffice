@@ -1,0 +1,437 @@
+﻿@using MazraeatiBackOffice.Models.LoyaltyPoints
+@* @using MazraeatiBackOffice.Models.LoyaltyPoints
+@model List<LoyaltyPointRuleSportModel>
+
+@{
+    ViewBag.Title = $"قواعد النقاط - {ViewBag.ActivityTypeName}";
+    ViewBag.activePage = "قواعد النقاط";
+
+    // ===== تحويل ViewBag إلى SelectListItem =====
+    var properties = ViewBag.Properties as List<SelectListItem>;
+    var isFarm = ViewBag.IsFarm ?? false;
+}
+
+<div class="container-fluid">
+    <div class="row clearfix">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="header">
+                    <h2>
+                        <strong>قواعد النقاط</strong>
+                        <small>@ViewBag.ActivityTypeName</small>
+                    </h2>
+                    <ul class="header-dropdown">
+                        <li>
+                            <a href="@Url.Action("Index", "LoyaltyPointRules")" class="btn btn-default btn-round">
+                                <i class="fa fa-arrow-right"></i> العودة للقائمة
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="body">
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success"><strong>تم!</strong> @TempData["SuccessMessage"]</div>
+                    }
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger"><strong>خطأ!</strong> @TempData["ErrorMessage"]</div>
+                    }
+
+                    <!-- Debug: عرض عدد العقارات -->
+                    <div class="alert alert-info">
+                        <i class="fa fa-info-circle"></i>
+                        عدد العقارات: @(properties?.Count() ?? 0)
+                        @if (isFarm)
+                        {
+                            <span class="badge badge-success">مزرعة</span>
+                        }
+                        else
+                        {
+                            <span class="badge badge-primary">رياضة</span>
+                        }
+                    </div>
+
+                    <!-- نموذج إضافة قاعدة -->
+                    <div class="card">
+                        <div class="card-header bg-info text-white">
+                            <h5>
+                                <i class="fa fa-plus"></i> إضافة قاعدة جديدة
+                                <small>@ViewBag.ActivityTypeName</small>
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <form method="post" action="@Url.Action("SportRules", "LoyaltyPointRules")">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="ActivityTypeId" value="@ViewBag.ActivityTypeId" />
+                                <input type="hidden" name="IsFarm" value="@isFarm.ToString()" />
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label>العقار <span class="text-muted">(اختياري)</span></label>
+                                            <select class="form-control select2" name="@(isFarm ? "FarmId" : "SportId")">
+                                                <option value="">-- جميع العقارات --</option>
+                                                @if (properties != null)
+                                                    @if (properties != null)
+                                                    {
+                                                        foreach (var item in properties)
+                                                        {
+                                                            <option value="@item.Value">@item.Text</option>
+                                                        }
+                                                    }
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label>عدد النقاط <span class="text-danger">*</span></label>
+                                            <input type="number" name="Points" class="form-control" required min="1" />
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <div class="form-group">
+                                            <label>قاعدة افتراضية</label>
+                                            <br />
+                                            <input type="checkbox" name="IsDefault" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" />
+                                            <input type="hidden" name="IsDefault" value="false" />
+                                            <small class="text-muted">(تطبق على جميع العقارات)</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3" style="padding-top:22px;">
+                                        <button type="submit" class="btn btn-primary btn-round">
+                                            <i class="fa fa-save"></i> إضافة
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- الجدول -->
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-hover">
+                            <thead class="bg-primary text-white">
+                                <tr>
+                                    <th>#</th>
+                                    <th>النوع</th>
+                                    <th>العقار</th>
+                                    <th>النقاط</th>
+                                    <th>افتراضي</th>
+                                    <th>الحالة</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.Any())
+                                {
+                                    int counter = 1;
+                                    foreach (var item in Model)
+                                    {
+                                        var property = properties?.FirstOrDefault(p =>
+                                        p.Value == (isFarm ? item.FarmId?.ToString() : item.SportId?.ToString())
+                                        );
+                                        <tr>
+                                            <td>@counter</td>
+                                            <td>
+                                                @if (item.IsDefault)
+                                                {
+                                                    <span class="badge badge-warning">عام</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge badge-info">خاص</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if ((isFarm && item.FarmId.HasValue) || (!isFarm && item.SportId.HasValue))
+                                                {
+                                                    <span class="badge badge-primary">@property?.Text</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge badge-secondary">جميع العقارات</span>
+                                                }
+                                            </td>
+                                            <td><strong>@item.Points</strong></td>
+                                            <td>
+                                                @if (item.IsDefault)
+                                                {
+                                                    <span class="badge badge-success">نعم</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (item.IsActive)
+                                                {
+                                                    <span class="badge badge-success">نشط</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge badge-danger">غير نشط</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm">
+                                                    <a href="javascript:deleteRule(@item.Id, '@(isFarm ? "Farm" : "Sport")')" class="btn btn-danger">
+                                                        <i class="fa fa-trash"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        counter++;
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="7" class="text-center">
+                                            <div class="alert alert-info">
+                                                <i class="fa fa-info-circle"></i> لا توجد قواعد نقاط لهذا النشاط
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function deleteRule(id, type) {
+        if (confirm('هل أنت متأكد من حذف هذه القاعدة؟')) {
+            var url = type === 'Farm'
+                ? '/LoyaltyPointRules/DeleteFarmRule/' + id
+                : '/LoyaltyPointRules/DeleteSportRule/' + id;
+            $.ajax({
+                url: url,
+                type: 'POST',
+                success: function(data) {
+                    if (data.success) {
+                        alert(data.message);
+                        location.reload();
+                    } else {
+                        alert(data.message);
+                    }
+                }
+            });
+        }
+    }
+
+    $(document).ready(function() {
+        $('.select2').select2();
+    });
+</script> *@
+
+
+@model List<LoyaltyPointRuleModel>
+
+@{
+    ViewBag.Title = $"قواعد النقاط - {ViewBag.ActivityTypeName}";
+    ViewBag.activePage = "قواعد النقاط";
+
+    var properties = ViewBag.Properties as List<SelectListItem>;
+    var referenceType = ViewBag.ReferenceType as string ?? "Sport";
+}
+
+<div class="container-fluid">
+    <div class="row clearfix">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="header">
+                    <h2>
+                        <strong>قواعد النقاط</strong>
+                        <small>@ViewBag.ActivityTypeName</small>
+                    </h2>
+                    <ul class="header-dropdown">
+                        <li>
+                            <a href="@Url.Action("Index", "LoyaltyPointRules")" class="btn btn-default btn-round">
+                                <i class="fa fa-arrow-right"></i> العودة للقائمة
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="body">
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success"><strong>تم!</strong> @TempData["SuccessMessage"]</div>
+                    }
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger"><strong>خطأ!</strong> @TempData["ErrorMessage"]</div>
+                    }
+
+                    <div class="alert alert-info">
+                        <i class="fa fa-info-circle"></i>
+                        <strong>ملاحظة:</strong> القواعد الخاصة بالعقار تتفوق على القواعد العامة.
+                    </div>
+
+                    <!-- نموذج إضافة قاعدة -->
+                    <div class="card">
+                        <div class="card-header bg-info text-white">
+                            <h5><i class="fa fa-plus"></i> إضافة قاعدة جديدة</h5>
+                        </div>
+                        <div class="card-body">
+                            <form method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="ActivityTypeId" value="@ViewBag.ActivityTypeId" />
+                                <input type="hidden" name="ReferenceType" value="@referenceType" />
+
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label>العقار <span class="text-muted">(اختياري)</span></label>
+                                            <select class="form-control select2" name="ReferenceId">
+                                                <option value="">-- جميع العقارات --</option>
+                                                @if (properties != null)
+                                                {
+                                                    foreach (var item in properties)
+                                                    {
+                                                        <option value="@item.Value">@item.Text</option>
+                                                    }
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label>عدد النقاط <span class="text-danger">*</span></label>
+                                            <input type="number" name="Points" class="form-control" required min="1" />
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <div class="form-group">
+                                            <label>قاعدة افتراضية</label>
+                                            <br />
+                                            <input type="checkbox" name="IsDefault" value="true" class="form-control" style="width:20px;height:20px;margin-top:5px;" />
+                                            <input type="hidden" name="IsDefault" value="false" />
+                                            <small class="text-muted">(تطبق على جميع العقارات)</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3" style="padding-top:22px;">
+                                        <button type="submit" class="btn btn-primary btn-round">
+                                            <i class="fa fa-save"></i> إضافة
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- الجدول -->
+                    <div class="tab-pane table-responsive active table-scroll table table-bordered">
+                        <table class="table table-bordered table-striped table-hover">
+                            <thead class="bg-primary text-white">
+                                <tr>
+                                    <th>#</th>
+                                    <th>النوع</th>
+                                    <th>الكود</th>
+                                    <th>العقار</th>
+                                    <th>النقاط</th>
+                                    <th>افتراضي</th>
+                                    <th>الحالة</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.Any())
+                                {
+                                    int counter = 1;
+                                    foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>@counter</td>
+                                            <td>
+                                                @if (item.IsDefault)
+                                                {
+                                                    <span class="badge badge-warning">عام</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge badge-info">خاص</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <span class="badge badge-primary">@item.Code</span>
+                                            </td>
+                                            <td>
+                                                @if (item.ReferenceId.HasValue)
+                                                {
+                                                    <span class="badge badge-primary">@item.ReferenceName</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge badge-secondary">جميع العقارات</span>
+                                                }
+                                            </td>
+                                            <td><strong>@item.Points</strong></td>
+                                            <td>
+                                                @if (item.IsDefault)
+                                                {
+                                                    <span class="badge badge-success">نعم</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (item.IsActive)
+                                                {
+                                                    <span class="badge badge-success">نشط</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge badge-danger">غير نشط</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm">
+                                                    <a href="javascript:deleteRule(@item.Id)" class="btn btn-danger">
+                                                        <i class="fa fa-trash"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        counter++;
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="9" class="text-center">
+                                            <div class="alert alert-info">
+                                                <i class="fa fa-info-circle"></i> لا توجد قواعد نقاط لهذا النشاط
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function deleteRule(id) {
+        if (confirm('هل أنت متأكد من حذف هذه القاعدة؟')) {
+            $.ajax({
+                url: '/LoyaltyPointRules/DeleteRule/' + id,
+                type: 'POST',
+                success: function(data) {
+                    if (data.success) {
+                        alert(data.message);
+                        location.reload();
+                    } else {
+                        alert(data.message);
+                    }
+                }
+            });
+        }
+    }
+
+    $(document).ready(function() {
+        $('.select2').select2();
+    });
+</script>

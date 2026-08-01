@@ -14,7 +14,8 @@
 
     // Check if today's date is on or after the cutoff date
     if (today.getTime() >= cutoffDate.getTime()) {
-        console.log("Eid al-Adha animation and audio are now deactivated as of " + today.toLocaleDateString() + ".");
+        console.log("Eid al-Adha animation and audio are now deactivated as of " + today.
+            toLocaleDateString() + ".");
         //marquee.css('display', 'none')
          
         // Ensure image is not displayed and audio is stopped if it was somehow playing
@@ -92,4 +93,629 @@
             });
         }
     }
+
+
+
+    //console.log('jQuery شغال'); // تتأكد إن jQuery شغال
+
+    //$('#adminName').on('click', function () {
+    //    console.log('تم الضغط على adminName'); // تتأكد إن الحدث شغال
+
+    //    Swal.fire({
+    //        title: 'تسجيل الخروج',
+    //        text: 'هل أنت متأكد من تسجيل الخروج؟',
+    //        icon: 'question',
+    //        showCancelButton: true,
+    //        confirmButtonText: 'نعم، اخرج',
+    //        cancelButtonText: 'لا',
+    //        confirmButtonColor: '#d33'
+    //    }).then(function (result) {
+    //        if (result.isConfirmed) {
+    //            Swal.fire({
+    //                title: 'جاري تسجيل الخروج...',
+    //                text: 'من فضلك انتظر',
+    //                allowOutsideClick: false,
+    //                showConfirmButton: false,
+    //                didOpen: function () {
+    //                    Swal.showLoading();
+    //                }
+    //            });
+
+    //            setTimeout(function () {
+    //                window.location.href = '@Url.Content("~/account/SignOut")';
+    //            }, 500);
+    //        }
+    //    });
+    //});
+
 });
+
+
+
+
+// ==========================
+// Start Delete Functions
+// ==========================
+
+
+
+// function Delete(controller, id, action, redirectAction) {
+//     if (action == undefined)
+//         action = "Index";
+
+
+//     if (confirm("هل انت متأكد من انك تريد الغاء هذا السجل")) {
+//         $.ajax({
+//             url: '../' + controller + '/' + action,
+//             data: { id: id },
+//             success: function (s) {
+//                 if (s == 1) {
+//                     window.location.href = '../' + controller + '/' + redirectAction + '';
+//                     return;
+//                 }
+//                 alert(s);
+//             },
+//             error: function (e) { }
+//         });
+//     }
+
+// }
+
+
+//Old Delete before permission ....
+
+
+// function Delete(controller, id, action, redirectAction) {
+
+//     if (action == undefined)
+//         action = "Index";
+
+//     Swal.fire({
+//         title: 'هل أنت متأكد؟',
+//         text: "لن تستطيع استرجاع هذا السجل!",
+//         icon: 'warning',
+//         showCancelButton: true,
+//         confirmButtonText: 'نعم، احذف',
+//         cancelButtonText: 'إلغاء',
+//         confirmButtonColor: '#d33',
+//         cancelButtonColor: '#3085d6'
+//     }).then((result) => {
+
+//         if (result.isConfirmed) {
+
+//             $.ajax({
+//                 url: '../' + controller + '/' + action,
+//                 data: { id: id },
+//                 success: function (s) {
+
+//                     if (s == 1) {
+
+//                         Swal.fire({
+//                             title: 'تم الحذف!',
+//                             text: 'تم حذف السجل بنجاح',
+//                             icon: 'success',
+//                             timer: 1500,
+//                             showConfirmButton: false
+//                         }).then(() => {
+//                             window.location.href = '../' + controller + '/' + redirectAction;
+//                         });
+
+//                     } else {
+
+//                         Swal.fire({
+//                             title: 'خطأ!',
+//                             text: s,
+//                             icon: 'error'
+//                         });
+//                     }
+//                 },
+//                 error: function () {
+//                     Swal.fire({
+//                         title: 'خطأ!',
+//                         text: 'حدث خطأ أثناء الحذف',
+//                         icon: 'error'
+//                     });
+//                 }
+//             });
+
+//         }
+
+//     });
+// }
+
+//1 - New Delete  after permission .....
+
+function Delete(controller, id, action, redirectAction) {
+    debugger
+    if (action == undefined)
+        action = "Index";
+
+    Swal.fire({
+        title: 'هل أنت متأكد؟',
+        text: "لن تستطيع استرجاع هذا السجل!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'نعم، احذف',
+        cancelButtonText: 'إلغاء',
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6'
+    }).then((result) => {
+        debugger
+        if (result.isConfirmed) {
+
+            // ===== إضافة Loading =====
+            Swal.fire({
+                title: 'جاري الحذف...',
+                html: 'يرجى الانتظار',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            debugger
+            $.ajax({
+                
+                url: '../' + controller + '/' + action,
+                data: { id: id },
+                // ===== إضافة الـ Header عشان الـ Filter يعرف إنه طلب AJAX =====
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                success: function (s) {
+                    Swal.close();
+
+                    // ===== لو كان الرد JSON (من الـ PermissionFilter) =====
+                    if (typeof s === 'object' && s !== null) {
+                        if (s.success === false) {
+                            // ===== لو كان خطأ صلاحية =====
+                            if (s.errorType === 'permission_denied') {
+                                Swal.fire({
+                                    title: '⛔ غير مصرح بالدخول',
+                                    text: s.message || 'ليس لديك صلاحية للقيام بهذا الإجراء',
+                                    icon: 'error',
+                                    confirmButtonText: 'حسناً',
+                                    confirmButtonColor: '#dc3545'
+                                });
+                                return;
+                            } else {
+                                Swal.fire({
+                                    title: 'خطأ!',
+                                    text: s.message || 'حدث خطأ',
+                                    icon: 'error',
+                                    confirmButtonText: 'حسناً'
+                                });
+                                return;
+                            }
+                        }
+                        // لو كان success = true، نكمل
+                        if (s.success === true) {
+                            Swal.fire({
+                                title: 'تم الحذف!',
+                                text: s.message || 'تم حذف السجل بنجاح',
+                                icon: 'success',
+                                timer: 1500,
+                                showConfirmButton: false
+                            }).then(() => {
+                                window.location.href = '../' + controller + '/' + redirectAction;
+                            });
+                            return;
+                        }
+                    }
+
+                    // ===== الكود الأصلي (لو السيرفر رجع 1 أو نص) =====
+                    if (s == 1) {
+                        Swal.fire({
+                            title: 'تم الحذف!',
+                            text: 'تم حذف السجل بنجاح',
+                            icon: 'success',
+                            timer: 1500,
+                            showConfirmButton: false
+                        }).then(() => {
+                            window.location.href = '../' + controller + '/' + redirectAction;
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'خطأ!',
+                            text: s,
+                            icon: 'error',
+                            confirmButtonText: 'حسناً'
+                        });
+                    }
+                },
+                error: function (xhr) {
+                    Swal.close();
+
+                    // ===== لو كان 403 Forbidden (من الـ Filter) =====
+                    if (xhr.status === 403) {
+                        Swal.fire({
+                            title: '⛔ غير مصرح بالدخول',
+                            text: 'ليس لديك صلاحية للقيام بهذا الإجراء',
+                            icon: 'error',
+                            confirmButtonText: 'حسناً',
+                            confirmButtonColor: '#dc3545'
+                        });
+                        return;
+                    }
+
+                    // ===== الكود الأصلي للخطأ =====
+                    Swal.fire({
+                        title: 'خطأ!',
+                        text: 'حدث خطأ أثناء الحذف',
+                        icon: 'error',
+                        confirmButtonText: 'حسناً'
+                    });
+                }
+            });
+
+        }
+
+    });
+}
+
+//2 - Old Delete before permission .....
+// function DeleteWithAction(controller, action , id , redirectAction) {
+//     if (action == undefined)
+//         action = "Index";
+
+//     if (confirm("هل انت متأكد من انك تريد الغاء هذا السجل")) {
+//         $.ajax({
+//             url: '../' + controller + '/' + action,
+//             data: { id: id },
+//             success: function (s) {
+//                 if (s == 1) {
+//                     window.location.href = '../' + controller + '/' + redirectAction + '';
+//                     return;
+//                 }
+//                 alert(s);
+//             },
+//             error: function (e) { }
+//         });
+//     }
+
+// }
+
+
+
+//New Delete after permission .....
+
+function DeleteWithAction(controller, action, id, redirectAction) {
+    if (action == undefined)
+        action = "Index";
+
+    if (confirm("هل انت متأكد من انك تريد الغاء هذا السجل")) {
+
+        // ===== إضافة Loading =====
+        Swal.fire({
+            title: 'جاري الحذف...',
+            html: 'يرجى الانتظار',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        $.ajax({
+            url: '../' + controller + '/' + action,
+            data: { id: id },
+            // ===== إضافة الـ Header عشان الـ Filter يعرف إنه طلب AJAX =====
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            success: function (s) {
+                Swal.close();
+
+                // ===== لو كان الرد JSON (من الـ PermissionFilter) =====
+                if (typeof s === 'object' && s !== null) {
+                    if (s.success === false) {
+                        // ===== لو كان خطأ صلاحية =====
+                        if (s.errorType === 'permission_denied') {
+                            Swal.fire({
+                                title: '⛔ غير مصرح بالدخول',
+                                text: s.message || 'ليس لديك صلاحية للقيام بهذا الإجراء',
+                                icon: 'error',
+                                confirmButtonText: 'حسناً',
+                                confirmButtonColor: '#dc3545'
+                            });
+                            return;
+                        } else {
+                            Swal.fire({
+                                title: 'خطأ!',
+                                text: s.message || 'حدث خطأ',
+                                icon: 'error',
+                                confirmButtonText: 'حسناً'
+                            });
+                            return;
+                        }
+                    }
+                    // لو كان success = true، نكمل
+                    if (s.success === true) {
+                        Swal.fire({
+                            title: 'تم الحذف!',
+                            text: s.message || 'تم حذف السجل بنجاح',
+                            icon: 'success',
+                            timer: 1500,
+                            showConfirmButton: false
+                        }).then(() => {
+                            window.location.href = '../' + controller + '/' + redirectAction;
+                        });
+                        return;
+                    }
+                }
+
+                // ===== الكود الأصلي =====
+                if (s == 1) {
+                    window.location.href = '../' + controller + '/' + redirectAction + '';
+                    return;
+                }
+
+                // ===== لو كان الرد نص خطأ =====
+                if (typeof s === 'string') {
+                    Swal.fire({
+                        title: 'خطأ!',
+                        text: s,
+                        icon: 'error',
+                        confirmButtonText: 'حسناً'
+                    });
+                } else {
+                    alert(s);
+                }
+            },
+            error: function (xhr) {
+                Swal.close();
+
+                // ===== لو كان 403 Forbidden (من الـ Filter) =====
+                if (xhr.status === 403) {
+                    Swal.fire({
+                        title: '⛔ غير مصرح بالدخول',
+                        text: 'ليس لديك صلاحية للقيام بهذا الإجراء',
+                        icon: 'error',
+                        confirmButtonText: 'حسناً',
+                        confirmButtonColor: '#dc3545'
+                    });
+                    return;
+                }
+
+                // ===== الكود الأصلي =====
+                // (فاضي، بس لو عايز تضيف معالجة للخطأ)
+                if (xhr.responseText) {
+                    Swal.fire({
+                        title: 'خطأ!',
+                        text: xhr.responseText || 'حدث خطأ أثناء الحذف',
+                        icon: 'error',
+                        confirmButtonText: 'حسناً'
+                    });
+                }
+            }
+        });
+    }
+}
+
+//3 - Old Delete before permission .....
+//for Delete Reservation ::::::
+// function DeleteFarmerReservationWithParampter(controller, id, action, redirectAction, parampterId) {
+
+//     if (action == undefined)
+//         action = "Index";
+
+//     Swal.fire({
+//         title: 'هل أنت متأكد؟',
+//         text: "لن تستطيع التراجع بعد الحذف!",
+//         icon: 'warning',
+//         showCancelButton: true,
+//         confirmButtonColor: '#3085d6',
+//         cancelButtonColor: '#d33',
+//         confirmButtonText: 'نعم، احذف!',
+//         cancelButtonText: 'إلغاء'
+//     }).then((result) => {
+
+//         if (result.isConfirmed) {
+
+//             $.ajax({
+//                 url: '../' + controller + '/' + action,
+//                 data: { id: id },
+//                 success: function (s) {
+
+//                     if (s == 1) {
+
+//                         Swal.fire({
+//                             icon: 'success',
+//                             title: 'تم الحذف بنجاح',
+//                             showConfirmButton: false,
+//                             timer: 1500
+//                         }).then(() => {
+
+//                             if (parampterId == 0) {
+//                                 window.location.href = '../' + controller + '/' + redirectAction;
+//                             } else {
+//                                 window.location.href = '../' + controller + '/' + redirectAction + '?farmerId=' + parampterId;
+//                             }
+
+//                         });
+
+//                     } else {
+//                         Swal.fire({
+//                             icon: 'error',
+//                             title: 'خطأ',
+//                             text: s
+//                         });
+//                     }
+//                 },
+//                 error: function () {
+//                     Swal.fire({
+//                         icon: 'error',
+//                         title: 'خطأ',
+//                         text: 'حدث خطأ أثناء الحذف'
+//                     });
+//                 }
+//             });
+
+//         }
+
+//     });
+// }
+
+
+//3 - New Delete after permission .....
+
+function DeleteFarmerReservationWithParampter(controller, id, action, redirectAction, parampterId) {
+
+    if (action == undefined)
+        action = "Index";
+
+    Swal.fire({
+        title: 'هل أنت متأكد؟',
+        text: "لن تستطيع التراجع بعد الحذف!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'نعم، احذف!',
+        cancelButtonText: 'إلغاء'
+    }).then((result) => {
+
+        if (result.isConfirmed) {
+
+            // ===== إضافة Loading =====
+            Swal.fire({
+                title: 'جاري الحذف...',
+                html: 'يرجى الانتظار',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            $.ajax({
+                url: '../' + controller + '/' + action,
+                data: { id: id },
+                // ===== إضافة الـ Header عشان الـ Filter يعرف إنه طلب AJAX =====
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                success: function (s) {
+                    Swal.close();
+
+                    // ===== لو كان الرد JSON (من الـ PermissionFilter) =====
+                    if (typeof s === 'object' && s !== null) {
+                        if (s.success === false) {
+                            // ===== لو كان خطأ صلاحية =====
+                            if (s.errorType === 'permission_denied') {
+                                Swal.fire({
+                                    title: '⛔ غير مصرح بالدخول',
+                                    text: s.message || 'ليس لديك صلاحية للقيام بهذا الإجراء',
+                                    icon: 'error',
+                                    confirmButtonText: 'حسناً',
+                                    confirmButtonColor: '#dc3545'
+                                });
+                                return;
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'خطأ',
+                                    text: s.message || 'حدث خطأ',
+                                    confirmButtonText: 'حسناً'
+                                });
+                                return;
+                            }
+                        }
+                        // لو كان success = true، نكمل
+                        if (s.success === true) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: s.message || 'تم الحذف بنجاح',
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(() => {
+                                if (parampterId == 0) {
+                                    window.location.href = '../' + controller + '/' + redirectAction;
+                                } else {
+                                    window.location.href = '../' + controller + '/' + redirectAction + '?farmerId=' + parampterId;
+                                }
+                            });
+                            return;
+                        }
+                    }
+
+                    // ===== الكود الأصلي =====
+                    if (s == 1) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'تم الحذف بنجاح',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(() => {
+                            if (parampterId == 0) {
+                                window.location.href = '../' + controller + '/' + redirectAction;
+                            } else {
+                                window.location.href = '../' + controller + '/' + redirectAction + '?farmerId=' + parampterId;
+                            }
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'خطأ',
+                            text: s,
+                            confirmButtonText: 'حسناً'
+                        });
+                    }
+                },
+                error: function (xhr) {
+                    Swal.close();
+
+                    // ===== لو كان 403 Forbidden (من الـ Filter) =====
+                    if (xhr.status === 403) {
+                        Swal.fire({
+                            title: '⛔ غير مصرح بالدخول',
+                            text: 'ليس لديك صلاحية للقيام بهذا الإجراء',
+                            icon: 'error',
+                            confirmButtonText: 'حسناً',
+                            confirmButtonColor: '#dc3545'
+                        });
+                        return;
+                    }
+
+                    // ===== الكود الأصلي =====
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'خطأ',
+                        text: 'حدث خطأ أثناء الحذف',
+                        confirmButtonText: 'حسناً'
+                    });
+                }
+            });
+
+        }
+
+    });
+}
+
+function Approve(id) {
+    if (confirm("هل انت متأكد من انك تريد انهاء هذا الطلب")) {
+        $.ajax({
+            url: '../Home/ApproveRequest',
+            data: { id: id },
+            success: function (s) {
+                if (s == 1) {
+                    window.location.reload();
+                    return;
+                }
+                alert(s);
+            },
+            error: function (e) { }
+        });
+    }
+
+}
+
+
+
+// ==========================
+// End Delete Functions
+// ==========================
+
+
+
+
+
+
+

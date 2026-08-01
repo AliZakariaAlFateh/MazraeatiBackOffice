@@ -1,13 +1,6 @@
 ﻿@using MazraeatiBackOffice.Configuration;
 @model IEnumerable<FarmerModel>
 <style>
-    #All thead th {
-        position: sticky;
-        top: 0;
-        background: #198754; /* نفس لون الهيدر */
-        color: #fff;
-        z-index: 10;
-    }
 
 </style>
 <div class="col-md-12">
@@ -99,64 +92,79 @@
 
             </form>
             <!-- Tab panes -->
-            <div class="tab-content m-t-10">
-                <div class="tab-pane table-responsive active" id="All" style="height:270px; overflow-y:auto;">
-                    <table class="table m-b-0 table-hover">
-                        <thead style="position: sticky;top: 0;z-index: 999;">
-                            <tr>
-                                <th>@Html.DisplayNameFor(a => a.CountryDesc)</th>
-                                <th>@Html.DisplayNameFor(a => a.CityDesc)</th>
-                                <th>@Html.DisplayNameFor(a => a.MobileNumber)</th>
-                                <th>@Html.DisplayNameFor(a => a.UserName)</th>
-                                <th>@Html.DisplayNameFor(a => a.statusFarmAppUser)</th>
-                                <th>@Html.DisplayNameFor(a => a.Name)</th>
-                                <th>@Html.DisplayNameFor(a => a.Number)</th>
-                                <th>@Html.DisplayNameFor(a => a.IsTrust)</th>
-                                <th>@Html.DisplayNameFor(a => a.IsVIP)</th>
-                                <th>@Html.DisplayNameFor(a => a.IsApprove)</th>
-                                <th>تفاصيل</th>
-                                <th>حجوزات المزارع</th>
-                                <th>ملاحظات المزارع</th>
-                                <th>تعديل الصور</th>
-                                <th>تعديل الفيدوهات</th>
-                                <th>حذف</th>
-                                <th>معلومات الادمن</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model)
-                            {
+            @if (Model.Any())
+            {
+                <div class="tab-content m-t-10">
+                    <div class="tab-pane table-responsive active table-scroll table table-bordered" id="All" style="height:270px; overflow-y:auto;">
+                        <table class="table m-b-0 table-hover">
+                            <thead style="position: sticky;top: 0;z-index: 999;">
                                 <tr>
-                                    <td>@item.CountryDesc</td>
-                                    <td>@item.CityDesc</td>
-                                    <td>@item.MobileNumber</td>
-                                    <td>@item.UserName</td>
-                                    <td>@(((FarmAppUserStatus?)item.statusFarmAppUser).ToArabic())</td>
-                                    <td>
-                                        @(item.Name)
-                                        <span style="color:red"> @(item.ReservationCount > 0 ? "( " + item.ReservationCount + " ) حجز " : "")  </span>
-                                        <span style="color:red"> @(item.FeedbackCount > 0 ? " - ( " + item.FeedbackCount + " ) تقييمات " : "")  </span>
-                                    </td>
-                                    <td>@item.Number</td>
-                                    <td>@(item.IsTrust == true ? "نعم" : "لا")</td>
-                                    <td>@(item.IsVIP == true ? "نعم" : "لا")</td>
-                                    <td>@(item.IsApprove == true ? "نعم" : "لا")</td>
-                                    <td><a href="@Url.Content("~/Farmers/edit/")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
-                                    <td><a href="@Url.Content("~/FarmerReservation/index?farmerId=")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
-                                    <td><a href="@Url.Content("~/FarmerFeedBack/index?farmerId=")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
-                                    <td><a href="@Url.Content("~/Farmers/farmerImages/")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
-                                    <td><a href="@Url.Content("~/Farmers/FarmerVideos/")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
-                                    <td>
-                                        <a href="javascript:Delete('Farmers',@item.Id,'Delete','Index')" class="btn btn-danger btn-sm">حذف</a>
-                                    </td>
-                                    <td><a href="@Url.Content("~/Farmers/FarmerUser?farmerId=")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
+                                    <th>@Html.DisplayNameFor(a => a.CountryDesc)</th>
+                                    <th>@Html.DisplayNameFor(a => a.CityDesc)</th>
+                                    <th>@Html.DisplayNameFor(a => a.MobileNumber)</th>
+                                    <th>@Html.DisplayNameFor(a => a.UserName)</th>
+                                    <th>@Html.DisplayNameFor(a => a.statusFarmAppUser)</th>
+                                    <th>@Html.DisplayNameFor(a => a.Name)</th>
+                                    <th>@Html.DisplayNameFor(a => a.Number)</th>
+                                    <th>@Html.DisplayNameFor(a => a.IsTrust)</th>
+                                    <th>@Html.DisplayNameFor(a => a.IsVIP)</th>
+                                    <th>@Html.DisplayNameFor(a => a.IsApprove)</th>
+                                    <th>تفاصيل</th>
+                                    <th>حجوزات المزارع</th>
+                                    <th>ملاحظات المزارع</th>
+                                    <th>تعديل الصور</th>
+                                    <th>تعديل الفيدوهات</th>
+                                    <th>حذف</th>
+                                    <th>معلومات الادمن</th>
                                 </tr>
-                            }
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>@item.CountryDesc</td>
+                                        <td>@item.CityDesc</td>
+                                        <td>@item.MobileNumber</td>
+                                        <td>@item.UserName</td>
+                                        <td>@(((FarmAppUserStatus?)item.statusFarmAppUser).ToArabic())</td>
+                                        <td>
+                                            @(item.Name)
+                                            <span style="color:red"> @(item.ReservationCount > 0 ? "( " + item.ReservationCount + " ) حجز " : "")  </span>
+                                            <span style="color:red"> @(item.FeedbackCount > 0 ? " - ( " + item.FeedbackCount + " ) تقييمات " : "")  </span>
+                                        </td>
+                                        <!--SerialFarmKey-->
+                                        <td>@item.Number</td>
+                                        <td>@(item.IsTrust == true ? "نعم" : "لا")</td>
+                                        <td>@(item.IsVIP == true ? "نعم" : "لا")</td>
+                                        <td>@(item.IsApprove == true ? "نعم" : "لا")</td>
+                                        <td><a href="@Url.Content("~/Farmers/edit/")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
+                                        <td><a href="@Url.Content("~/FarmerReservation/index?farmerId=")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
+                                        <td><a href="@Url.Content("~/FarmerFeedBack/index?farmerId=")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
+                                        <td><a href="@Url.Content("~/Farmers/farmerImages/")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
+                                        <td><a href="@Url.Content("~/Farmers/FarmerVideos/")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
+                                        <td>
+                                            <a href="javascript:Delete('Farmers',@item.Id,'Delete','Index')" class="btn btn-danger btn-sm">حذف</a>
+                                        </td>
+                                        <td><a href="@Url.Content("~/Farmers/FarmerUser?farmerId=")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
+                                    </tr>
+                                }
 
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
+            }
+            else
+            {
+
+                <div class="empty-state-container">
+                    <div class="empty-state-icon">
+                        <i class="zmdi zmdi-search-for-wild"></i> 
+                    </div>
+                    <div class="empty-state-title">لا توجد بيانات حالياً</div>
+                    <div class="empty-state-description">لا توجد بيانات ليتم عرضها يمكنك اضافة بيانات ليتم عرضها هنا </div>
+                </div>
+            }
         </div>
     </div>
 </div>

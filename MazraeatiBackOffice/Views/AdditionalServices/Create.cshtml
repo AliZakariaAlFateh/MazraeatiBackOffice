@@ -1,0 +1,11 @@
+﻿@model AdditionalServiceModel
+
+@{
+    ViewBag.Title = "إضافة خدمة إضافية جديدة";
+    ViewBag.activePage = "الخدمات الإضافية";
+}
+
+@using (Html.BeginForm("Create", "AdditionalServices", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.Partial("_CreateOrUpdate", Model)
+}

@@ -1,0 +1,388 @@
+﻿@using MazraeatiBackOffice.Models.FarmModel
+@using MazraeatiBackOffice.Models.LoyaltyPoints
+@model ConfirmReservationFarmViewModel
+
+<!-- ===== Modal ===== -->
+<div class="modal fade" id="confirmReservationFarmModal" tabindex="-1" role="dialog" aria-labelledby="confirmReservationFarmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background: #28a745; color: white;">
+                <h5 class="modal-title" id="confirmReservationFarmModalLabel">
+                    <i class="fa fa-check-circle"></i> تأكيد الحجز
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: white;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- ===== بيانات الحجز ===== -->
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label><strong>العميل:</strong></label>
+                            <p>@(Model.CustomerName ?? "غير محدد")</p>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label><strong>رقم الجوال:</strong></label>
+                            <p>@(Model.CustomerPhone ?? "غير محدد")</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label><strong>المزرعة:</strong></label>
+                            <p>@(Model.FarmName ?? "غير محدد")</p>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label><strong>نوع الحجز:</strong></label>
+                            <p>@(Model.ReservationTypeName ?? "غير محدد")</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label><strong>التاريخ:</strong></label>
+                            <p>@Model.ReservationDate.ToString("yyyy-MM-dd")</p>
+                        </div>
+                    </div>
+                </div>
+
+                <hr />
+
+                <!-- ===== نظام النقاط ===== -->
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h5 style="text-decoration:underline; color:#28a745;">
+                            <i class="fa fa-star" style="color:#ffc107;"></i> نظام النقاط
+                        </h5>
+                    </div>
+                </div>
+
+                <!-- نقاط العميل -->
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="points-box" style="background: #f8f9fa; padding: 10px 15px; border-radius: 5px; border: 1px solid #ffc107; margin: 10px 0;">
+                            <i class="fa fa-star" style="color:#ffc107;"></i>
+                            <strong>نقاط العميل المتاحة:</strong>
+                            <span class="points-number" id="popupFarmCustomerPoints" style="font-size: 24px; font-weight: bold; color: #28a745;">@Model.CustomerAvailablePoints</span>
+                            نقطة
+                            <span id="popupFarmPointsStatusBadge" class="badge @(Model.CustomerAvailablePoints > 0 ? "badge-success" : "badge-secondary")">
+                                @(Model.CustomerAvailablePoints > 0 ? "متاحة للخصم" : "لا توجد نقاط")
+                            </span>
+                            <br />
+                            <strong>المستوى الحالي:</strong>
+                            <span class="badge badge-info" style="font-size: 14px; padding: 5px 15px;">
+                                <i class="fa fa-trophy"></i> @(Model.CurrentTierName ?? "برونز")
+                            </span>
+                            @if (!string.IsNullOrEmpty(Model.TierIcon))
+                            {
+                                <span style="font-size: 20px;">@Model.TierIcon</span>
+                            }
+                            <br />
+                            <!-- ✅ النقاط المستحقة بعد التأكيد -->
+                            <strong>نقاط الحجز المستحقة:</strong>
+                            <span class="badge badge-success" style="font-size: 16px; padding: 5px 15px;">
+                                <i class="fa fa-plus-circle"></i> +@Model.EarnedPoints نقطة
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- استخدام النقاط -->
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="popupFarmUsePoints" value="true" />
+                                استخدام نقاط الولاء
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-4" id="popupFarmPointsRedeemSection" style="display:none;">
+                        <div class="form-group">
+                            <label>عدد النقاط للخصم</label>
+                            <input type="number" id="popupFarmRedeemPoints"
+                                   class="form-control" min="0" max="@Model.CustomerAvailablePoints" value="0" />
+                            <small class="text-muted">الحد الأقصى: <strong id="popupFarmMaxPoints">@Model.CustomerAvailablePoints</strong></small>
+                            <div id="popupFarmPointsValidationMessage" style="display:none;color:red;font-size:12px;margin-top:5px;"></div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-4" id="popupFarmDiscountResults" style="display:none;">
+                        <div class="discount-result" style="background: #e8f4fd; padding: 10px 15px; border-radius: 5px; border: 1px solid #b8daff;">
+                            <div><strong>قيمة الخصم:</strong> <span class="discount-amount" id="popupFarmDiscountAmount" style="color: #dc3545; font-weight: bold; font-size: 18px;">0.00 دينار</span></div>
+                            <div><strong>المبلغ الجديد:</strong> <span class="new-total" id="popupFarmNewTotal" style="color: #28a745; font-weight: bold; font-size: 18px;">0.00 دينار</span></div>
+                            <div><strong>النقاط المتبقية:</strong> <span id="popupFarmRemainingPoints">0</span> نقطة</div>
+                            <small class="text-muted" id="popupFarmDiscountRule"></small>
+                        </div>
+                    </div>
+                </div>
+
+                <hr />
+
+                <!-- ===== ملخص المبلغ ===== -->
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label><strong>المبلغ الكلي المطلوب:</strong></label>
+                            <p id="popupFarmOriginalAmount">@Model.OriginalAmount.ToString("N2") دينار</p>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label><strong>المبلغ بعد الخصم:</strong></label>
+                            <p id="popupFarmFinalAmount" style="color: #28a745; font-weight: bold;">@Model.OriginalAmount.ToString("N2") دينار</p>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label><strong>الربح (العمولة):</strong></label>
+                            <p id="popupFarmNetProfit" style="color: #007bff; font-weight: bold;">@Model.NetProfit.ToString("N2") دينار</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== رسوم إضافية ===== -->
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="popupFarmIsReceiveCommission" value="true" />
+                                استلام العمولة
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== حقول مخفية ===== -->
+                <input type="hidden" id="popupFarmReservationId" value="@Model.ReservationId" />
+                <input type="hidden" id="popupFarmCustomerId" value="@Model.CustomerId" />
+                <input type="hidden" id="popupFarmOriginalAmountHidden" value="@Model.OriginalAmount" />
+                <input type="hidden" id="popupFarmDiscountAmountHidden" value="0" />
+                <input type="hidden" id="popupFarmNewTotalHidden" value="@Model.OriginalAmount" />
+                <input type="hidden" id="popupFarmPointsUsedHidden" value="0" />
+                <input type="hidden" id="popupFarmNetProfitHidden" value="@Model.NetProfit" />
+
+                <!-- ===== حقول مخفية لنقل البيانات للـ JS ===== -->
+                <input type="hidden" id="popupFarmCustomerPointsData" value="@Model.CustomerAvailablePoints" />
+                <input type="hidden" id="popupFarmOriginalAmountData" value="@Model.OriginalAmount" />
+                <input type="hidden" id="popupFarmNetProfitData" value="@Model.NetProfit" />
+                <input type="hidden" id="popupFarmEarnedPointsData" value="@Model.EarnedPoints" />
+                <input type="hidden" id="popupFarmRedeemRulesData" value='@Html.Raw(Json.Serialize(ViewBag.RedeemRules))' />
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    <i class="fa fa-times"></i> إلغاء
+                </button>
+                <button type="button" class="btn btn-success" id="popupFarmConfirmBtn">
+                    <i class="fa fa-check"></i> تأكيد الحجز نهائياً
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================
+     JavaScript للـ Popup
+     ============================================================ -->
+<script>
+    $(document).ready(function() {
+        var popupFarmCustomerPoints = @Model.CustomerAvailablePoints;
+        var popupFarmOriginalAmount = parseFloat(@Model.OriginalAmount) || 0;
+        var popupFarmNetProfit = parseFloat(@Model.NetProfit) || 0;
+        var popupFarmRedeemRules = @Html.Raw(Json.Serialize(ViewBag.RedeemRules));
+        var popupFarmIsUpdating = false;
+
+        // ===== حساب الخصم =====
+        function calculateFarmPopupDiscount(points) {
+            if (!popupFarmRedeemRules || popupFarmRedeemRules.length === 0) {
+                return { discount: 0, rule: null, canRedeem: false };
+            }
+
+            var sortedRules = popupFarmRedeemRules.slice().sort(function(a, b) {
+                return b.points - a.points;
+            });
+
+            for (var i = 0; i < sortedRules.length; i++) {
+                if (points >= sortedRules[i].points) {
+                    var ratio = points / sortedRules[i].points;
+                    var discount = ratio * sortedRules[i].discountAmount;
+                    discount = Math.round(discount * 1000) / 1000;
+                    return {
+                        discount: discount,
+                        rule: sortedRules[i],
+                        canRedeem: true
+                    };
+                }
+            }
+            return { discount: 0, rule: null, canRedeem: false };
+        }
+
+        // ===== تحديث الحسابات في الـ Popup =====
+        function updateFarmPopupCalculations(pointsToRedeem) {
+            if (popupFarmIsUpdating) return;
+            popupFarmIsUpdating = true;
+
+            var usePoints = $('#popupFarmUsePoints').is(':checked');
+            var points = pointsToRedeem || parseInt($('#popupFarmRedeemPoints').val()) || 0;
+
+            if (!usePoints || points <= 0) {
+                $('#popupFarmDiscountResults').hide();
+                $('#popupFarmFinalAmount').text(popupFarmOriginalAmount.toFixed(2) + ' دينار');
+                $('#popupFarmNetProfit').text(popupFarmNetProfit.toFixed(2) + ' دينار');
+                $('#popupFarmDiscountAmountHidden').val(0);
+                $('#popupFarmNewTotalHidden').val(popupFarmOriginalAmount);
+                $('#popupFarmPointsUsedHidden').val(0);
+                $('#popupFarmNetProfitHidden').val(popupFarmNetProfit);
+                popupFarmIsUpdating = false;
+                return;
+            }
+
+            if (points > popupFarmCustomerPoints) {
+                points = popupFarmCustomerPoints;
+                $('#popupFarmRedeemPoints').val(points);
+            }
+
+            var result = calculateFarmPopupDiscount(points);
+            var discount = result.discount;
+            var newTotal = popupFarmOriginalAmount - discount;
+            var remainingPoints = popupFarmCustomerPoints - points;
+            var newNetProfit = popupFarmNetProfit - discount;
+
+            if (result.canRedeem && discount > 0) {
+                $('#popupFarmDiscountResults').show();
+                $('#popupFarmDiscountAmount').text(discount.toFixed(3) + ' دينار');
+                $('#popupFarmRemainingPoints').text(remainingPoints + ' نقطة');
+                $('#popupFarmNewTotal').text(newTotal.toFixed(3) + ' دينار');
+                $('#popupFarmFinalAmount').text(newTotal.toFixed(3) + ' دينار');
+                $('#popupFarmNetProfit').text(newNetProfit.toFixed(3) + ' دينار');
+                if (result.rule) {
+                    $('#popupFarmDiscountRule').text(result.rule.points + ' نقطة = ' + result.rule.discountAmount + ' دينار');
+                }
+                $('#popupFarmDiscountAmountHidden').val(discount);
+                $('#popupFarmNewTotalHidden').val(newTotal);
+                $('#popupFarmPointsUsedHidden').val(points);
+                $('#popupFarmNetProfitHidden').val(newNetProfit);
+                $('#popupFarmPointsValidationMessage').hide();
+            } else {
+                $('#popupFarmDiscountResults').hide();
+                $('#popupFarmFinalAmount').text(popupFarmOriginalAmount.toFixed(2) + ' دينار');
+                $('#popupFarmNetProfit').text(popupFarmNetProfit.toFixed(2) + ' دينار');
+                $('#popupFarmDiscountAmountHidden').val(0);
+                $('#popupFarmNewTotalHidden').val(popupFarmOriginalAmount);
+                $('#popupFarmPointsUsedHidden').val(0);
+                $('#popupFarmNetProfitHidden').val(popupFarmNetProfit);
+            }
+
+            popupFarmIsUpdating = false;
+        }
+
+        // ===== أحداث الـ Popup =====
+        $('#popupFarmUsePoints').change(function() {
+            if ($(this).is(':checked')) {
+                $('#popupFarmPointsRedeemSection').show();
+                $('#popupFarmRedeemPoints').val(0);
+                updateFarmPopupCalculations(0);
+            } else {
+                $('#popupFarmPointsRedeemSection').hide();
+                $('#popupFarmRedeemPoints').val(0);
+                $('#popupFarmDiscountResults').hide();
+                $('#popupFarmPointsValidationMessage').hide();
+                updateFarmPopupCalculations(0);
+            }
+        });
+
+        $('#popupFarmRedeemPoints').on('input', function() {
+            var points = parseInt($(this).val()) || 0;
+            if (points > popupFarmCustomerPoints) {
+                $(this).val(popupFarmCustomerPoints);
+            }
+            updateFarmPopupCalculations(points);
+        });
+
+        // ===== تأكيد الحجز نهائياً =====
+        $('#popupFarmConfirmBtn').on('click', function() {
+            var reservationId = $('#popupFarmReservationId').val();
+            var customerId = $('#popupFarmCustomerId').val();
+            var pointsUsed = parseInt($('#popupFarmPointsUsedHidden').val()) || 0;
+            var discountAmount = parseFloat($('#popupFarmDiscountAmountHidden').val()) || 0;
+            var newTotal = parseFloat($('#popupFarmNewTotalHidden').val()) || 0;
+            var netProfit = parseFloat($('#popupFarmNetProfitHidden').val()) || 0;
+            var isReceiveCommission = $('#popupFarmIsReceiveCommission').is(':checked');
+
+            // ===== التحقق من صحة البيانات =====
+            if (!reservationId || reservationId <= 0) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'معرف الحجز غير صحيح'
+                });
+                return;
+            }
+
+            // ===== إظهار مؤشر التحميل =====
+            Swal.fire({
+                title: 'جاري تأكيد الحجز...',
+                text: 'الرجاء الانتظار',
+                allowOutsideClick: false,
+                didOpen: function() {
+                    Swal.showLoading();
+                }
+            });
+
+            // ===== إرسال طلب التأكيد =====
+            $.ajax({
+                url: '@Url.Action("ConfirmFarmReservation", "FarmerReservation")',
+                type: 'POST',
+                data: {
+                    reservationId: reservationId,
+                    customerId: customerId,
+                    pointsUsed: pointsUsed,
+                    discountAmount: discountAmount,
+                    newTotal: newTotal,
+                    netProfit: netProfit,
+                    isReceiveCommission: isReceiveCommission
+                },
+                success: function(data) {
+                    Swal.close();
+                    if (data.success) {
+                        // ✅ استخدام Swal.fire بدلاً من Toast
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'تم!',
+                            text: data.message || 'تم تأكيد الحجز بنجاح'
+                        }).then(function() {
+                            $('#confirmReservationFarmModal').modal('hide');
+                            // ===== تحديث الصفحة =====
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'خطأ',
+                            text: data.message || 'حدث خطأ أثناء تأكيد الحجز'
+                        });
+                    }
+                },
+                error: function(xhr) {
+                    Swal.close();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'خطأ',
+                        text: xhr.responseJSON?.message || 'حدث خطأ في الاتصال بالخادم'
+                    });
+                }
+            });
+        });
+    });
+</script>

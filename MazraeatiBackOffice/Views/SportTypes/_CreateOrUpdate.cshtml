@@ -1,0 +1,70 @@
+﻿@model SportTypeModel
+
+<style>
+    .form-group {
+        font-size: 13px;
+    }
+</style>
+
+@Html.HiddenFor(a => a.Id)
+@Html.HiddenFor(a => a.CreatedDate)
+
+<div class="container-fluid">
+    <div class="row clearfix">
+        <div class="col-lg-12 col-md-12 col-sm-12">
+            <div class="card">
+                <div class="header">
+                    <h2><strong>معالجة </strong> السجل</h2>
+                    <ul class="header-dropdown">
+                    </ul>
+                </div>
+                <div class="body">
+                    <div class="row clearfix">
+                        <!-- الاسم بالعربي -->
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.NameAr)
+                                @Html.TextBoxFor(a => a.NameAr, new { @class = "form-control", @autocomplete = "off" })
+                                @Html.ValidationMessageFor(a => a.NameAr, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+
+                        <!-- الاسم بالإنجليزي -->
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.NameEn)
+                                @Html.TextBoxFor(a => a.NameEn, new { @class = "form-control", @autocomplete = "off" })
+                                @Html.ValidationMessageFor(a => a.NameEn, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+
+                        <!-- الأيقونة -->
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.IconClass)
+                                @Html.TextBoxFor(a => a.IconClass, new { @class = "form-control", @autocomplete = "off", @placeholder = "مثال: fa fa-futbol-o" })
+                                @Html.ValidationMessageFor(a => a.IconClass, "", new { @style = "color:red;font-size:10px" })
+                                <small class="text-muted">يمكنك استخدام أيقونات من <a href="https://fontawesome.com/icons" target="_blank">Font Awesome</a></small>
+                            </div>
+                        </div>
+
+                        <!-- نشط -->
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.IsActive)
+                                <br />
+                                @Html.CheckBoxFor(a => a.IsActive, new { @class = "form-control", @style = "margin-top: 10px;" })
+                            </div>
+                        </div>
+
+                        <!-- أزرار -->
+                        <div class="col-sm-12">
+                            <button type="submit" class="btn btn-primary btn-round">حفظ</button>
+                            <button type="button" onclick="window.location.href='@Url.Content("~/SportTypes/Index/")'" class="btn btn-default btn-round btn-simple">رجوع</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

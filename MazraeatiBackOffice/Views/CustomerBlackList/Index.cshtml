@@ -1,43 +1,5 @@
 ﻿<style>
-    .table-scroll {
-        height: 350px;
-        overflow-y: scroll;
-        overflow-x: hidden;
-    }
-
-        /* Sticky header */
-        .table-scroll thead th {
-            position: sticky;
-            top: 0;
-            background: #198754;
-            color: #fff;
-            z-index: 10;
-        }
-
-        /* Chrome / Edge */
-        .table-scroll::-webkit-scrollbar {
-            width: 12px;
-        }
-
-        .table-scroll::-webkit-scrollbar-track {
-            background: #eee;
-        }
-
-        .table-scroll::-webkit-scrollbar-thumb {
-            background: #999;
-            border-radius: 10px;
-            border: 2px solid #eee;
-        }
-
-            .table-scroll::-webkit-scrollbar-thumb:hover {
-                background: #666;
-            }
-
-    /* Firefox */
-    .table-scroll {
-        scrollbar-width: auto;
-        scrollbar-color: #999 #eee;
-    }
+    
 </style>
 @model IEnumerable<CustomerBlackListModel>
 <div class="col-md-12">
@@ -80,44 +42,59 @@
                 </div>
             </div>
 
-            <div class="tab-content m-t-10">
-                <div class="tab-pane table-responsive active" id="All">
-                    <table class="table m-b-0 table-hover">
-                        <thead>
-                            <tr>
-                                <th>@Html.DisplayNameFor(a => a.CustMobileNum)</th>
-                                <th>@Html.DisplayNameFor(a => a.CustName)</th>
-                                <th>@Html.DisplayNameFor(a => a.Reason)</th>
-                                <th>@Html.DisplayNameFor(a => a.ImageUrl)</th>
-                                <th>@Html.DisplayNameFor(a => a.IsApprove)</th>
-                                <th>تفاصيل</th>
-                                <th>حذف</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model)
-                            {
+            @if (Model.Any())
+            {
+                <div class="tab-content m-t-10">
+                    <div class="tab-pane table-responsive active table-scroll table table-bordered" id="All">
+                        <table class="table m-b-0 table-hover">
+                            <thead>
                                 <tr>
-                                    <td>@item.CustMobileNum</td>
-                                    <td>@item.CustName</td>
-                                    <td>@(string.IsNullOrEmpty(item.Reason) ? "" : (item.Reason.Length > 40 ? item.Reason.Substring(0, 40) : item.Reason))</td>
-                                    <td>
-                                        <a href="@Url.Content("~/images/")@item.ImageUrl" target="_blank">
-                                            <img width="120" height="120" src="@Url.Content("~/images/")@item.ImageUrl" />
-                                        </a>
-                                    </td>
-                                    <td> <span class="badge badge-@(item.IsApprove ? "success" : "danger")">@(item.IsApprove ? "موافق عليها" : "غير موافق عليها")</span></td>
-                                    <td><a href="@Url.Content("~/CustomerBlackList/edit/")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
-                                    <td>
-                                        <a href="javascript:Delete('CustomerBlackList',@item.Id,'Delete','Index')" class="btn btn-danger btn-sm">حذف</a>
-                                    </td>
+                                    <th>@Html.DisplayNameFor(a => a.CustMobileNum)</th>
+                                    <th>@Html.DisplayNameFor(a => a.CustName)</th>
+                                    <th>@Html.DisplayNameFor(a => a.Reason)</th>
+                                    <th>@Html.DisplayNameFor(a => a.ImageUrl)</th>
+                                    <th>@Html.DisplayNameFor(a => a.IsApprove)</th>
+                                    <th>تفاصيل</th>
+                                    <th>حذف</th>
                                 </tr>
-                            }
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>@item.CustMobileNum</td>
+                                        <td>@item.CustName</td>
+                                        <td>@(string.IsNullOrEmpty(item.Reason) ? "" : (item.Reason.Length > 40 ? item.Reason.Substring(0, 40) : item.Reason))</td>
+                                        <td>
+                                            <a href="@Url.Content("~/images/")@item.ImageUrl" target="_blank">
+                                                <img width="120" height="120" src="@Url.Content("~/images/")@item.ImageUrl" />
+                                            </a>
+                                        </td>
+                                        <td> <span class="badge badge-@(item.IsApprove ? "success" : "danger")">@(item.IsApprove ? "موافق عليها" : "غير موافق عليها")</span></td>
+                                        <td><a href="@Url.Content("~/CustomerBlackList/edit/")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
+                                        <td>
+                                            <a href="javascript:Delete('CustomerBlackList',@item.Id,'Delete','Index')" class="btn btn-danger btn-sm">حذف</a>
+                                        </td>
+                                    </tr>
+                                }
 
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
+            }
+            else
+            {
+
+                <div class="empty-state-container">
+                    <div class="empty-state-icon">
+                        <i class="zmdi zmdi-search-for-wild"></i> 
+
+                    </div>
+                    <div class="empty-state-title">لا توجد بيانات حالياً</div>
+                    <div class="empty-state-description">لا توجد بيانات ليتم عرضها يمكنك اضافة بيانات ليتم عرضها هنا </div>
+                </div>
+            }
 
 
 

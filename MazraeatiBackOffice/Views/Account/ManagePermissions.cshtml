@@ -1,0 +1,258 @@
+﻿@model ManageUserPermissionsViewModel
+
+@{
+    ViewData["Title"] = $"صلاحيات المستخدم: {Model.FullName}";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/assets/css/managepermissions.css" rel="stylesheet" />
+
+<!-- Loading Spinner -->
+<div class="loading-spinner" id="loadingSpinner">
+    <div class="spinner-content">
+        <div class="spinner-border-custom"></div>
+        <h5>جاري المعالجة...</h5>
+    </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Main Content -->
+<div class="container-fluid">
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-custom">
+        <a href="@Url.Action("Index")"><i class="fas fa-users"></i> المستخدمين</a>
+        <span class="mx-2">/</span>
+        <span>صلاحيات المستخدم</span>
+    </div>
+
+    <!-- User Info Card -->
+    <div class="user-info-card">
+        <div class="row align-items-center">
+            <div class="col-md-7 d-flex align-items-center">
+                <div class="avatar">
+                    @Model.FullName.Trim().Substring(0, 1).ToUpper()
+                </div>
+                <div class="ms-3">
+                    <h4 class="mb-0">@Model.FullName</h4>
+                    <small class="text-muted">
+                        <i class="fas fa-user"></i> @Model.UserName
+                        @if (!string.IsNullOrEmpty(Model.Email))
+                        {
+                            <span class="ms-2"><i class="fas fa-envelope"></i> @Model.Email</span>
+                        }
+                    </small>
+                    <div class="mt-1">
+                        @if (Model.IsSuperAdmin)
+                        {
+                            <span class="badge-super"><i class="fas fa-star"></i> SuperAdmin - صلاحية شاملة</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">مستخدم عادي</span>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-5 text-md-left mt-3 mt-md-0">
+                <a href="@Url.Action("Index")" class="btn-back">
+                    <i class="fas fa-arrow-left"></i> العودة
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== Selected Actions Bar ===== -->
+    <div class="selected-actions-bar" id="selectedActionsBar">
+        <div class="selected-count">
+            <i class="fas fa-check-circle text-primary"></i>
+            تم اختيار <span id="selectedCount">0</span> صف
+        </div>
+    </div>
+
+    <!-- Permissions Table -->
+    <div class="permissions-container">
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+            <h5 class="mb-0">
+                <i class="fas fa-lock text-primary"></i>
+                صلاحيات الصفحات
+                <span class="badge bg-secondary ms-2">@Model.Permissions.Count صفحة</span>
+            </h5>
+            <div class="mt-2 mt-md-0">
+                <button class="btn-outline-perm" onclick="selectAllRows(true)">
+                    <i class="fas fa-check-double"></i> تحديد الكل
+                </button>
+                <button class="btn-outline-perm danger" onclick="selectAllRows(false)">
+                    <i class="fas fa-times"></i> إلغاء الكل
+                </button>
+                <button class="btn-gradient-success ms-2 d-none" onclick="saveAllPermissions()">
+                    <i class="fas fa-save"></i> حفظ الكل
+                </button>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="perm-table table table-bordered">
+                <thead>
+                    <tr>
+                        <th style="width: 5%;">
+                            <input type="checkbox" class="header-row-checkbox" id="selectAllRows"
+                                   onchange="toggleAllRowCheckboxes(this.checked)" />
+                            <span class="perm-label" style="color: rgba(255,255,255,0.8); font-size: 9px; display: block;">الكل</span>
+                        </th>
+                        <th style="width: 18%; text-align: right;">الصفحة</th>
+                        <th style="width: 18%; text-align: right;">الـ URL</th>
+                        <th style="width: 59%;">
+                            <div class="header-perm-actions">
+                                <div class="header-perm-item">
+                                    <span class="perm-label">عرض</span>
+                                    <input type="checkbox" class="header-checkbox" id="selectAllView"
+                                           onchange="selectAll('view', this.checked)" />
+                                </div>
+                                <div class="header-perm-item">
+                                    <span class="perm-label">إنشاء</span>
+                                    <input type="checkbox" class="header-checkbox" id="selectAllCreate"
+                                           onchange="selectAll('create', this.checked)" />
+                                </div>
+                                <div class="header-perm-item">
+                                    <span class="perm-label">تعديل</span>
+                                    <input type="checkbox" class="header-checkbox" id="selectAllEdit"
+                                           onchange="selectAll('edit', this.checked)" />
+                                </div>
+                                <div class="header-perm-item">
+                                    <span class="perm-label">حذف</span>
+                                    <input type="checkbox" class="header-checkbox" id="selectAllDelete"
+                                           onchange="selectAll('delete', this.checked)" />
+                                </div>
+                                <div class="header-perm-item">
+                                    <span class="perm-label">تصدير</span>
+                                    <input type="checkbox" class="header-checkbox" id="selectAllExport"
+                                           onchange="selectAll('export', this.checked)" />
+                                </div>
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var perm in Model.Permissions.OrderBy(p => p.DisplayOrder))
+                    {
+                        <tr data-screen-id="@perm.ScreenId">
+                            <td>
+                                <input type="checkbox" class="row-checkbox row-selector"
+                                       data-screen-id="@perm.ScreenId"
+                                       onchange="onRowSelect(this)" />
+                            </td>
+                            <td class="screen-name-cell">
+                                @if (!string.IsNullOrEmpty(perm.Icon))
+                                {
+                                    <i class="@perm.Icon"></i>
+                                }
+                                @perm.ScreenName
+                                @if (!perm.IsMenu)
+                                {
+                                    <span class="badge bg-secondary ms-1" style="font-size: 9px;">غير قائمة</span>
+                                }
+                            </td>
+                            <td class="screen-url-cell">
+                                @perm.ScreenUrl
+                            </td>
+                            <td>
+                                <div class="perm-actions">
+                                    <!-- View -->
+                                    <div class="perm-item">
+                                        <label class="custom-switch">
+                                            <input type="checkbox"
+                                                   class="perm-checkbox"
+                                                   data-screen="@perm.ScreenId"
+                                                   data-perm="view"
+                                                   @(perm.CanView ? "checked" : "")
+                                                   onchange="updatePermission(@perm.ScreenId, 'view', this.checked)" />
+                                            <span class="slider perm-view"></span>
+                                        </label>
+                                    </div>
+                                    <!-- Create -->
+                                    <div class="perm-item">
+                                        <label class="custom-switch">
+                                            <input type="checkbox"
+                                                   class="perm-checkbox"
+                                                   data-screen="@perm.ScreenId"
+                                                   data-perm="create"
+                                                   @(perm.CanCreate ? "checked" : "")
+                                                   @* @(!perm.CanView ? "disabled" : "") *@
+                                                   onchange="updatePermission(@perm.ScreenId, 'create', this.checked)" />
+                                            <span class="slider perm-create"></span>
+                                        </label>
+                                    </div>
+                                    <!-- Edit -->
+                                    <div class="perm-item">
+                                        <label class="custom-switch">
+                                            <input type="checkbox"
+                                                   class="perm-checkbox"
+                                                   data-screen="@perm.ScreenId"
+                                                   data-perm="edit"
+                                                   @(perm.CanEdit ? "checked" : "")
+                                                   @* @(!perm.CanView ? "disabled" : "") *@
+                                                   onchange="updatePermission(@perm.ScreenId, 'edit', this.checked)" />
+                                            <span class="slider perm-edit"></span>
+                                        </label>
+                                    </div>
+                                    <!-- Delete -->
+                                    <div class="perm-item">
+                                        <label class="custom-switch">
+                                            <input type="checkbox"
+                                                   class="perm-checkbox"
+                                                   data-screen="@perm.ScreenId"
+                                                   data-perm="delete"
+                                                   @(perm.CanDelete ? "checked" : "")
+                                                   @* @(!perm.CanView ? "disabled" : "") *@
+                                                   onchange="updatePermission(@perm.ScreenId, 'delete', this.checked)" />
+                                            <span class="slider perm-delete"></span>
+                                        </label>
+                                    </div>
+                                    <!-- Export -->
+                                    <div class="perm-item">
+                                        <label class="custom-switch">
+                                            <input type="checkbox"
+                                                   class="perm-checkbox"
+                                                   data-screen="@perm.ScreenId"
+                                                   data-perm="export"
+                                                   @(perm.CanExport ? "checked" : "")
+                                                   @* @(!perm.CanView ? "disabled" : "") *@
+                                                   onchange="updatePermission(@perm.ScreenId, 'export', this.checked)" />
+                                            <span class="slider perm-export"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @if (!Model.Permissions.Any())
+        {
+            <div class="text-center py-5">
+                <i class="fas fa-inbox fa-3x text-muted"></i>
+                <h5 class="text-muted mt-3">لا توجد صفحات مسجلة في النظام</h5>
+            </div>
+        }
+    </div>
+</div>
+
+
+
+
+
+
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="~/assets/js/managepermissions.js"></script>
+    <script>
+
+        var userId = @Model.UserId;
+
+    </script>
+}

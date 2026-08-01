@@ -1,7 +1,9 @@
 ﻿@model FarmerModel
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.min.css" />
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+
 <style>
     
     /*ALi Zakaryaa AlGuhnyyy*/
@@ -35,10 +37,12 @@
     font-size: 0.8em;
 }
 
+
     img {
         /* max-width: 50% !important; */
         /* border-radius: 1px; */
     }
+
     /* ... Your existing styles ... */
     /* Added for visual consistency of removed item */
     .farmer-image-item.removing,
@@ -47,15 +51,18 @@
         transition: opacity 0.3s ease-out; /* Smooth fade out */
     }
 
+
     /* for price table */
     .text-center td, .text-center th {
         vertical-align: middle;
     }
 
+
     .table input {
         min-width: 90px;
     }
     /* for price table */
+
 
 </style>
 <link href="~/assets/css/style_main_mahjouz.css" rel="stylesheet" />
@@ -69,9 +76,10 @@
         <i class="fas fa-exclamation-triangle me-2"></i> <strong>Error!</strong> @TempData["ErrorMessage"]
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
-} *@
+}*@
 
-@* @if (TempData["ErrorMessage"] != null)
+
+@*@if (TempData["ErrorMessage"] != null)
 {
     <script>
         Swal.fire({
@@ -82,7 +90,7 @@
         });
     </script>
     TempData["ErrorMessage"] = null;
-} *@
+}*@
 
 @Html.HiddenFor(a => a.Id)
 @* @Html.HiddenFor(a => a.statusFarmAppUser) *@
@@ -94,6 +102,7 @@
 @Html.HiddenFor(a => a.Regions)
 @Html.HiddenFor(a => a.Users)
 @Html.HiddenFor(a => a.SerialFarmKey)
+<input type="hidden" id="SelectedRegionId" value="@ViewBag.RegionId" />
 <div class="container-fluid">
     <div class="row clearfix">
         <div class="col-lg-12 col-md-12 col-sm-12">
@@ -212,12 +221,15 @@
                         </div>
                         </div>
                         }*@
+
+
                         <div class="col-sm-6">
                             @Html.DisplayNameFor(a => a.Owner)
                             <select class="form-control select2" name="Owner">
                                 <option selected="selected" disabled="disabled">--الرجاء اختيار نوع المالك--</option>
                                 <option selected="@(Model.Owner.Trim() == "من المالك")" value="من المالك">من المالك</option>
                                 <option selected="@(Model.Owner.Trim() == "من المسوق")" value="من المسوق">من المسوق</option>
+                                <option selected="@(Model.Owner.Trim() == "من المتضمن")" value="من المتضمن">من المتضمن</option>
                             </select>
                             @Html.ValidationMessageFor(a => a.Owner, "", new { @style = "color:red;font-size:10px" })
                         </div>
@@ -238,8 +250,6 @@
                             </div>
                         </div>
                        
-
-
 
                         <div class="col-sm-12" style="margin-bottom:20px">
                             &nbsp;
@@ -411,7 +421,21 @@
                         <div class="col-sm-6">
                             <div class="form-group">
                                 @Html.DisplayNameFor(a => a.Location)
-                                @Html.TextBoxFor(a => a.Location, new { @class = "form-control", @autocomplete = "off", @maxlength = 50 })
+                                @Html.TextBoxFor(a => a.Location, new { @class = "form-control", @autocomplete = "off", @maxlength = 100 })
+                                @*@Html.ValidationMessageFor(a => a.Location, "", new { @style = "color:red;font-size:10px" })*@
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.Longitude)
+                                @Html.TextBoxFor(a => a.Longitude, new { @class = "form-control", @autocomplete = "off", @maxlength = 100 })
+                                @*@Html.ValidationMessageFor(a => a.Location, "", new { @style = "color:red;font-size:10px" })*@
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.Latitude)
+                                @Html.TextBoxFor(a => a.Latitude, new { @class = "form-control", @autocomplete = "off", @maxlength = 100 })
                                 @*@Html.ValidationMessageFor(a => a.Location, "", new { @style = "color:red;font-size:10px" })*@
                             </div>
                         </div>
@@ -520,7 +544,10 @@
                         <div class="col-sm-12">
                             <h5 style="text-decoration:underline">الاسعار</h5>
                         </div>
-                        @if (Model.PriceList.Count() == 0)
+
+
+
+                        @if (Model?.PriceList?.Count() == 0)
                         {
                             <button type="button"
                                     onclick="window.location.href='@Url.Content("~/Farmers/FarmerPriceList?farmerId=")@Model.Id'"
@@ -529,7 +556,7 @@
                             </button>
                         }
                         
-                        @if (Model.PriceList.Count() > 0)
+                        @if (Model?.PriceList?.Count() > 0)
                         {
                             <div style="overflow-x:auto">
 
@@ -553,6 +580,7 @@
 
                                     <tbody>
 
+
                                         @for (int i = 0; i < Model.PriceList.OrderBy(c => c.Person).ThenBy(n => n.Day).Count(); i++)
                                         {
                                             //Title for All Person
@@ -560,20 +588,23 @@
                                             {
                                                 <tr style="background:#e9f7ef;font-weight:bold">
                                                     <td colspan="10">
-                                                        عدد الاشخاص المسموح بهم: @Model.PriceList[i].Person
+                                                        عدد الاشخاص المسموح بهم:
+                                                        <div class="col-sm-3" style="display: inline-flex;">
+                                                            <div class="form-group">
+                                                                @Html.TextBoxFor(a => Model.PriceList[i].Person, new { @class = "form-control", type = "number", id = "person_" + Model.PriceList[i].Day })
+                                                            </div>
+                                                        </div>
                                                     </td>
                                                     <td>
-                                                        <button type="button"
-                                                                onclick="DeletePriceList(@Model.PriceList[i].FarmerId,@Model.PriceList[i].Person);"
+                                                        <a href="javascript:DeletePriceList_Full(@Model.PriceList[i].FarmerId);"
                                                                 class="btn btn-danger btn-sm">
                                                             حذف
-                                                        </button>
+                                                        </a>
                                                     </td>
                                                 </tr>
                                             }
 
                                             <tr>
-
                                                 <!-- اليوم -->
                                                 <td>
                                                     @switch (Model.PriceList[i].Day)
@@ -582,21 +613,27 @@
                                                             @("الاحد")
                                                             ; break;
                                                         case 2:
+
                                                             @("الاثنين")
                                                             ; break;
                                                         case 3:
+
                                                             @("الثلاثاء")
                                                             ; break;
                                                         case 4:
+
                                                             @("الاربعاء")
                                                             ; break;
                                                         case 5:
+
                                                             @("الخميس")
                                                             ; break;
                                                         case 6:
+
                                                             @("الجمعة")
                                                             ; break;
                                                         case 7:
+
                                                             @("السبت")
                                                             ; break;
                                                     }
@@ -605,7 +642,9 @@
                                                 @Html.HiddenFor(a => Model.PriceList[i].Id)
                                                 @Html.HiddenFor(a => Model.PriceList[i].Day)
                                                 @Html.HiddenFor(a => Model.PriceList[i].FarmerId)
-                                                @Html.HiddenFor(a => Model.PriceList[i].Person)
+                                                @* ===== التعديل هنا ===== *@
+                                                @* بدل ما نخبي الـ Person، هنستخدم JavaScript عشان ننقل القيمة *@
+                                                @Html.HiddenFor(a => Model.PriceList[i].Person, new { @class = "person-hidden", data_day = Model.PriceList[i].Day })
 
                                                 <td>
                                                     @Html.TextBoxFor(a => Model.PriceList[i].MorningPrice, new { @class = "form-control", type = "number" })
@@ -644,11 +683,12 @@
                                                 </td>
 
                                                 <td>
-                                                    <!-- ممكن تضيف delete لليوم هنا -->
+                                                    <!-- حذف اليوم -->
                                                 </td>
-
                                             </tr>
                                         }
+
+
 
                                     </tbody>
                                 </table>
@@ -656,8 +696,9 @@
                             </div>
                         }
                         
-
                         @* For Price Table *@
+
+
 
 
 
@@ -681,6 +722,14 @@
                                         @Html.CheckBoxFor(a => a.ExtraFeature[i].IsCheck, new { @class = "form-control", @style = "margin-top: 10px;" })
                                         @Html.TextBoxFor(a => a.ExtraFeature[i].ExtraTextDescriptionAr, new { @class = "form-control", @maxlength = 100 ,@placeholder="الوصف بالعربي"})
                                         @Html.TextBoxFor(a => a.ExtraFeature[i].ExtraTextDescriptionEn, new { @class = "form-control", @maxlength = 100 ,@placeholder="الوصف بالانجليزيه"})
+                                        @* Code=="SwimPool\r\n" *@
+                                        @if (Model.ExtraFeature[i].TypeId == 4)
+                                        {
+                                            @Html.TextBoxFor(a => a.ExtraFeature[i].SwimmingPoolLength, new { @class = "form-control", @maxlength = 100, @placeholder = "طول المسبح" })
+                                            @Html.TextBoxFor(a => a.ExtraFeature[i].SwimmingPoolWidth, new { @class = "form-control", @maxlength = 100, @placeholder = "عرض المسبح" })
+                                            @Html.TextBoxFor(a => a.ExtraFeature[i].SwimmingPoolDepth, new { @class = "form-control", @maxlength = 100, @placeholder = "عمق المسبح" })
+                                        }
+                                        
                                     </div>
                                 </div>
                             }
@@ -707,7 +756,9 @@
                             <div id="imagePreviews" class="farmer-image-container" width="200px">
                             </div>
                         </div>
+
                         @* Start of image display section *@
+
                         @if (Model.FarmerImages != null && Model.FarmerImages.Any())
                         {
                             <div class="col-sm-12" style="margin-bottom:20px">
@@ -723,11 +774,8 @@
                                 </div>
                             </div>
                         }
+
                         @* End of image display section *@
-
-
-
-
 
                         <div class="col-sm-12">
                             <h5 style="text-decoration:underline">اضافه فيدوهات</h5>
@@ -750,8 +798,8 @@
                             </div>
                         </div>
 
-
                         @* Start of Video display section *@
+
                         @if (Model.FarmerVideos != null && Model.FarmerVideos.Any())
                         {
                             <div class="col-sm-12" style="margin-bottom:20px">
@@ -770,10 +818,8 @@
                                 </div>
                             </div>
                         }
+
                         @* End of Video display section *@
-
-
-
 
                         <div class="col-sm-12">
                             <button type="submit" class="btn btn-primary btn-round">حفظ</button>
@@ -790,139 +836,12 @@
 @* @section Scripts { *@
 
 
-    <script src="~/assets/js/farmer_image_videos_preview_update.js"></script>
+ <script src="~/assets/js/farmer_image_videos_preview_update.js"></script>
     
 @* } *@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
+
 <script>
-    $(document).ready(function () {
-
-        //BaseUrl_Pro
-        //BaseUrl_Dev
-        // الحصول على القيم من السيرفر (ViewBag)
-
-        var selectedCityId = $('#CityId').val(); // أو من ViewBag إذا فضلت
-        var selectedRegionId = '@ViewBag.RegionId';
-
-        // 1. تعريف حدث تغيير المدينة
-        $("#CityId").on("change", function () {
-            var cityId = $(this).val();
-            var $region = $("#RegionId");
-
-            // تنظيف القائمة وتعطيلها مؤقتاً
-            $region.empty()
-                .append('<option selected disabled>--الرجاء اختيار المنطقة--</option>')
-                .prop("disabled", true)
-                //.selectpicker('refresh');
-                $region.trigger('change');
-            if (!cityId || cityId === "0") return;
-
-            // طلب البيانات من السيرفر
-            $.ajax({
-                url: `${BaseUrl_Pro}/Farmers/GetRegionsByCityId`,
-                type: 'GET',
-                data: { cityId: cityId },
-                success: function (data) {
-                    $region.empty().append($('<option/>', {
-                        text: '--الرجاء اختيار المنطقة--',
-                        disabled: true,
-                        selected: true
-                    }));
-
-                    if (data && data.length > 0) {
-                        $.each(data, function (i, item) {
-                            var $opt = $('<option/>', {
-                                value: item.id,
-                                text: item.descAr
-                            });
-                            // إضافة الـ Data Attributes لو محتاجها
-                            $opt.attr("data-descar", item.descAr);
-                            $opt.attr("data-descen", item.descEn);
-                            $region.append($opt);
-                        });
-
-                        $region.prop("disabled", false);
-                    }
-
-                    // تحديث مكتبة الـ SelectPicker
-                    //$region.selectpicker('refresh');
-                    $region.trigger('change');
-                    // --- الجزء المهم جداً لضبط الاختيار القديم ---
-                    if (selectedRegionId && selectedRegionId !== "0") {
-                        $region.val(selectedRegionId);
-                        //$region.selectpicker('refresh');
-                        $region.trigger('change');
-                        // تصفير المتغير عشان ميعلقش لو غيرت المدينة يدوياً بعد كدة
-                        selectedRegionId = "0";
-                    }
-                },
-                error: function () {
-                    console.error("خطأ في جلب المناطق");
-                }
-            });
-        });
-
-        // 2. تشغيل الكود تلقائياً عند تحميل الصفحة إذا كانت المدينة مختارة
-        if (selectedCityId && selectedCityId !== "0") {
-            $("#CityId").trigger('change');
-        }
-
-
-        function initPhone(inputId) {
-
-            var input = document.querySelector(inputId);
-
-            var iti = window.intlTelInput(input, {
-
-                initialCountry: "auto",
-
-                geoIpLookup: function (callback) {
-                    $.get("https://ipapi.co/json/", function (data) {
-                        callback(data.country_code.toLowerCase());
-                    }).fail(function () {
-                        callback("eg"); // fallback
-                    });
-                },
-
-                separateDialCode: true,
-                preferredCountries: ["eg", "sa", "ae", "jo"],
-
-                utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"
-            });
-
-            // لو فيه رقم جاى من DB
-            var existingValue = $(inputId).val();
-            if (existingValue) {
-                iti.setNumber(existingValue);
-            }
-
-            return iti;
-        }
-
-        // Initialize الاتنين
-        var iti1 = initPhone("#phone1");
-
-        // ============================
-        // Submit
-        // ============================
-        $("form").on("submit", function () {
-
-            // تأكد إن utils اتحمل
-            if (!iti1.isValidNumber()) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'خطأ',
-                    text: 'رقم الموبايل  غير صحيح'
-                });
-                return false;
-            }
-
-            $("#phone1").val(iti1.getNumber());
-        });
-
-
-    });
-
 </script>

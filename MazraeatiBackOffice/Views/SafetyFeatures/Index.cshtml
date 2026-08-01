@@ -1,0 +1,135 @@
+﻿@model IEnumerable<SafetyFeatureModel>
+
+@{
+    ViewBag.Title = "ميزات الأمان";
+    ViewBag.activePage = "ميزات الأمان";
+}
+
+<div class="container-fluid">
+    <div class="row clearfix">
+        <div class="col-lg-12 col-md-12 col-sm-12">
+            <div class="card">
+                <div class="header">
+                    <h2><strong>ميزات</strong> الأمان</h2>
+                    <ul class="header-dropdown">
+                        <li>
+                            <a href="@Url.Action("Create")" class="btn btn-primary btn-round">
+                                <i class="fa fa-plus"></i> إضافة ميزة جديدة
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="body">
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show">
+                            <strong>تم!</strong> @TempData["SuccessMessage"]
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        </div>
+                    }
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show">
+                            <strong>خطأ!</strong> @TempData["ErrorMessage"]
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        </div>
+                    }
+
+                    <!-- فلتر البحث -->
+                    <form action="" method="post">
+                        <div class="row clearfix">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <input id="searchInput" type="text" name="search" value="@ViewBag.search"
+                                           placeholder="الكلمة المفتاحية" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group" style="margin-top: -10px;">
+                                    <button type="submit" class="btn btn-primary btn-round">بحث</button>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group" style="margin-top: -10px;">
+                                    <a href="@Url.Action("Index")" class="btn btn-primary btn-round">تفضية الحقول</a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- جدول الميزات -->
+                    <div class="tab-pane table-responsive active table-scroll table table-bordered" id="All" style="height:270px; overflow-y:auto;">
+                        <table class="table table-bordered table-striped table-hover">
+                            <thead class="bg-danger text-white">
+                                <tr>
+                                    <th>#</th>
+                                    <th>الميزة (عربي)</th>
+                                    <th>الميزة (إنجليزي)</th>
+                                    <th>الأيقونة</th>
+                                    <th>الحالة</th>
+                                    <th>تعديل</th>
+                                    <th>حذف</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.Any())
+                                {
+                                    int counter = 1;
+                                    foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>@counter</td>
+                                            <td><strong>@item.FeatureTextAr</strong></td>
+                                            <td>@item.FeatureTextEn</td>
+                                            <td>
+                                                @if (!string.IsNullOrEmpty(item.IconClass))
+                                                {
+                                                    <i class="@item.IconClass"></i>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (item.IsActive)
+                                                {
+                                                    <span class="badge badge-success">نشط</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge badge-danger">غير نشط</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <a href="@Url.Content("~/SafetyFeatures/Edit/")@item.Id" style="height: 25px;" class="btn btn-primary btn-round">
+                                                    <i class="fa fa-edit" style="color: white;margin-top: -10px;"></i>
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <a href="javascript:Delete('SafetyFeatures',@item.Id,'Delete','Index')" class="btn btn-danger">
+                                                    <i class="fa fa-trash" style="color: white;margin-top: -10px;"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        counter++;
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="7" class="text-center">
+                                            <div class="alert alert-info">
+                                                لا توجد ميزات أمان
+                                                <br />
+                                                <a href="@Url.Action("Create")" class="btn btn-primary btn-sm mt-2">
+                                                    <i class="fa fa-plus"></i> أضف ميزة جديدة
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

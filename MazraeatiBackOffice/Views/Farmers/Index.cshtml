@@ -35,14 +35,7 @@
 }
 
 <style>
-    #All thead th {
-        position: sticky;
-        top: 0;
-        background: #198754; /* نفس لون الهيدر */
-        color: #fff;
-        z-index: 10;
-    }
-
+    
     .badge-success {
         background: linear-gradient(45deg, #28a745, #5cd65c);
         color: white;
@@ -171,7 +164,7 @@
             </form>
             <!-- Tab panes -->
             <div class="tab-content m-t-10">
-                <div class="tab-pane table-responsive active" id="All" style="height:270px; overflow-y:auto;">
+                <div class="tab-pane table-responsive active table-scroll table table-bordered" id="All" style="height:270px; overflow-y:auto;">
                     <table class="table m-b-0 table-hover">
                         <thead style="position: sticky;top: 0;z-index: 999;">
                             <tr>
@@ -187,6 +180,7 @@
                                 <th>@Html.DisplayNameFor(a => a.IsVIP)</th>
                                 <th>@Html.DisplayNameFor(a => a.IsApprove)</th>
                                 <th>تفاصيل</th>
+                                <th>عرض الاعلان</th>
                                 <th>حجوزات المزارع</th>
                                 <th>جدول مواعيد الحجوزات</th>
                                 <th>ملاحظات المزارع</th>
@@ -220,14 +214,20 @@
                                     <span style="color:red"> @(item.ReservationCount > 0 ?  "( "+ item.ReservationCount + " ) حجز " : "")  </span> 
                                     <span style="color:red"> @(item.FeedbackCount > 0 ? " - ( " + item.FeedbackCount + " ) تقييمات " : "")  </span>
                                 </td>
-                                <td>@(item.SerialFarmKey)</td>
+                                    <!--SerialFarmKey-->
+                                <td>@(item.Number)</td>
                                 @* <td>@item.Number</td> *@
                                 <td>@(item.IsTrust == true ? "نعم" : "لا" )</td>
                                 <td>@(item.IsVIP == true ? "نعم" : "لا" )</td>
                                 <td>@(item.IsApprove == true ? "نعم" : "لا" )</td>
                                 <td><a href="@Url.Content("~/Farmers/edit/")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
+                                <td>
+                                    <a href="https://mahjoz.app/farm/@item.Id" target="_blank" class="btn btn-primary btn-round" style="height: 25px;">
+                                        <i class="zmdi zmdi-eye" style="color: white;margin-top: -10px;"></i>
+                                    </a>
+                                </td>
                                 <td><a href="@Url.Content("~/FarmerReservation/index?farmerId=")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
-                                    <td><a href="@Url.Content("~/FarmerReservation/CalendarReservation?farmerid=")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
+                                <td><a href="@Url.Content("~/FarmerReservation/CalendarReservation?farmerid=")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
                                 <td><a href="@Url.Content("~/FarmerFeedBack/index?farmerId=")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
                                 <td><a href="@Url.Content("~/Farmers/farmerImages/")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
                                 <td><a href="@Url.Content("~/Farmers/FarmerVideos/")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>

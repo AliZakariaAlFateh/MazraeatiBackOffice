@@ -1,13 +1,17 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace MazraeatiBackOffice.Controllers
 {
+    [Authorize]
     public class BaseController : Controller
     {
         public enum NotifyType
@@ -57,6 +61,17 @@ namespace MazraeatiBackOffice.Controllers
                     ViewData[dataKey] = new List<string>();
                 ((List<string>)ViewData[dataKey]).Add(message);
             }
+        }
+        protected int GetCurrentUserId()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            return !string.IsNullOrEmpty(userId) ? int.Parse(userId) : 0;
+        }
+
+        // أو من الـ Session
+        protected int GetCurrentUserIdFromSession()
+        {
+            return HttpContext.Session.GetInt32("UserId") ?? 0;
         }
     }
 }

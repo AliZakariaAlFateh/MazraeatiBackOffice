@@ -1,0 +1,1193 @@
+﻿@using MazraeatiBackOffice.Configuration
+@using MazraeatiBackOffice.Core
+@model List<SportReservation>
+
+@{
+    ViewBag.Title = ViewBag.SportName != null && !string.IsNullOrEmpty(ViewBag.SportName)
+        ? $"حجوزات - {ViewBag.SportName}"
+        : "الحجوزات الرياضية";
+    ViewBag.activePage = "الحجوزات الرياضية";
+}
+
+<style>
+    /* ============================================================
+               الإحصائيات
+               ============================================================ */
+    .stat-card {
+        background: white;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        text-align: center;
+        margin-bottom: 15px;
+        cursor: default;
+        transition: transform 0.2s;
+    }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .stat-card .number {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .stat-card .label {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .stat-card.total {
+            border-left: 4px solid #007bff;
+        }
+
+        .stat-card.pending {
+            border-left: 4px solid #ffc107;
+        }
+
+        .stat-card.confirmed {
+            border-left: 4px solid #28a745;
+        }
+
+        .stat-card.cancelled {
+            border-left: 4px solid #dc3545;
+        }
+
+    /* ============================================================
+               حالات الحجز (Badges)
+               ============================================================ */
+    .status-badge {
+        display: inline-block;
+        padding: 5px 14px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 12px;
+        min-width: 80px;
+        text-align: center;
+        letter-spacing: 0.3px;
+    }
+
+    .status-pending {
+        background: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffc107;
+    }
+
+    .status-confirmed {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #28a745;
+    }
+
+    .status-cancelled {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #dc3545;
+    }
+
+    /* ============================================================
+               الفلتر
+               ============================================================ */
+    .filter-section {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+
+        .filter-section .form-group {
+            margin-bottom: 5px;
+        }
+
+        .filter-section label {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+    /* ============================================================
+               الجدول
+               ============================================================ */
+    .table-scroll {
+        max-height: 500px;
+        overflow-y: auto;
+    }
+
+        .table-scroll thead th {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: #2c3e50;
+            color: white;
+            white-space: nowrap;
+        }
+
+        .table-scroll tbody td {
+            vertical-align: middle;
+        }
+
+    /* ============================================================
+               أزرار الإجراءات
+               ============================================================ */
+    .btn-action {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 4px 12px;
+        font-size: 11px;
+        font-weight: 600;
+        border: none;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        min-width: 55px;
+        height: 28px;
+        gap: 4px;
+    }
+
+        .btn-action i {
+            font-size: 12px;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            text-decoration: none;
+            color: #fff;
+        }
+
+    .btn-confirm {
+        background: #28a745;
+        color: #fff;
+    }
+
+        .btn-confirm:hover {
+            background: #218838;
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+        }
+
+    .btn-cancel {
+        background: #dc3545;
+        color: #fff;
+    }
+
+        .btn-cancel:hover {
+            background: #c82333;
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
+        }
+
+    .btn-edit {
+        background: #ffc107;
+        color: #000;
+    }
+
+        .btn-edit:hover {
+            background: #e0a800;
+            color: #000;
+            box-shadow: 0 4px 15px rgba(255, 193, 7, 0.4);
+        }
+
+    .btn-delete {
+        background: #dc3545;
+        color: #fff;
+    }
+
+        .btn-delete:hover {
+            background: #c82333;
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
+        }
+
+    .btn-group-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .btn-group-actions .btn-action {
+            flex: 0 0 auto;
+            min-width: 60px;
+            text-align: center;
+        }
+
+    .badge-info {
+        background: #17a2b8;
+        color: #fff;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 11px;
+    }
+
+    .alert {
+        border-radius: 10px;
+    }
+
+    .table td {
+        padding: 8px 10px;
+        vertical-align: middle;
+    }
+</style>
+
+<div class="container-fluid">
+    <div class="row clearfix">
+        <div class="col-lg-12 col-md-12 col-sm-12">
+            <div class="card">
+                <div class="header">
+                    <h2>
+                        <strong>الحجوزات</strong> الرياضية
+                        @if (!string.IsNullOrEmpty(ViewBag.SportName))
+                        {
+                            <small> - @ViewBag.SportName</small>
+                        }
+                    </h2>
+                    <ul class="header-dropdown">
+                        <li>
+                            <a href="@Url.Action("Create", new { sportId = ViewBag.SportId })" class="btn btn-primary btn-round">
+                                <i class="fa fa-plus"></i> إضافة حجز جديد
+                            </a>
+                        </li>
+                        @if (ViewBag.SportId > 0)
+                        {
+                            <li>
+                                <a href="@Url.Action("Index", "Sports")" class="btn btn-default btn-round">
+                                    <i class="fa fa-arrow-right"></i> العودة للقائمة
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+                <div class="body">
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show">
+                            <strong>تم!</strong> @TempData["SuccessMessage"]
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        </div>
+                    }
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show">
+                            <strong>خطأ!</strong> @TempData["ErrorMessage"]
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        </div>
+                    }
+
+                    <!-- ===== الإحصائيات ===== -->
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <div class="stat-card total">
+                                <div class="number">@ViewBag.TotalReservations</div>
+                                <div class="label">إجمالي الحجوزات</div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="stat-card pending">
+                                <div class="number">@ViewBag.PendingCount</div>
+                                <div class="label">قيد الانتظار</div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="stat-card confirmed">
+                                <div class="number">@ViewBag.ConfirmedCount</div>
+                                <div class="label">مؤكدة</div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="stat-card cancelled">
+                                <div class="number">@ViewBag.CancelledCount</div>
+                                <div class="label">ملغاة</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ===== الفلتر ===== -->
+                    <div class="filter-section">
+                        <form method="post" action="@Url.Action("Index", "SportReservations")">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="sportId" value="@ViewBag.SportId" />
+                            <div class="row clearfix">
+                                <!-- بحث -->
+                                <div class="col-sm-2">
+                                    <div class="form-group">
+                                        <label>بحث</label>
+                                        <input type="text" name="search" value="@ViewBag.search"
+                                               placeholder="اسم العميل أو رقم الجوال" class="form-control" />
+                                    </div>
+                                </div>
+
+                                <!-- نوع الرياضة -->
+                                <div class="col-sm-2">
+                                    <div class="form-group">
+                                        <label> القسم الرياضي</label>
+                                        <select class="form-control select2" name="sportTypeId" id="sportTypeFilter">
+                                            <option value="">-- الكل --</option>
+                                            @foreach (var item in ViewBag.SportTypes)
+                                            {
+                                                <option value="@item.Id" selected="@(item.Id == ViewBag.SelectedSportTypeId)">@item.NameAr</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- القسم الرياضي -->
+                                <div class="col-sm-2">
+                                    <div class="form-group">
+                                        <label> العقار</label>
+                                        <select class="form-control select2" name="sportFilterId" id="sportFilter">
+                                            <option value="">-- الكل --</option>
+                                            @if (ViewBag.Sports != null)
+                                            {
+                                                foreach (var item in ViewBag.Sports)
+                                                {
+                                                    <option value="@item.Id" selected="@(item.Id == ViewBag.SelectedSportId)">@item.NameAr</option>
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- الحالة -->
+                                <div class="col-sm-2">
+                                    <div class="form-group">
+                                        <label>الحالة</label>
+                                        <select class="form-control select2" name="status">
+                                            <option value="">-- الكل --</option>
+                                            <option value="0" selected="@(ViewBag.Status == ReservStatusEnum.Pending)">قيد الانتظار</option>
+                                            <option value="1" selected="@(ViewBag.Status == ReservStatusEnum.Confirmed)">مؤكدة</option>
+                                            <option value="2" selected="@(ViewBag.Status == ReservStatusEnum.Cancelled)">ملغاة</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- ===== التاريخ ===== -->
+                                <div class="col-sm-2">
+                                    <div class="form-group">
+                                        <label>من تاريخ</label>
+                                        <input type="date" name="fromDate" value="@(ViewBag.FromDate?.ToString("yyyy-MM-dd"))" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="form-group">
+                                        <label>إلى تاريخ</label>
+                                        <input type="date" name="toDate" value="@(ViewBag.ToDate?.ToString("yyyy-MM-dd"))" class="form-control" />
+                                    </div>
+                                </div>
+
+                                <!-- ===== الوقت ===== -->
+                                <div class="col-sm-2">
+                                    <div class="form-group">
+                                        <label>من وقت</label>
+                                        <input type="time" name="fromTime" value="@(ViewBag.FromTime?.ToString(@"hh\:mm"))" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="form-group">
+                                        <label>إلى وقت</label>
+                                        <input type="time" name="toTime" value="@(ViewBag.ToTime?.ToString(@"hh\:mm"))" class="form-control" />
+                                    </div>
+                                </div>
+
+                                <!-- أزرار -->
+                                <div class="col-sm-3" style="padding-top:10px;">
+                                    <button type="submit" class="btn btn-primary btn-round">
+                                        <i class="fa fa-search"></i> بحث
+                                    </button>
+                                    @* <a href="@Url.Action("Index", new { sportId = ViewBag.SportId })" class="btn btn-default btn-round">
+                                        <i class="fa fa-refresh"></i> تفريغ
+                                    </a> *@
+                                        @* <a href="javascript:void(0)" 
+                                               class="btn btn-default btn-round" 
+                                               onclick="clearAllFilters();">
+                                                <i class="fa fa-refresh"></i> تفريغ
+                                        </a> *@
+                                    <a href="@Url.Action("Index")" class="btn btn-default btn-round">
+                                        <i class="fa fa-refresh"></i> تفريغ
+                                    </a> 
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- ===== جدول الحجوزات ===== -->
+                    <div class="table-scroll" style="overflow-x: auto; overflow-y: visible;max-height:300px">
+                        <table class="table table-bordered table-striped table-hover" style="min-width: 1000px; width: 100%;">
+                            <thead style="position: sticky; top: 0; z-index: 10; background: #2c3e50;">
+                                <tr>
+                                    <th>#</th>
+                                    <th>العميل</th>
+                                    <th>القسم</th>
+                                    <th>النوع</th>
+                                    <th>التاريخ</th>
+                                    <th>الوقت</th>
+                                    <th>عدد الساعات</th>
+                                    <th>المبلغ</th>
+                                    <th>الحالة</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.Any())
+                                {
+                                    int counter = 1;
+                                    foreach (var item in Model)
+                                    {
+                                        string statusClass = "";
+                                        string statusText = "";
+                                        switch (item.ReservStatus)
+                                        {
+                                            case ReservStatusEnum.Pending:
+                                                statusClass = "status-pending";
+                                                statusText = "قيد الانتظار";
+                                                break;
+                                            case ReservStatusEnum.Confirmed:
+                                                statusClass = "status-confirmed";
+                                                statusText = "مؤكد";
+                                                break;
+                                            case ReservStatusEnum.Cancelled:
+                                                statusClass = "status-cancelled";
+                                                statusText = "ملغى";
+                                                break;
+                                        }
+
+                                        <tr>
+                                            <td>@counter</td>
+                                            <td>
+                                                <strong>@item.CustomerName</strong>
+                                                <br /><small class="text-muted">@item.CustMobNum</small>
+                                            </td>
+                                            <td>@item.Sport?.NameAr</td>
+                                            <td>
+                                                <span class="badge badge-info">@item.SportType?.NameAr</span>
+                                            </td>
+                                            <td>@item.ReservationDate.ToString("yyyy-MM-dd")</td>
+                                            <td>
+                                                @{
+                                                    var startTime = item.StartTime;
+                                                    var endTime = item.EndTime;
+                                                    var startAmPm = startTime.Hours >= 12 ? "م" : "ص";
+                                                    var endAmPm = endTime.Hours >= 12 ? "م" : "ص";
+                                                    var startDisplay = startTime.ToString(@"hh\:mm") + " " + startAmPm;
+                                                    var endDisplay = endTime.ToString(@"hh\:mm") + " " + endAmPm;
+                                                }
+                                                @startDisplay - @endDisplay
+                                            </td>
+                                            <td>@item.TotalHours</td>
+                                            <td>@item.ReservationAmt.ToString("N2")</td>
+                                            <td><span class="status-badge @statusClass">@statusText</span></td>
+                                            <td>
+                                                <div class="btn-group-actions">
+                                                    @if (item.ReservStatus == ReservStatusEnum.Pending)
+                                                    {
+                                                        <a href="javascript:changeStatus(@item.Id, 1)"
+                                                           class="btn-action btn-confirm"
+                                                           title="تأكيد الحجز">
+                                                            <i class="fa fa-check"></i> تأكيد
+                                                        </a>
+                                                    }
+
+                                                    @if (item.ReservStatus == ReservStatusEnum.Pending)
+                                                    {
+                                                        <a href="javascript:changeStatus(@item.Id, 2)"
+                                                           class="btn-action btn-cancel"
+                                                           title="إلغاء الحجز">
+                                                            <i class="fa fa-times"></i> إلغاء
+                                                        </a>
+                                                    }
+
+                                                    <a href="@Url.Action("Edit", new { id = item.Id })"
+                                                       class="btn-action btn-edit"
+                                                       title="تعديل الحجز">
+                                                        <i class="fa fa-edit"></i> تعديل
+                                                    </a>
+
+                                                    <a href="javascript:Delete('SportReservations', @item.Id, 'Delete', 'Index')"
+                                                       class="btn-action btn-delete"
+                                                       title="حذف الحجز">
+                                                        <i class="fa fa-trash"></i> حذف
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        counter++;
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="10" class="text-center">
+                                            <div class="alert alert-info">
+                                                لا توجد حجوزات
+                                                <br />
+                                                <a href="@Url.Action("Create", new { sportId = ViewBag.SportId })" class="btn btn-primary btn-sm mt-2">
+                                                    <i class="fa fa-plus"></i> أضف حجز جديد
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- ===== إجمالي النتائج ===== -->
+                    @if (Model != null && Model.Any())
+                    {
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <span class="text-muted">إجمالي النتائج: @Model.Count()</span>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="popupContainer"></div>
+<!-- ===== JavaScript ===== -->
+<script>
+    // $(document).ready(function() {
+    //     $('.select2').select2();
+    //     // ===== عند تغيير نوع الرياضة =====
+    //     // $('#sportTypeFilter').change(function() {
+    //     //     var sportTypeId = $(this).val();
+    //     //     var selectedSportId = (ViewBag.SelectedSportId ?? 0);
+
+    //     //     if (sportTypeId) {
+    //     //         $.ajax({
+    //     //             url: 'Url.Action("GetSportsByType", "SportReservations")',
+    //     //             type: 'GET',
+    //     //             data: { sportTypeId: sportTypeId },
+    //     //             success: function(data) {
+    //     //                 var select = $('#sportFilter');
+    //     //                 select.empty();
+    //     //                 select.append('<option value="">-- الكل --</option>');
+    //     //                 $.each(data, function(index, sport) {
+    //     //                     var selected = (sport.id == selectedSportId) ? 'selected' : '';
+    //     //                     select.append('<option value="' + sport.id + '" ' + selected + '>' + sport.nameAr + '</option>');
+    //     //                 });
+    //     //             }
+    //     //         });
+    //     //     } else {
+    //     //         $('#sportFilter').empty().append('<option value="">-- الكل --</option>');
+    //     //     }
+    //     // });
+    //     // ===== حفظ كل العقارات =====
+    //     // var allSports = [];
+
+    //     // // ===== جلب كل العقارات عند تحميل الصفحة =====
+    //     // $.ajax({
+    //     //     url: 'Url.Action("GetAllSports", "SportReservations")',
+    //     //     type: 'GET',
+    //     //     async: false,
+    //     //     success: function(data) {
+    //     //         allSports = data;
+    //     //     }
+    //     // });
+
+    //     // ===== عند تغيير نوع الرياضة =====
+    //     $('#sportTypeFilter').change(function() {
+    //         var sportTypeId = $(this).val();
+    //         var selectedSportId = @(ViewBag.SelectedSportId ?? 0)
+    //         var select = $('#sportFilter');
+
+    //         select.empty();
+    //         select.append('<option value="">-- الكل --</option>');
+
+    //         if (sportTypeId) {
+    //             $.ajax({
+    //                 url: '@Url.Action("GetSportsByType", "SportReservations")',
+    //                 type: 'GET',
+    //                 data: { sportTypeId: sportTypeId },
+    //                 success: function(data) {
+    //                     $.each(data, function(index, sport) {
+    //                         var selected = (sport.id == selectedSportId) ? 'selected' : '';
+    //                         select.append('<option value="' + sport.id + '" ' + selected + '>' + sport.nameAr + '</option>');
+    //                     });
+    //                     select.trigger('change');
+    //                 }
+    //             });
+    //         } else {
+    //             $.each(allSports, function(index, sport) {
+    //                 var selected = (sport.id == selectedSportId) ? 'selected' : '';
+    //                 select.append('<option value="' + sport.id + '" ' + selected + '>' + sport.nameAr + '</option>');
+    //             });
+    //             select.trigger('change');
+    //         }
+    //     });
+
+
+    // });
+
+    // // ============================================================
+    // // SweetAlert Configuration
+    // // ============================================================
+    // const Toast = Swal.mixin({
+    //     toast: true,
+    //     position: 'top-end',
+    //     showConfirmButton: false,
+    //     timer: 3000,
+    //     timerProgressBar: true,
+    //     didOpen: (toast) => {
+    //         toast.addEventListener('mouseenter', Swal.stopTimer);
+    //         toast.addEventListener('mouseleave', Swal.resumeTimer);
+    //     }
+    // });
+
+   
+    //     // ============================================================
+    // // تغيير حالة الحجز (مع الـ Popup للتأكيد)
+    // // ============================================================
+    // function changeStatus(id, status) {
+    //     var isConfirm = status === 1;
+    //     var title = isConfirm ? 'تأكيد الحجز' : 'إلغاء الحجز';
+    //     var icon = isConfirm ? 'question' : 'warning';
+    //     var confirmButtonText = isConfirm ? 'نعم، تأكيد' : 'نعم، إلغاء';
+    //     var row = $('tr').find('a[href*="Edit/' + id + '"]').closest('tr');
+    //     var actionsCell = row.find('td:last-child');
+    //     if (isConfirm) {
+    //         // ===== عرض الـ Popup للتأكيد =====
+    //         Swal.fire({
+    //             title: 'جاري تحميل بيانات الحجز...',
+    //             text: 'الرجاء الانتظار',
+    //             allowOutsideClick: false,
+    //             didOpen: function() {
+    //                 Swal.showLoading();
+    //             }
+    //         });
+
+    //         $.ajax({
+    //             url: '@Url.Action("GetConfirmReservationData", "SportReservations")',
+    //             type: 'GET',
+    //             data: { id: id },
+    //             success: function(data) {
+    //                 Swal.close();
+
+    //                 // ✅ التحقق من نجاح الطلب
+    //                 if (typeof data === 'string' && data.trim().startsWith('{') === false) {
+    //                     // البيانات HTML (PartialView)
+    //                     $('#popupContainer').html(data);
+    //                     $('#confirmReservationModal').modal('show');
+    //                 } else if (typeof data === 'object' && data.success === false) {
+    //                     Swal.fire({
+    //                         icon: 'error',
+    //                         title: 'خطأ',
+    //                         text: data.message || 'حدث خطأ أثناء تحميل البيانات'
+    //                     });
+    //                 } else {
+    //                     // لو رجع JSON
+    //                     var parsed = typeof data === 'string' ? JSON.parse(data) : data;
+    //                     if (parsed && parsed.success === false) {
+    //                         Swal.fire({
+    //                             icon: 'error',
+    //                             title: 'خطأ',
+    //                             text: parsed.message || 'حدث خطأ أثناء تحميل البيانات'
+    //                         });
+    //                     }
+    //                 }
+    //             },
+    //             error: function(xhr) {
+    //                 Swal.close();
+    //                 Swal.fire({
+    //                     icon: 'error',
+    //                     title: 'خطأ',
+    //                     text: xhr.responseJSON?.message || 'حدث خطأ في الاتصال بالخادم'
+    //                 });
+    //             }
+    //         });
+    //     } else {
+    //         // ===== إلغاء الحجز (نفس الكود القديم) =====
+    //         Swal.fire({
+    //             title: title,
+    //             text: 'هل أنت متأكد من إلغاء هذا الحجز؟',
+    //             icon: icon,
+    //             showCancelButton: true,
+    //             confirmButtonColor: '#dc3545',
+    //             cancelButtonColor: '#6c757d',
+    //             confirmButtonText: 'نعم، إلغاء',
+    //             cancelButtonText: 'إلغاء',
+    //             reverseButtons: true
+    //         }).then((result) => {
+    //             if (result.isConfirmed) {
+    //                 Swal.fire({
+    //                     title: 'سبب الإلغاء',
+    //                     input: 'text',
+    //                     inputPlaceholder: 'أدخل سبب الإلغاء...',
+    //                     showCancelButton: true,
+    //                     confirmButtonText: 'تأكيد الإلغاء',
+    //                     cancelButtonText: 'إلغاء',
+    //                     inputValidator: (value) => {
+    //                         if (!value || value.trim() === '') {
+    //                             return 'الرجاء إدخال سبب الإلغاء';
+    //                         }
+    //                         return null;
+    //                     }
+    //                 }).then((reasonResult) => {
+    //                     if (reasonResult.isConfirmed && reasonResult.value) {
+    //                         sendChangeStatus(id, status, reasonResult.value);
+
+
+    //                     }
+    //                 });
+    //             }
+    //         });
+    //     }
+    // }
+
+    // function sendChangeStatus(id, status, reason) {
+    //     $.ajax({
+    //         url: 'Url.Action("ChangeStatus", "SportReservations")',
+    //         type: 'POST',
+    //         data: { id: id, status: status, reason: reason },
+    //         success: function(data) {
+    //             if (data.success) {
+    //                 updateStatusInTable(id, status, reason);
+    //                 updateStatistics(id, status);
+
+    //                 Toast.fire({
+    //                     icon: 'success',
+    //                     title: data.message || 'تم تغيير حالة الحجز بنجاح'
+    //                 });
+    //             } else {
+    //                 Swal.fire({
+    //                     icon: 'error',
+    //                     title: 'خطأ',
+    //                     text: data.message || 'حدث خطأ أثناء تغيير الحالة'
+    //                 });
+    //             }
+    //         },
+    //         error: function() {
+    //             Swal.fire({
+    //                 icon: 'error',
+    //                 title: 'خطأ',
+    //                 text: 'حدث خطأ في الاتصال بالخادم'
+    //             });
+    //         }
+    //     });
+    // }
+
+    // // ===== تحديث الحالة في الجدول =====
+    // function updateStatusInTable(id, status, reason) {
+    //     var row = $('tr').find('a[href*="Edit/' + id + '"]').closest('tr');
+    //     if (row.length === 0) return;
+
+    //     var statusCell = row.find('td:eq(8)');
+    //     var statusClass = status === 1 ? 'status-confirmed' : (status === 2 ? 'status-cancelled' : 'status-pending');
+    //     var statusText = status === 1 ? 'مؤكد' : (status === 2 ? 'ملغى' : 'قيد الانتظار');
+
+    //     statusCell.html('<span class="status-badge ' + statusClass + '">' + statusText + '</span>');
+
+    //     if (status === 2 && reason) {
+    //         statusCell.find('.status-badge').attr('title', 'سبب الإلغاء: ' + reason);
+    //     }
+    //         // ===== 2.  إخفاء/إظهار أزرار الإجراءات =====
+    // var actionsCell = row.find('td:last-child');
+
+    // if (status === 1 || status === 2) {
+    //     //  تم التأكيد أو الإلغاء → إخفاء زر "تأكيد" و "إلغاء"
+    //     actionsCell.find('.btn-confirm').hide();
+    //     actionsCell.find('.btn-cancel').hide();
+    // } else {
+    //     //  قيد الانتظار → إظهار الأزرار
+    //     actionsCell.find('.btn-confirm').show();
+    //     actionsCell.find('.btn-cancel').show();
+    // }
+    // }
+
+    // // ===== تحديث الإحصائيات =====
+    // function updateStatistics(id, status) {
+    //     var row = $('tr').find('a[href*="Edit/' + id + '"]').closest('tr');
+    //     if (row.length === 0) return;
+
+    //     var statusCell = row.find('td:eq(8)');
+    //     var oldStatusText = statusCell.text().trim();
+    //     var oldStatus = -1;
+
+    //     if (oldStatusText === 'قيد الانتظار'){ oldStatus = 0;
+        
+        
+    //     }
+    //     else if (oldStatusText === 'مؤكد') {oldStatus = 1;
+        
+        
+    //     }
+    //     else if (oldStatusText === 'ملغى') {oldStatus = 2;
+        
+        
+    //     }
+    //     else return;
+
+    //     if (oldStatus === status) return;
+
+    //     var oldCard = getStatCard(oldStatus);
+    //     if (oldCard) {
+    //         var oldNumber = parseInt(oldCard.find('.number').text()) || 0;
+    //         oldCard.find('.number').text(Math.max(0, oldNumber - 1));
+    //     }
+
+    //     var newCard = getStatCard(status);
+    //     if (newCard) {
+    //         var newNumber = parseInt(newCard.find('.number').text()) || 0;
+    //         newCard.find('.number').text(newNumber + 1);
+    //     }
+    // }
+
+    // function getStatCard(status) {
+    //     switch (status) {
+    //         case 0: return $('.stat-card.pending');
+    //         case 1: return $('.stat-card.confirmed');
+    //         case 2: return $('.stat-card.cancelled');
+    //         default: return null;
+    //     }
+    // }
+
+    // // ============================================================
+    // // حذف السجل
+    // // ============================================================
+    // function Delete(controller, id, action, view) {
+    //     Swal.fire({
+    //         title: 'هل أنت متأكد؟',
+    //         text: 'لا يمكنك التراجع عن هذا الإجراء!',
+    //         icon: 'warning',
+    //         showCancelButton: true,
+    //         confirmButtonColor: '#dc3545',
+    //         cancelButtonColor: '#6c757d',
+    //         confirmButtonText: 'نعم، احذف',
+    //         cancelButtonText: 'إلغاء',
+    //         reverseButtons: true
+    //     }).then((result) => {
+    //         if (result.isConfirmed) {
+    //             $.ajax({
+    //                 url: '/' + controller + '/' + action + '/' + id,
+    //                 type: 'POST',
+    //                 success: function(data) {
+    //                     if (data === 1) {
+    //                         Toast.fire({
+    //                             icon: 'success',
+    //                             title: 'تم الحذف بنجاح'
+    //                         }).then(() => {
+    //                             window.location.href = '/' + controller + '/' + view + '?sportId=' + @(ViewBag.SportId ?? 0);
+    //                         });
+    //                     } else {
+    //                         Swal.fire({
+    //                             icon: 'error',
+    //                             title: 'خطأ',
+    //                             text: data || 'حدث خطأ أثناء الحذف'
+    //                         });
+    //                     }
+    //                 },
+    //                 error: function() {
+    //                     Swal.fire({
+    //                         icon: 'error',
+    //                         title: 'خطأ',
+    //                         text: 'حدث خطأ في الاتصال بالخادم'
+    //                     });
+    //                 }
+    //             });
+    //         }
+    //     });
+    // }
+    //     // ===== دالة تفريغ كل الفلاتر =====
+    //     function clearAllFilters() {
+    //     window.location.href = '@Url.Action("Index", new { sportId = ViewBag.SportId })';
+    // }
+
+
+        // ============================================================
+    // SweetAlert Configuration
+    // ============================================================
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer);
+            toast.addEventListener('mouseleave', Swal.resumeTimer);
+        }
+    });
+
+    // ============================================================
+    // تغيير حالة الحجز (مع الـ Popup للتأكيد)
+    // ============================================================
+    function changeStatus(id, status) {
+        var isConfirm = status === 1;
+        var title = isConfirm ? 'تأكيد الحجز' : 'إلغاء الحجز';
+        var icon = isConfirm ? 'question' : 'warning';
+
+        if (isConfirm) {
+            // ===== عرض الـ Popup للتأكيد =====
+            Swal.fire({
+                title: 'جاري تحميل بيانات الحجز...',
+                text: 'الرجاء الانتظار',
+                allowOutsideClick: false,
+                didOpen: function() {
+                    Swal.showLoading();
+                }
+            });
+
+            $.ajax({
+                url: '@Url.Action("GetConfirmReservationData", "SportReservations")',
+                type: 'GET',
+                data: { id: id },
+                success: function(data) {
+                    Swal.close();
+
+                    if (typeof data === 'string' && data.trim().startsWith('{') === false) {
+                        $('#popupContainer').html(data);
+                        $('#confirmReservationModal').modal('show');
+                    } else if (typeof data === 'object' && data.success === false) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'خطأ',
+                            text: data.message || 'حدث خطأ أثناء تحميل البيانات'
+                        });
+                    } else {
+                        var parsed = typeof data === 'string' ? JSON.parse(data) : data;
+                        if (parsed && parsed.success === false) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'خطأ',
+                                text: parsed.message || 'حدث خطأ أثناء تحميل البيانات'
+                            });
+                        }
+                    }
+                },
+                error: function(xhr) {
+                    Swal.close();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'خطأ',
+                        text: xhr.responseJSON?.message || 'حدث خطأ في الاتصال بالخادم'
+                    });
+                }
+            });
+        } else {
+            // ===== إلغاء الحجز =====
+            Swal.fire({
+                title: title,
+                text: 'هل أنت متأكد من إلغاء هذا الحجز؟',
+                icon: icon,
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'نعم، إلغاء',
+                cancelButtonText: 'إلغاء',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'سبب الإلغاء',
+                        input: 'text',
+                        inputPlaceholder: 'أدخل سبب الإلغاء...',
+                        showCancelButton: true,
+                        confirmButtonText: 'تأكيد الإلغاء',
+                        cancelButtonText: 'إلغاء',
+                        inputValidator: (value) => {
+                            if (!value || value.trim() === '') {
+                                return 'الرجاء إدخال سبب الإلغاء';
+                            }
+                            return null;
+                        }
+                    }).then((reasonResult) => {
+                        if (reasonResult.isConfirmed && reasonResult.value) {
+                            sendChangeStatus(id, status, reasonResult.value);
+                        }
+                    });
+                }
+            });
+        }
+    }
+
+    // ============================================================
+    // إرسال تغيير الحالة
+    // ============================================================
+    function sendChangeStatus(id, status, reason) {
+        Swal.fire({
+            title: 'جاري المعالجة...',
+            text: 'الرجاء الانتظار',
+            allowOutsideClick: false,
+            didOpen: function() {
+                Swal.showLoading();
+            }
+        });
+
+        $.ajax({
+            url: '@Url.Action("ChangeStatus", "SportReservations")',
+            type: 'POST',
+            data: { id: id, status: status, reason: reason },
+            success: function(data) {
+                Swal.close();
+
+                if (data.success) {
+                    updateStatusInTable(id, status, reason);
+                    updateStatistics(id, status);
+
+                    Toast.fire({
+                        icon: 'success',
+                        title: data.message || 'تم تغيير حالة الحجز بنجاح'
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'خطأ',
+                        text: data.message || 'حدث خطأ أثناء تغيير الحالة'
+                    });
+                }
+            },
+            error: function(xhr) {
+                Swal.close();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: xhr.responseJSON?.message || 'حدث خطأ في الاتصال بالخادم'
+                });
+            }
+        });
+    }
+
+    // ============================================================
+    // تحديث الحالة في الجدول (مع إخفاء الأزرار)
+    // ============================================================
+    function updateStatusInTable(id, status, reason) {
+        var row = $('tr').find('a[href*="Edit/' + id + '"]').closest('tr');
+        if (row.length === 0) return;
+
+        // ===== 1. تحديث حالة الحجز =====
+        var statusCell = row.find('td:eq(8)');
+        var statusClass = status === 1 ? 'status-confirmed' : (status === 2 ? 'status-cancelled' : 'status-pending');
+        var statusText = status === 1 ? 'مؤكد' : (status === 2 ? 'ملغى' : 'قيد الانتظار');
+
+        statusCell.html('<span class="status-badge ' + statusClass + '">' + statusText + '</span>');
+
+        if (status === 2 && reason) {
+            statusCell.find('.status-badge').attr('title', 'سبب الإلغاء: ' + reason);
+        }
+
+        // ===== 2. ✅ إخفاء/إظهار أزرار الإجراءات =====
+        var actionsCell = row.find('td:last-child');
+
+        if (status === 1 || status === 2) {
+            // ✅ تم التأكيد أو الإلغاء → إخفاء زر "تأكيد" و "إلغاء"
+            actionsCell.find('.btn-confirm').hide();
+            actionsCell.find('.btn-cancel').hide();
+        } else {
+            // ✅ قيد الانتظار → إظهار الأزرار
+            actionsCell.find('.btn-confirm').show();
+            actionsCell.find('.btn-cancel').show();
+        }
+    }
+
+    // ============================================================
+    // تحديث الإحصائيات
+    // ============================================================
+    function updateStatistics(id, status) {
+        var row = $('tr').find('a[href*="Edit/' + id + '"]').closest('tr');
+        if (row.length === 0) return;
+
+        var statusCell = row.find('td:eq(8)');
+        var oldStatusText = statusCell.text().trim();
+        var oldStatus = -1;
+
+        if (oldStatusText === 'قيد الانتظار') {
+            oldStatus = 0;
+        } else if (oldStatusText === 'مؤكد') {
+            oldStatus = 1;
+        } else if (oldStatusText === 'ملغى') {
+            oldStatus = 2;
+        } else {
+            return;
+        }
+
+        if (oldStatus === status) return;
+
+        var oldCard = getStatCard(oldStatus);
+        if (oldCard) {
+            var oldNumber = parseInt(oldCard.find('.number').text()) || 0;
+            oldCard.find('.number').text(Math.max(0, oldNumber - 1));
+        }
+
+        var newCard = getStatCard(status);
+        if (newCard) {
+            var newNumber = parseInt(newCard.find('.number').text()) || 0;
+            newCard.find('.number').text(newNumber + 1);
+        }
+    }
+
+    function getStatCard(status) {
+        switch (status) {
+            case 0: return $('.stat-card.pending');
+            case 1: return $('.stat-card.confirmed');
+            case 2: return $('.stat-card.cancelled');
+            default: return null;
+        }
+    }
+
+    // ============================================================
+    // حذف السجل
+    // ============================================================
+    function Delete(controller, id, action, view) {
+        Swal.fire({
+            title: 'هل أنت متأكد؟',
+            text: 'لا يمكنك التراجع عن هذا الإجراء!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'نعم، احذف',
+            cancelButtonText: 'إلغاء',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/' + controller + '/' + action + '/' + id,
+                    type: 'POST',
+                    success: function(data) {
+                        if (data === 1) {
+                            Toast.fire({
+                                icon: 'success',
+                                title: 'تم الحذف بنجاح'
+                            }).then(() => {
+                                window.location.href = '/' + controller + '/' + view + '?sportId=' + @(ViewBag.SportId ?? 0);
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'خطأ',
+                                text: data || 'حدث خطأ أثناء الحذف'
+                            });
+                        }
+                    },
+                    error: function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'خطأ',
+                            text: 'حدث خطأ في الاتصال بالخادم'
+                        });
+                    }
+                });
+            }
+        });
+    }
+
+    // ===== دالة تفريغ كل الفلاتر =====
+    function clearAllFilters() {
+        window.location.href = '@Url.Action("Index", new { sportId = ViewBag.SportId })';
+    }
+</script>
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" />
+}
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/i18n/ar.js"></script>
+}

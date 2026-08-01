@@ -1,0 +1,1484 @@
+﻿@* @using MazraeatiBackOffice.Core
+@model SportReservationModel
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.min.css" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+<style>
+    .form-group {
+        font-size: 13px;
+    }
+
+    .calculation-box {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 10px;
+    }
+
+        .calculation-box .row {
+            margin-bottom: 5px;
+        }
+
+        .calculation-box .label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .calculation-box .value {
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        .calculation-box .profit {
+            color: #28a745;
+        }
+
+        .calculation-box .remain {
+            color: #dc3545;
+        }
+</style>
+
+@Html.HiddenFor(a => a.Id)
+@Html.HiddenFor(a => a.MobileOwnerAppUser)
+@Html.HiddenFor(a => a.TotalHours)
+@if (ViewData.ModelState.Any(m => m.Value.Errors.Any()))
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>خطأ!</strong> يرجى تصحيح الأخطاء التالية:
+        <ul>
+            @foreach (var modelState in ViewData.ModelState.Values)
+            {
+                foreach (var error in modelState.Errors)
+                {
+                    <li>@error.ErrorMessage</li>
+                }
+            }
+        </ul>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+<div class="row clearfix">
+    <!-- ===== نوع الرياضة ===== -->
+    <div class="col-sm-4">
+        <div class="form-group">
+            @Html.DisplayNameFor(a => a.SportTypeDesc)
+            <select class="form-control select2" name="SportTypeId" id="SportTypeId">
+                <option value="">-- اختر القسم الرياضي --</option>
+                @foreach (var item in ViewBag.SportTypes)
+                {
+                    <option selected="@(item.Id == Model.SportTypeId)" value="@item.Id">@item.NameAr</option>
+                }
+            </select>
+            @Html.ValidationMessageFor(a => a.SportTypeId, "", new { @style = "color:red;font-size:10px" })
+        </div>
+    </div>
+
+    <!-- ===== القسم الرياضي ===== -->
+    <div class="col-sm-4">
+        <div class="form-group">
+            @Html.DisplayNameFor(a => a.SportDesc)
+            <select class="form-control select2" name="SportId" id="SportId">
+                <option value="">-- اختر العقار --</option>
+                @if (ViewBag.Sports != null)
+                {
+                    var sports = ViewBag.Sports as List<Sport>;
+                    if (sports != null)
+                    {
+                        foreach (var sport in sports)
+                        {   
+                            <option value="@sport.Id" selected="@(sport.Id == Model.SportId)">@sport.NameAr</option>
+                        }
+                    }
+                }
+            </select>
+            @Html.ValidationMessageFor(a => a.SportId, "", new { @style = "color:red;font-size:10px" })
+        </div>
+    </div>                              
+    <!-- ===== العميل ===== -->
+    <div class="col-sm-4">
+        <div class="form-group">
+            @Html.DisplayNameFor(a => a.CustomerDesc)
+            <select class="form-control select2" name="CustomerId" id="CustomerId">
+                <option value="">-- اختر العميل --</option>
+                @if (Model.Customers != null)
+                {
+                    foreach (var customer in Model.Customers)
+                    {
+                        <option value="@customer.Id"
+                                data-customername="@customer.FullName",
+                                data-customerphone="@customer.MobileNumber"
+                                selected="@(customer.Id == Model.CustomerId)">
+                            @customer.FullName  /  @customer.MobileNumber
+                            
+                        </option>
+                    }
+                }
+            </select>
+            @Html.ValidationMessageFor(a => a.CustomerId, "", new { @style = "color:red;font-size:10px" })
+        </div>
+    </div>
+    
+    <!-- ===== اسم العميل ===== -->
+
+
+    <div class="col-sm-6">
+        <div class="form-group">
+            @Html.DisplayNameFor(a => a.CustomerName)
+            @Html.TextBoxFor(a => a.CustomerName, new { @class = "form-control", @autocomplete = "off", @id = "CustomerName", @readonly = "readonly" })
+            @Html.ValidationMessageFor(a => a.CustomerName, "", new { @style = "color:red;font-size:10px" })
+        </div>
+    </div>
+
+    <!-- ===== رقم جوال العميل ===== -->
+    <div class="col-sm-6">
+        <div class="form-group">
+            @Html.DisplayNameFor(a => a.CustMobNum)
+            @Html.TextBoxFor(a => a.CustMobNum, new { @class = "form-control", @autocomplete = "off", id = "CustomerPhone", dir = "ltr" })
+            @Html.ValidationMessageFor(a => a.CustMobNum, "", new { @style = "color:red;font-size:10px" })
+        </div>
+    </div>
+
+    <!-- ===== تاريخ الحجز ===== -->
+    <div class="col-sm-4">
+        <div class="form-group">
+            @Html.DisplayNameFor(a => a.ReservationDate)
+            @Html.TextBoxFor(a => a.ReservationDate, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date", @id = "ReservationDate" })
+            @Html.ValidationMessageFor(a => a.ReservationDate, "", new { @style = "color:red;font-size:10px" })
+        </div>
+    </div>
+
+    <!-- ===== وقت البداية ===== -->
+    <div class="col-sm-4">
+        <div class="form-group">
+            @Html.DisplayNameFor(a => a.StartTime)
+            @Html.TextBoxFor(a => a.StartTime, "{0:hh\\:mm}", new { @class = "form-control", type = "time" })
+            @Html.ValidationMessageFor(a => a.StartTime, "", new { @style = "color:red;font-size:10px" })
+        </div>
+    </div>
+
+    <!-- ===== وقت النهاية ===== -->
+    <div class="col-sm-4">
+        <div class="form-group">
+            @Html.DisplayNameFor(a => a.EndTime)
+            @Html.TextBoxFor(a => a.EndTime, "{0:hh\\:mm}", new { @class = "form-control", type = "time" })
+            @Html.ValidationMessageFor(a => a.EndTime, "", new { @style = "color:red;font-size:10px" })
+        </div>
+    </div>
+
+    <!-- ===== عدد الأشخاص ===== -->
+    <div class="col-sm-4">
+        <div class="form-group">
+            @Html.DisplayNameFor(a => a.PersonCount)
+            @Html.TextBoxFor(a => a.PersonCount, new { @class = "form-control", type = "number", min = "1" })
+            @Html.ValidationMessageFor(a => a.PersonCount, "", new { @style = "color:red;font-size:10px" })
+        </div>
+    </div>
+
+    <!-- ===== تكلفة الحجز على محجوز ===== -->
+    <div class="col-sm-4">
+        <div class="form-group">
+            @Html.DisplayNameFor(a => a.CostReservationAmtOnMahjouz)
+            @Html.TextBoxFor(a => a.CostReservationAmtOnMahjouz, new { @class = "form-control cost-amount", type = "number", step = "0.01" })
+            @Html.ValidationMessageFor(a => a.CostReservationAmtOnMahjouz, "", new { @style = "color:red;font-size:10px" })
+        </div>
+    </div>
+
+    <!-- ===== المبلغ الكلي ===== -->
+    <div class="col-sm-4">
+        <div class="form-group">
+            @Html.DisplayNameFor(a => a.ReservationAmt)
+            @Html.TextBoxFor(a => a.ReservationAmt, new { @class = "form-control reservation-amt", type = "number", step = "0.01" })
+            @Html.ValidationMessageFor(a => a.ReservationAmt, "", new { @style = "color:red;font-size:10px" })
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="form-group">
+            @Html.DisplayNameFor(a => a.NetProfit)
+            @Html.TextBoxFor(a => a.NetProfit, new { @class = "form-control", @autocomplete = "off", type = "number", @id = "netProfit", @readonly = "readonly", @style = "color:#000;font-size:medium" })
+            @Html.ValidationMessageFor(a => a.NetProfit, "", new { @style = "color:red;font-size:medium;" })
+        </div>
+    </div>
+    <!-- ===== المبلغ المدفوع ===== -->
+    <div class="col-sm-4">
+        <div class="form-group">
+            @Html.DisplayNameFor(a => a.ReservationDepositAmt)
+            @Html.TextBoxFor(a => a.ReservationDepositAmt, new { @class = "form-control deposit-amt", type = "number", step = "0.01" })
+            @Html.ValidationMessageFor(a => a.ReservationDepositAmt, "", new { @style = "color:red;font-size:10px" })
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="form-group">
+            @Html.DisplayNameFor(a => a.ReservationRemainAmt)
+            @Html.TextBoxFor(a => a.ReservationRemainAmt, new { @class = "form-control", @autocomplete = "off", type = "number", @id = "reservationRemain", @readonly = "readonly", @style = "color:#000;font-size:medium" })
+            @Html.ValidationMessageFor(a => a.ReservationRemainAmt, "", new { @style = "color:red;font-size:medium" })
+        </div>
+    </div>
+    <!-- ===== ملاحظات ===== -->
+    <div class="col-sm-12">
+        <div class="form-group">
+            @Html.DisplayNameFor(a => a.Note)
+            @Html.TextAreaFor(a => a.Note, new { @class = "form-control", rows = 3 })
+            @Html.ValidationMessageFor(a => a.Note, "", new { @style = "color:red;font-size:10px" })
+        </div>
+    </div>
+    <div class="col-sm-12">
+        <div class="form-group">
+            @Html.DisplayNameFor(a => a.Reason)
+            @Html.TextAreaFor(a => a.Reason, new { @class = "form-control", rows = 3, @readonly = "readonly", @style = "color:#000;font-size:medium" })
+            @Html.ValidationMessageFor(a => a.Reason, "", new { @style = "color:red;font-size:10px" })
+        </div>
+    </div>
+</div>
+<div class="col-sm-3">
+    <div class="form-group">
+        @Html.DisplayNameFor(a => a.IsReceiveCommession)
+        <br />
+        @Html.CheckBoxFor(a => a.IsReceiveCommession, new { @class = "form-control", @style = "margin-top: 10px; width:5% !important" })
+    </div>
+</div>
+
+<!-- ===== JavaScript للحسابات ===== -->
+<script>
+    $(document).ready(function() {
+            var todayStr = new Date().toISOString().split('T')[0];
+            var $input = $('#ReservationDate');
+            // حد أدنى فقط (اليوم)، بدون حد أقصى
+            $input.attr({ min: todayStr });
+
+            if (!$input.val()) $input.val(todayStr);
+
+            $input
+                .attr('readonly', false)
+                .on('keydown paste drop input', function(e) {
+                    e.preventDefault();
+                    return false;
+                });
+
+            $input.on('click', function() {
+                try {
+                    this.showPicker && this.showPicker();
+                } catch(e) {}
+                this.blur();
+            });
+
+            $input.on('change', function() {
+                var val = $(this).val();
+                if (!val || val < todayStr) {
+                    $(this).val(todayStr);
+                }
+                // ما فيش حد أقصى
+            });
+
+            $("#CustomerId").on("change", function () {
+                var selectedOption = $(this).find('option:selected');
+                var Cname = selectedOption.data('customername'); // أو data('CustomerDesc')
+                var CPhone = selectedOption.data('customerphone');
+                $("#CustomerName").val(Cname);
+                $("#CustomerPhone").val(CPhone)
+            });
+            calculateValues();
+            $('.cost-amount, .reservation-amt, .deposit-amt').on('input', function() {
+                calculateValues();
+            });
+
+            $('#SportTypeId').change(function() {
+            var sportTypeId = $(this).val();
+            var selectedSportId = @Model.SportId; // القيمة المحفوظة
+
+            if (sportTypeId) {
+                $.ajax({
+                    url: '@Url.Action("GetSportsByType", "SportReservations")',
+                    type: 'GET',
+                    data: { sportTypeId: sportTypeId },
+                    success: function(data) {
+                        var select = $('#SportId');
+                        select.empty();
+                        select.append('<option value="">-- اختر القسم --</option>');
+                        $.each(data, function(index, sport) {
+                            var selected = (sport.id == selectedSportId) ? 'selected' : '';
+                            select.append('<option value="' + sport.id + '" ' + selected + '>' + sport.nameAr + '</option>');
+                        });
+                    }
+                });
+                } else {
+                    $('#SportId').empty().append('<option value="">-- اختر القسم --</option>');
+                }
+            });
+
+            function calculateValues() {
+                    var cost = parseFloat($('.cost-amount').val()) || 0;
+                    var total = parseFloat($('.reservation-amt').val()) || 0;
+                    var deposit = parseFloat($('.deposit-amt').val()) || 0;
+                    var profit = total - cost;
+                    var remain = total - deposit;
+
+
+                    $('#netProfit').val(profit.toFixed(2));
+                    $('#reservationRemain').val(remain.toFixed(2));
+                }
+
+            function initPhone(inputId) {
+
+                    var input = document.querySelector(inputId);
+
+                    var iti = window.intlTelInput(input, {
+
+                        initialCountry: "auto",
+
+                        geoIpLookup: function (callback) {
+                            $.get("https://ipapi.co/json/", function (data) {
+                                callback(data.country_code.toLowerCase());
+                            }).fail(function () {
+                                callback("eg"); // fallback
+                            });
+                        },
+
+                        separateDialCode: true,
+                        preferredCountries: ["eg", "sa", "ae", "jo"],
+
+                        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"
+                    });
+
+                    // لو فيه رقم جاى من DB
+                    var existingValue = $(inputId).val();
+                    if (existingValue) {
+                        iti.setNumber(existingValue);
+                    }
+
+                    return iti;
+                }
+
+                // Initialize الاتنين
+            var iti1 = initPhone("#CustomerPhone");
+
+                // ============================
+                // Submit
+                // ============================
+            $("form").on("submit", function () {
+
+                    // تأكد إن utils اتحمل
+                    if (!iti1.isValidNumber()) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'خطأ',
+                            text: 'رقم الموبايل  غير صحيح'
+                        });
+                        return false;
+                    }
+
+                    $("#CustomerPhone").val(iti1.getNumber());
+                });
+
+        
+
+
+             //For Calculate Redeem Points
+
+
+
+
+
+
+
+    });
+
+</script> *@
+
+
+
+
+
+
+
+@* /////////////////// *@
+
+
+
+
+
+
+
+@* @using MazraeatiBackOffice.Core
+@model SportReservationModel
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.min.css" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+
+<style>
+    .form-group {
+        font-size: 13px;
+    }
+
+    .calculation-box {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 10px;
+    }
+
+        .calculation-box .row {
+            margin-bottom: 5px;
+        }
+
+        .calculation-box .label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .calculation-box .value {
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        .calculation-box .profit {
+            color: #28a745;
+        }
+
+        .calculation-box .remain {
+            color: #dc3545;
+        }
+
+    /* ===== جديد: نظام النقاط ===== */
+    .points-box {
+        background: #f8f9fa;
+        padding: 10px 15px;
+        border-radius: 5px;
+        border: 1px solid #ffc107;
+        margin: 10px 0;
+    }
+
+        .points-box .points-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #28a745;
+        }
+
+    .discount-result {
+        background: #e8f4fd;
+        padding: 10px 15px;
+        border-radius: 5px;
+        border: 1px solid #b8daff;
+        margin: 10px 0;
+    }
+
+    .discount-amount {
+        color: #dc3545;
+        font-weight: bold;
+        font-size: 18px;
+    }
+
+    .new-total {
+        color: #28a745;
+        font-weight: bold;
+        font-size: 18px;
+    }
+</style>
+
+@Html.HiddenFor(a => a.Id)
+@Html.HiddenFor(a => a.MobileOwnerAppUser)
+@Html.HiddenFor(a => a.TotalHours)
+
+<!-- ===== Hidden field للمبلغ الأصلي (جديد) ===== -->
+<input type="hidden" id="ReservationAmtOriginal" value="@Model.ReservationAmt" />
+
+@if (ViewData.ModelState.Any(m => m.Value.Errors.Any()))
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>خطأ!</strong> يرجى تصحيح الأخطاء التالية:
+        <ul>
+            @foreach (var modelState in ViewData.ModelState.Values)
+            {
+                foreach (var error in modelState.Errors)
+                {
+                    <li>@error.ErrorMessage</li>
+                }
+            }
+        </ul>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="row clearfix">
+    <!-- ===== نوع الرياضة ===== -->
+    <div class="col-sm-4">
+        <div class="form-group">
+            @Html.DisplayNameFor(a => a.SportTypeDesc)
+            <select class="form-control select2" name="SportTypeId" id="SportTypeId">
+                <option value="">-- اختر القسم الرياضي --</option>
+                @foreach (var item in ViewBag.SportTypes)
+                {
+                    <option selected="@(item.Id == Model.SportTypeId)" value="@item.Id">@item.NameAr</option>
+                }
+            </select>
+            @Html.ValidationMessageFor(a => a.SportTypeId, "", new { @style = "color:red;font-size:10px" })
+        </div>
+    </div>
+
+    <!-- ===== القسم الرياضي ===== -->
+    <div class="col-sm-4">
+        <div class="form-group">
+            @Html.DisplayNameFor(a => a.SportDesc)
+            <select class="form-control select2" name="SportId" id="SportId">
+                <option value="">-- اختر العقار --</option>
+                @if (ViewBag.Sports != null)
+                {
+                    var sports = ViewBag.Sports as List<Sport>;
+                    if (sports != null)
+                    {
+                        foreach (var sport in sports)
+                        {
+                            <option value="@sport.Id" selected="@(sport.Id == Model.SportId)">@sport.NameAr</option>
+                        }
+                    }
+                }
+            </select>
+            @Html.ValidationMessageFor(a => a.SportId, "", new { @style = "color:red;font-size:10px" })
+        </div>
+    </div>
+
+    <!-- ===== العميل ===== -->
+    <div class="col-sm-4">
+        <div class="form-group">
+            @Html.DisplayNameFor(a => a.CustomerDesc)
+            <select class="form-control select2" name="CustomerId" id="CustomerId">
+                <option value="">-- اختر العميل --</option>
+                @if (Model.Customers != null)
+                {
+                    foreach (var customer in Model.Customers)
+                    {
+                        <option value="@customer.Id"
+                                data-customername="@customer.FullName"
+                                data-customerphone="@customer.MobileNumber"
+                                selected="@(customer.Id == Model.CustomerId)">
+                            @customer.FullName  /  @customer.MobileNumber
+                        </option>
+                    }
+                }
+            </select>
+            @Html.ValidationMessageFor(a => a.CustomerId, "", new { @style = "color:red;font-size:10px" })
+        </div>
+    </div>
+
+    <!-- ===== اسم العميل ===== -->
+    <div class="col-sm-6">
+        <div class="form-group">
+            @Html.DisplayNameFor(a => a.CustomerName)
+            @Html.TextBoxFor(a => a.CustomerName, new { @class = "form-control", @autocomplete = "off", @id = "CustomerName", @readonly = "readonly" })
+            @Html.ValidationMessageFor(a => a.CustomerName, "", new { @style = "color:red;font-size:10px" })
+        </div>
+    </div>
+
+    <!-- ===== رقم جوال العميل ===== -->
+    <div class="col-sm-6">
+        <div class="form-group">
+            @Html.DisplayNameFor(a => a.CustMobNum)
+            @Html.TextBoxFor(a => a.CustMobNum, new { @class = "form-control", @autocomplete = "off", id = "CustomerPhone", dir = "ltr" })
+            @Html.ValidationMessageFor(a => a.CustMobNum, "", new { @style = "color:red;font-size:10px" })
+        </div>
+    </div>
+
+    <!-- ===== تاريخ الحجز ===== -->
+    <div class="col-sm-4">
+        <div class="form-group">
+            @Html.DisplayNameFor(a => a.ReservationDate)
+            @Html.TextBoxFor(a => a.ReservationDate, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date", @id = "ReservationDate" })
+            @Html.ValidationMessageFor(a => a.ReservationDate, "", new { @style = "color:red;font-size:10px" })
+        </div>
+    </div>
+
+    <!-- ===== وقت البداية ===== -->
+    <div class="col-sm-4">
+        <div class="form-group">
+            @Html.DisplayNameFor(a => a.StartTime)
+            @Html.TextBoxFor(a => a.StartTime, "{0:hh\\:mm}", new { @class = "form-control", type = "time" })
+            @Html.ValidationMessageFor(a => a.StartTime, "", new { @style = "color:red;font-size:10px" })
+        </div>
+    </div>
+
+    <!-- ===== وقت النهاية ===== -->
+    <div class="col-sm-4">
+        <div class="form-group">
+            @Html.DisplayNameFor(a => a.EndTime)
+            @Html.TextBoxFor(a => a.EndTime, "{0:hh\\:mm}", new { @class = "form-control", type = "time" })
+            @Html.ValidationMessageFor(a => a.EndTime, "", new { @style = "color:red;font-size:10px" })
+        </div>
+    </div>
+
+    <!-- ===== عدد الأشخاص ===== -->
+    <div class="col-sm-4">
+        <div class="form-group">
+            @Html.DisplayNameFor(a => a.PersonCount)
+            @Html.TextBoxFor(a => a.PersonCount, new { @class = "form-control", type = "number", min = "1" })
+            @Html.ValidationMessageFor(a => a.PersonCount, "", new { @style = "color:red;font-size:10px" })
+        </div>
+    </div>
+
+    <!-- ===== تكلفة الحجز على محجوز ===== -->
+    <div class="col-sm-4">
+        <div class="form-group">
+            @Html.DisplayNameFor(a => a.CostReservationAmtOnMahjouz)
+            @Html.TextBoxFor(a => a.CostReservationAmtOnMahjouz, new { @class = "form-control cost-amount", type = "number", step = "0.01" })
+            @Html.ValidationMessageFor(a => a.CostReservationAmtOnMahjouz, "", new { @style = "color:red;font-size:10px" })
+        </div>
+    </div>
+
+    <!-- ===== المبلغ الكلي ===== -->
+    <div class="col-sm-4">
+        <div class="form-group">
+            @Html.DisplayNameFor(a => a.ReservationAmt)
+            @Html.TextBoxFor(a => a.ReservationAmt, new { @class = "form-control reservation-amt", id = "ReservationAmt", type = "number" })
+            @Html.ValidationMessageFor(a => a.ReservationAmt, "", new { @style = "color:red;font-size:10px" })
+        </div>
+    </div>
+
+    <!-- ============================================================
+         نظام النقاط (جديد - مضاف)
+         ============================================================ -->
+    <div class="col-sm-12" style="margin:15px 0 10px 0;">
+        <h5 style="text-decoration:underline">نظام النقاط</h5>
+    </div>
+
+    <!-- نقاط العميل -->
+    <div class="col-sm-12">
+        <div class="points-box">
+            <i class="fa fa-star" style="color:#ffc107;"></i>
+            <strong>نقاط العميل المتاحة:</strong>
+            <span class="points-number" id="customerPointsDisplay">@Model.CustomerAvailablePoints</span>
+            نقطة
+            <span id="pointsStatusBadge" class="badge @(Model.CustomerAvailablePoints > 0 ? "badge-success" : "badge-secondary")">
+                @(Model.CustomerAvailablePoints > 0 ? "متاحة للخصم" : "لا توجد نقاط")
+            </span>
+        </div>
+    </div>
+
+    <!-- استخدام النقاط -->
+    <div class="col-sm-4">
+        <div class="form-group">
+            <label>
+                <input type="checkbox" name="UseLoyaltyPoints" id="usePointsCheck" value="true" />
+                استخدام نقاط الولاء
+            </label>
+            <input type="hidden" name="UseLoyaltyPoints" value="false" />
+        </div>
+    </div>
+
+    <!-- عدد النقاط للخصم -->
+    <div class="col-sm-4" id="pointsRedeemSection" style="display:none;">
+        <div class="form-group">
+            <label>عدد النقاط للخصم</label>
+            <input type="number" name="RedeemPoints" id="redeemPoints"
+                   class="form-control" min="0" max="@Model.CustomerAvailablePoints" value="0" />
+            <small class="text-muted">الحد الأقصى: <strong id="maxPointsDisplay">@Model.CustomerAvailablePoints</strong></small>
+            <div id="pointsValidationMessage" style="display:none;color:red;font-size:12px;margin-top:5px;"></div>
+        </div>
+    </div>
+
+    <!-- نتائج الخصم -->
+    <div class="col-sm-4" id="discountResultsSection" style="display:none;">
+        <div class="discount-result">
+            <div><strong>قيمة الخصم:</strong> <span class="discount-amount" id="discountAmountDisplay">0.00 دينار</span></div>
+            <div><strong>المبلغ الجديد:</strong> <span class="new-total" id="newTotalDisplay">0.00 دينار</span></div>
+            <div><strong>النقاط المتبقية:</strong> <span id="remainingPointsDisplay">0</span> نقطة</div>
+            <small>نظام الخصم : </small><small class="text-muted" id="discountRuleDisplay"></small>
+        </div>
+    </div>
+
+    <!-- ===== الربح (تم نقله بعد النقاط) ===== -->
+    <div class="col-sm-4">
+        <div class="form-group">
+            @Html.DisplayNameFor(a => a.NetProfit)
+            @Html.TextBoxFor(a => a.NetProfit, new { @class = "form-control", @autocomplete = "off", type = "number", @id = "netProfit", @readonly = "readonly", @style = "color:#000;font-size:medium" })
+            @Html.ValidationMessageFor(a => a.NetProfit, "", new { @style = "color:red;font-size:medium;" })
+        </div>
+    </div>
+
+    <!-- ===== المبلغ المدفوع ===== -->
+    <div class="col-sm-4">
+        <div class="form-group">
+            @Html.DisplayNameFor(a => a.ReservationDepositAmt)
+            @Html.TextBoxFor(a => a.ReservationDepositAmt, new { @class = "form-control deposit-amt", type = "number", step = "0.01" })
+            @Html.ValidationMessageFor(a => a.ReservationDepositAmt, "", new { @style = "color:red;font-size:10px" })
+        </div>
+    </div>
+
+    <!-- ===== المبلغ المتبقي ===== -->
+    <div class="col-sm-4">
+        <div class="form-group">
+            @Html.DisplayNameFor(a => a.ReservationRemainAmt)
+            @Html.TextBoxFor(a => a.ReservationRemainAmt, new { @class = "form-control", @autocomplete = "off", type = "number", @id = "reservationRemain", @readonly = "readonly", @style = "color:#000;font-size:medium" })
+            @Html.ValidationMessageFor(a => a.ReservationRemainAmt, "", new { @style = "color:red;font-size:medium" })
+        </div>
+    </div>
+
+    <!-- ===== ملاحظات ===== -->
+    <div class="col-sm-12">
+        <div class="form-group">
+            @Html.DisplayNameFor(a => a.Note)
+            @Html.TextAreaFor(a => a.Note, new { @class = "form-control", rows = 3 })
+            @Html.ValidationMessageFor(a => a.Note, "", new { @style = "color:red;font-size:10px" })
+        </div>
+    </div>
+
+    <!-- ===== سبب الإلغاء ===== -->
+    <div class="col-sm-12">
+        <div class="form-group">
+            @Html.DisplayNameFor(a => a.Reason)
+            @Html.TextAreaFor(a => a.Reason, new { @class = "form-control", rows = 3, @readonly = "readonly", @style = "color:#000;font-size:medium" })
+            @Html.ValidationMessageFor(a => a.Reason, "", new { @style = "color:red;font-size:10px" })
+        </div>
+    </div>
+</div>
+
+<!-- ===== استلام العمولة ===== -->
+<div class="col-sm-3">
+    <div class="form-group">
+        @Html.DisplayNameFor(a => a.IsReceiveCommession)
+        <br />
+        @Html.CheckBoxFor(a => a.IsReceiveCommession, new { @class = "form-control", @style = "margin-top: 10px; width:5% !important" })
+    </div>
+</div>
+
+<!-- ===== JavaScript (القديم + الجديد) ===== -->
+<script>
+    $(document).ready(function() {
+        // ============================================================
+        // الكود القديم (زي ما هو)
+        // ============================================================
+
+        var todayStr = new Date().toISOString().split('T')[0];
+        var $input = $('#ReservationDate');
+        $input.attr({ min: todayStr });
+        if (!$input.val()) $input.val(todayStr);
+        $input.attr('readonly', false)
+            .on('keydown paste drop input', function(e) {
+                e.preventDefault();
+                return false;
+            });
+        $input.on('click', function() {
+            try { this.showPicker && this.showPicker(); } catch(e) {}
+            this.blur();
+        });
+        $input.on('change', function() {
+            var val = $(this).val();
+            if (!val || val < todayStr) {
+                $(this).val(todayStr);
+            }
+        });
+
+        // ===== تعبئة اسم العميل ورقمه =====
+        $("#CustomerId").on("change", function() {
+            var selectedOption = $(this).find('option:selected');
+            var Cname = selectedOption.data('customername');
+            var CPhone = selectedOption.data('customerphone');
+            $("#CustomerName").val(Cname);
+            $("#CustomerPhone").val(CPhone);
+
+            // ===== عند تغيير العميل، نجيب نقاطه =====
+            var customerId = $(this).val();
+            if (customerId) {
+                $.ajax({
+                    url: '@Url.Action("GetCustomerPoints", "LoyaltyTransactions")',
+                    type: 'GET',
+                    data: { customerId: customerId },
+                    success: function(data) {
+                        customerPoints = data.points || 0;
+                        $('#customerPointsDisplay').text(customerPoints);
+                        $('#maxPointsDisplay').text(customerPoints);
+                        $('#redeemPoints').attr('max', customerPoints);
+                        $('#pointsStatusBadge')
+                            .text(customerPoints > 0 ? 'متاحة للخصم' : 'لا توجد نقاط')
+                            .removeClass(customerPoints > 0 ? 'badge-secondary' : 'badge-success')
+                            .addClass(customerPoints > 0 ? 'badge-success' : 'badge-secondary');
+                        updateAll();
+                    }
+                });
+            }
+        });
+
+        // ===== تهيئة intl-tel-input =====
+        function initPhone(inputId) {
+            var input = document.querySelector(inputId);
+            var iti = window.intlTelInput(input, {
+                initialCountry: "auto",
+                geoIpLookup: function(callback) {
+                    $.get("https://ipapi.co/json/", function(data) {
+                        callback(data.country_code.toLowerCase());
+                    }).fail(function() {
+                        callback("eg");
+                    });
+                },
+                separateDialCode: true,
+                preferredCountries: ["eg", "sa", "ae", "jo"],
+                utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"
+            });
+            var existingValue = $(inputId).val();
+            if (existingValue) {
+                iti.setNumber(existingValue);
+            }
+            return iti;
+        }
+
+        var iti1 = initPhone("#CustomerPhone");
+
+        $("form").on("submit", function() {
+            if (!iti1.isValidNumber()) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'رقم الموبايل غير صحيح'
+                });
+                return false;
+            }
+            $("#CustomerPhone").val(iti1.getNumber());
+        });
+
+        // ===== حساب الربح والمتبقي (القديم) =====
+        function calculateValues() {
+            var cost = parseFloat($('.cost-amount').val()) || 0;
+            var total = parseFloat($('.reservation-amt').val()) || 0;
+            var deposit = parseFloat($('.deposit-amt').val()) || 0;
+            var profit = total - cost;
+            var remain = total - deposit;
+            $('#netProfit').val(profit);
+            $('#reservationRemain').val(remain);
+        }
+
+        $('.cost-amount, .reservation-amt, .deposit-amt').on('input', function() {
+            calculateValues();
+        });
+
+        // ===== جلب الأقسام حسب نوع الرياضة (القديم) =====
+        $('#SportTypeId').change(function() {
+            var sportTypeId = $(this).val();
+            var selectedSportId = @Model.SportId;
+            if (sportTypeId) {
+                $.ajax({
+                    url: '@Url.Action("GetSportsByType", "SportReservations")',
+                    type: 'GET',
+                    data: { sportTypeId: sportTypeId },
+                    success: function(data) {
+                        var select = $('#SportId');
+                        select.empty();
+                        select.append('<option value="">-- اختر القسم --</option>');
+                        $.each(data, function(index, sport) {
+                            var selected = (sport.id == selectedSportId) ? 'selected' : '';
+                            select.append('<option value="' + sport.id + '" ' + selected + '>' + sport.nameAr + '</option>');
+                        });
+                    }
+                });
+            } else {
+                $('#SportId').empty().append('<option value="">-- اختر القسم --</option>');
+            }
+        });
+
+        // ============================================================
+        // الكود الجديد (نظام النقاط)
+        // ============================================================
+
+        var redeemRules = @Html.Raw(Json.Serialize(ViewBag.RedeemRules));
+        var customerPoints = @Model.CustomerAvailablePoints;
+        var isUpdating = false;
+
+        // حفظ المبلغ الأصلي
+        $('#ReservationAmtOriginal').val($('#ReservationAmt').val());
+
+        // حساب الخصم
+        function calculateDiscount(points) {
+            if (!redeemRules || redeemRules.length === 0) {
+                return { discount: 0, rule: null, canRedeem: false };
+            }
+            var sortedRules = redeemRules.slice().sort(function(a, b) {
+                return b.points - a.points;
+            });
+            for (var i = 0; i < sortedRules.length; i++) {
+                if (points >= sortedRules[i].points) {
+                    var ratio = Math.floor(points / sortedRules[i].points);
+                    var discount = ratio * sortedRules[i].discountAmount;
+                    return { discount: discount, rule: sortedRules[i], canRedeem: true };
+                }
+            }
+            return { discount: 0, rule: null, canRedeem: false };
+        }
+
+        // تحديث الحسابات
+        function updateCalculations(pointsToRedeem) {
+            if (isUpdating) return;
+            isUpdating = true;
+
+            var usePoints = $('#usePointsCheck').is(':checked');
+            var points = pointsToRedeem || parseInt($('#redeemPoints').val()) || 0;
+
+            if (!usePoints || points <= 0) {
+                $('#discountResultsSection').hide();
+                var total = parseFloat($('#ReservationAmtOriginal').val()) || 0;
+                $('#ReservationAmt').val(Number(total));
+                isUpdating = false;
+                calculateValues();
+                return;
+            }
+
+            if (points > customerPoints) {
+                points = customerPoints;
+                $('#redeemPoints').val(points);
+            }
+
+            var result = calculateDiscount(points);
+            var discount = result.discount;
+            var totalAmount = parseFloat($('#ReservationAmtOriginal').val()) || 0;
+            var newTotal = totalAmount - discount;
+            var remainingPoints = customerPoints - points;
+
+            if (result.canRedeem && discount > 0) {
+
+                $('#discountResultsSection').show();
+                $('#discountAmountDisplay').text(discount + ' دينار');
+                $('#remainingPointsDisplay').text(remainingPoints + ' نقطة');
+                $('#newTotalDisplay').text(newTotal + ' دينار');
+                if (result.rule) {
+                    $('#discountRuleDisplay').text(result.rule.points + ' نقطة = ' + result.rule.discountAmount + ' دينار');
+                }
+                $('#ReservationAmt').val(Number(newTotal));
+                $('#pointsValidationMessage').hide();
+            } else {
+                $('#discountResultsSection').hide();
+                var total = parseFloat($('#ReservationAmtOriginal').val()) || 0;
+                $('#ReservationAmt').val(Number(total));
+            }
+
+            calculateValues();
+            isUpdating = false;
+        }
+
+        // التحقق من النقاط
+        function validatePoints(points, customerId) {
+            if (!customerId || points <= 0) {
+                $('#pointsValidationMessage').hide();
+                return;
+            }
+            $.ajax({
+                url: '@Url.Action("ValidateRedeemPoints", "SportReservations")',
+                type: 'GET',
+                data: { customerId: customerId, points: points },
+                success: function(data) {
+                    if (data.success && data.canRedeem) {
+                        $('#pointsValidationMessage').hide();
+                        updateCalculations(points);
+                    } else {
+                        $('#pointsValidationMessage')
+                            .text(data.message || 'لا يمكن استخدام هذا العدد من النقاط')
+                            .show();
+                        $('#discountResultsSection').hide();
+                    }
+                },
+                error: function() {
+                    $('#pointsValidationMessage').text('حدث خطأ في الاتصال').show();
+                }
+            });
+        }
+
+        function updateAll() {
+            var usePoints = $('#usePointsCheck').is(':checked');
+            var points = parseInt($('#redeemPoints').val()) || 0;
+            if (usePoints && points > 0) {
+                validatePoints(points, $('#CustomerId').val());
+            } else {
+                $('#discountResultsSection').hide();
+                $('#pointsValidationMessage').hide();
+                var total = parseFloat($('#ReservationAmtOriginal').val()) || 0;
+                $('#ReservationAmt').val(Number(total));
+                calculateValues();
+            }
+        }
+
+        // ===== أحداث النقاط (جديدة) =====
+        $('#usePointsCheck').change(function() {
+            if ($(this).is(':checked')) {
+                $('#pointsRedeemSection').show();
+                $('#redeemPoints').val(0);
+                updateAll();
+            } else {
+                $('#pointsRedeemSection').hide();
+                $('#redeemPoints').val(0);
+                $('#discountResultsSection').hide();
+                $('#pointsValidationMessage').hide();
+                var total = parseFloat($('#ReservationAmtOriginal').val()) || 0;
+                $('#ReservationAmt').val(Number(total));
+                calculateValues();
+            }
+        });
+
+        $('#redeemPoints').on('input', function() {
+            var points = parseInt($(this).val()) || 0;
+            if (points > customerPoints) {
+                $(this).val(customerPoints);
+            }
+            updateAll();
+        });
+
+        $('#ReservationAmt').on('input', function() {
+            if (isUpdating) return;
+            var val = parseFloat($(this).val()) || 0;
+            if (val > 0) {
+                $('#ReservationAmtOriginal').val(val);
+            }
+            updateAll();
+        });
+
+        // ===== تهيئة أولية =====
+        calculateValues();
+        updateAll();
+    });
+</script> *@
+
+
+
+
+
+@* ///////////////////// *@
+
+
+
+
+
+
+@using MazraeatiBackOffice.Core
+@model SportReservationModel
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.min.css" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+
+<style>
+    .form-group {
+        font-size: 13px;
+    }
+
+    .calculation-box {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 10px;
+    }
+
+        .calculation-box .row {
+            margin-bottom: 5px;
+        }
+
+        .calculation-box .label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .calculation-box .value {
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        .calculation-box .profit {
+            color: #28a745;
+        }
+
+        .calculation-box .remain {
+            color: #dc3545;
+        }
+
+    .points-box {
+        background: #f8f9fa;
+        padding: 10px 15px;
+        border-radius: 5px;
+        border: 1px solid #ffc107;
+        margin: 10px 0;
+    }
+
+        .points-box .points-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #28a745;
+        }
+
+    .discount-result {
+        background: #e8f4fd;
+        padding: 10px 15px;
+        border-radius: 5px;
+        border: 1px solid #b8daff;
+        margin: 10px 0;
+    }
+
+    .discount-amount {
+        color: #dc3545;
+        font-weight: bold;
+        font-size: 18px;
+    }
+
+    .new-total {
+        color: #28a745;
+        font-weight: bold;
+        font-size: 18px;
+    }
+    /* إضافة في الـ <style> */
+.input-group .form-control {
+    border-radius: 4px 0 0 4px;
+}
+
+.input-group .btn {
+    border-radius: 0 4px 4px 0;
+    border-left: none;
+}
+
+.input-group .btn:hover {
+    background-color: #f8f9fa;
+}
+
+    #clearReservationAmt{
+        height: 10px;
+        border-radius: 50%;
+        position: absolute;
+        left: 10px;
+    }
+</style>
+
+@Html.HiddenFor(a => a.Id)
+@Html.HiddenFor(a => a.MobileOwnerAppUser)
+@Html.HiddenFor(a => a.TotalHours)
+
+<!-- ===== حقول مخفية للـ JavaScript ===== -->
+<input type="hidden" id="RedeemRulesData" value='@Html.Raw(Json.Serialize(ViewBag.RedeemRules))' />
+<input type="hidden" id="CustomerPointsData" value="@Model.CustomerAvailablePoints" />
+<input type="hidden" id="CustomerIdData" value="@Model.CustomerId" />
+
+<!-- ===== Hidden field للمبلغ الأصلي ===== -->
+<input type="hidden" id="ReservationAmtOriginal" value="@Model.ReservationAmt" />
+
+@if (ViewData.ModelState.Any(m => m.Value.Errors.Any()))
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>خطأ!</strong> يرجى تصحيح الأخطاء التالية:
+        <ul>
+            @foreach (var modelState in ViewData.ModelState.Values)
+            {
+                foreach (var error in modelState.Errors)
+                {
+                    <li>@error.ErrorMessage</li>
+                }
+            }
+        </ul>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="row clearfix">
+    <!-- ===== نوع الرياضة ===== -->
+    <div class="col-sm-4">
+        <div class="form-group">
+            @Html.DisplayNameFor(a => a.SportTypeDesc)
+            <select class="form-control select2" name="SportTypeId" id="SportTypeId"
+                    data-url="@Url.Action("GetSportsByType", "SportReservations")">
+                <option value="">-- اختر القسم الرياضي --</option>
+                @foreach (var item in ViewBag.SportTypes)
+                {
+                    <option selected="@(item.Id == Model.SportTypeId)" value="@item.Id">@item.NameAr</option>
+                }
+            </select>
+            @Html.ValidationMessageFor(a => a.SportTypeId, "", new { @style = "color:red;font-size:10px" })
+        </div>
+    </div>
+
+    <!-- ===== القسم الرياضي ===== -->
+    <div class="col-sm-4">
+        <div class="form-group">
+            @Html.DisplayNameFor(a => a.SportDesc)
+            <select class="form-control select2" name="SportId" id="SportId" data-selected-id="@Model.SportId">
+                <option value="">-- اختر العقار --</option>
+                @if (ViewBag.Sports != null)
+                {
+                    var sports = ViewBag.Sports as List<Sport>;
+                    if (sports != null)
+                    {
+                        foreach (var sport in sports)
+                        {
+                            <option value="@sport.Id" selected="@(sport.Id == Model.SportId)">@sport.NameAr</option>
+                        }
+                    }
+                }
+            </select>
+            @Html.ValidationMessageFor(a => a.SportId, "", new { @style = "color:red;font-size:10px" })
+        </div>
+    </div>
+
+    <!-- ===== العميل ===== -->
+    <div class="col-sm-4">
+        <div class="form-group">
+            @Html.DisplayNameFor(a => a.CustomerDesc)
+            <select class="form-control select2" name="CustomerId" id="CustomerId"
+                    data-points-url="@Url.Action("GetCustomerPoints", "LoyaltyTransactions")"
+                    data-validate-url="@Url.Action("ValidateRedeemPoints", "SportReservations")">
+                <option value="">-- اختر العميل --</option>
+                @if (Model.Customers != null)
+                {
+                    foreach (var customer in Model.Customers)
+                    {
+                        <option value="@customer.Id"
+                                data-customername="@customer.FullName"
+                                data-customerphone="@customer.MobileNumber"
+                                selected="@(customer.Id == Model.CustomerId)">
+                            @customer.FullName  /  @customer.MobileNumber
+                        </option>
+                    }
+                }
+            </select>
+            @Html.ValidationMessageFor(a => a.CustomerId, "", new { @style = "color:red;font-size:10px" })
+        </div>
+    </div>
+
+    <!-- ===== اسم العميل ===== -->
+    <div class="col-sm-6">
+        <div class="form-group">
+            @Html.DisplayNameFor(a => a.CustomerName)
+            @Html.TextBoxFor(a => a.CustomerName, new { @class = "form-control", @autocomplete = "off", @id = "CustomerName", @readonly = "readonly" })
+            @Html.ValidationMessageFor(a => a.CustomerName, "", new { @style = "color:red;font-size:10px" })
+        </div>
+    </div>
+
+    <!-- ===== رقم جوال العميل ===== -->
+    <div class="col-sm-6">
+        <div class="form-group">
+            @Html.DisplayNameFor(a => a.CustMobNum)
+            @Html.TextBoxFor(a => a.CustMobNum, new { @class = "form-control", @autocomplete = "off", id = "CustomerPhone", dir = "ltr" })
+            @Html.ValidationMessageFor(a => a.CustMobNum, "", new { @style = "color:red;font-size:10px" })
+        </div>
+    </div>
+
+    <!-- ===== تاريخ الحجز ===== -->
+    <div class="col-sm-4">
+        <div class="form-group">
+            @Html.DisplayNameFor(a => a.ReservationDate)
+            @Html.TextBoxFor(a => a.ReservationDate, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date", @id = "ReservationDate" })
+            @Html.ValidationMessageFor(a => a.ReservationDate, "", new { @style = "color:red;font-size:10px" })
+        </div>
+    </div>
+
+    <!-- ===== وقت البداية ===== -->
+    <div class="col-sm-4">
+        <div class="form-group">
+            @Html.DisplayNameFor(a => a.StartTime)
+            @Html.TextBoxFor(a => a.StartTime, "{0:hh\\:mm}", new { @class = "form-control", type = "time" })
+            @Html.ValidationMessageFor(a => a.StartTime, "", new { @style = "color:red;font-size:10px" })
+        </div>
+    </div>
+
+    <!-- ===== وقت النهاية ===== -->
+    <div class="col-sm-4">
+        <div class="form-group">
+            @Html.DisplayNameFor(a => a.EndTime)
+            @Html.TextBoxFor(a => a.EndTime, "{0:hh\\:mm}", new { @class = "form-control", type = "time" })
+            @Html.ValidationMessageFor(a => a.EndTime, "", new { @style = "color:red;font-size:10px" })
+        </div>
+    </div>
+
+    <!-- ===== عدد الأشخاص ===== -->
+    <div class="col-sm-4">
+        <div class="form-group">
+            @Html.DisplayNameFor(a => a.PersonCount)
+            @Html.TextBoxFor(a => a.PersonCount, new { @class = "form-control", type = "number", min = "1" })
+            @Html.ValidationMessageFor(a => a.PersonCount, "", new { @style = "color:red;font-size:10px" })
+        </div>
+    </div>
+
+    <!-- ===== تكلفة الحجز على محجوز ===== -->
+    <div class="col-sm-4">
+        <div class="form-group">
+            @Html.DisplayNameFor(a => a.CostReservationAmtOnMahjouz)
+            @Html.TextBoxFor(a => a.CostReservationAmtOnMahjouz, new { @class = "form-control cost-amount", type = "number", step = "0.01" })
+            @Html.ValidationMessageFor(a => a.CostReservationAmtOnMahjouz, "", new { @style = "color:red;font-size:10px" })
+        </div>
+    </div>
+
+    <!-- ===== المبلغ الكلي ===== -->
+    @* <div class="col-sm-4">
+        <div class="form-group">
+            @Html.DisplayNameFor(a => a.ReservationAmt)
+            @Html.TextBoxFor(a => a.ReservationAmt, new { @class = "form-control reservation-amt", id = "ReservationAmt", type = "number" })
+            @Html.ValidationMessageFor(a => a.ReservationAmt, "", new { @style = "color:red;font-size:10px" })
+        </div>
+    </div> *@
+    <!-- ===== المبلغ الكلي ===== -->
+    <div class="col-sm-4">
+        <div class="form-group">
+            @Html.DisplayNameFor(a => a.ReservationAmt)
+            <div class="input-group">
+                @Html.TextBoxFor(a => a.ReservationAmt, new {
+                @class = "form-control reservation-amt",
+                                id = "ReservationAmt",
+                                type = "text",  //  changed from "number" to "text"
+                                inputmode = "decimal"  //  shows decimal keyboard on mobile
+                                })
+                <button type="button" class="btn btn-outline-secondary" id="clearReservationAmt" title="مسح القيمة">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            @Html.ValidationMessageFor(a => a.ReservationAmt, "", new { @style = "color:red;font-size:10px" })
+        </div>
+    </div>
+
+    <!-- ============================================================
+         نظام النقاط (جديد - مضاف)
+         ============================================================ -->
+    @* <div class="col-sm-12" style="margin:15px 0 10px 0;">
+        <h5 style="text-decoration:underline">نظام النقاط</h5>
+    </div> *@
+
+    <!-- نقاط العميل -->
+    @* <div class="col-sm-12">
+        <div class="points-box">
+            <i class="fa fa-star" style="color:#ffc107;"></i>
+            <strong>نقاط العميل المتاحة:</strong>
+            <span class="points-number" id="customerPointsDisplay">@Model.CustomerAvailablePoints</span>
+            نقطة
+            <span id="pointsStatusBadge" class="badge @(Model.CustomerAvailablePoints > 0 ? "badge-success" : "badge-secondary")">
+                @(Model.CustomerAvailablePoints > 0 ? "متاحة للخصم" : "لا توجد نقاط")
+            </span>
+        </div>
+    </div> *@
+
+    <!-- استخدام النقاط -->
+    @* <div class="col-sm-4">
+        <div class="form-group">
+            <label>
+                <input type="checkbox" name="UseLoyaltyPoints" id="usePointsCheck" value="true" />
+                استخدام نقاط الولاء
+            </label>
+            <input type="hidden" name="UseLoyaltyPoints" value="false" />
+        </div>
+    </div> *@
+
+    <!-- عدد النقاط للخصم -->
+    @* <div class="col-sm-4" id="pointsRedeemSection" style="display:none;">
+        <div class="form-group">
+            <label>عدد النقاط للخصم</label>
+            <input type="number" name="RedeemPoints" id="redeemPoints"
+                   class="form-control" min="0" max="@Model.CustomerAvailablePoints" value="0" />
+            <small class="text-muted">الحد الأقصى: <strong id="maxPointsDisplay">@Model.CustomerAvailablePoints</strong></small>
+            <div id="pointsValidationMessage" style="display:none;color:red;font-size:12px;margin-top:5px;"></div>
+        </div>
+    </div> *@
+
+    <!-- نتائج الخصم -->
+    @* <div class="col-sm-4" id="discountResultsSection" style="display:none;">
+        <div class="discount-result">
+            <div><strong>قيمة الخصم:</strong> <span class="discount-amount" id="discountAmountDisplay">0.00 دينار</span></div>
+            <div><strong>المبلغ الجديد:</strong> <span class="new-total" id="newTotalDisplay">0.00 دينار</span></div>
+            <div><strong>النقاط المتبقية:</strong> <span id="remainingPointsDisplay">0</span> نقطة</div>
+            <small>نظام الخصم : </small><small class="text-muted" id="discountRuleDisplay"></small>
+        </div>
+    </div> *@
+
+    <!-- ===== الربح ===== -->
+    <div class="col-sm-4">
+        <div class="form-group">
+            @Html.DisplayNameFor(a => a.NetProfit)
+            @Html.TextBoxFor(a => a.NetProfit, new { @class = "form-control", @autocomplete = "off", type = "number", @id = "netProfit", @readonly = "readonly", @style = "color:#000;font-size:medium" })
+            @Html.ValidationMessageFor(a => a.NetProfit, "", new { @style = "color:red;font-size:medium;" })
+        </div>
+    </div>
+
+    <!-- ===== المبلغ المدفوع ===== -->
+    <div class="col-sm-4">
+        <div class="form-group">
+            @Html.DisplayNameFor(a => a.ReservationDepositAmt)
+            @Html.TextBoxFor(a => a.ReservationDepositAmt, new { @class = "form-control deposit-amt", type = "number", step = "0.01" })
+            @Html.ValidationMessageFor(a => a.ReservationDepositAmt, "", new { @style = "color:red;font-size:10px" })
+        </div>
+    </div>
+
+    <!-- ===== المبلغ المتبقي ===== -->
+    <div class="col-sm-4">
+        <div class="form-group">
+            @Html.DisplayNameFor(a => a.ReservationRemainAmt)
+            @Html.TextBoxFor(a => a.ReservationRemainAmt, new { @class = "form-control", @autocomplete = "off", type = "number", @id = "reservationRemain", @readonly = "readonly", @style = "color:#000;font-size:medium" })
+            @Html.ValidationMessageFor(a => a.ReservationRemainAmt, "", new { @style = "color:red;font-size:medium" })
+        </div>
+    </div>
+
+    <!-- ===== ملاحظات ===== -->
+    <div class="col-sm-12">
+        <div class="form-group">
+            @Html.DisplayNameFor(a => a.Note)
+            @Html.TextAreaFor(a => a.Note, new { @class = "form-control", rows = 3 })
+            @Html.ValidationMessageFor(a => a.Note, "", new { @style = "color:red;font-size:10px" })
+        </div>
+    </div>
+
+    <!-- ===== سبب الإلغاء ===== -->
+    <div class="col-sm-12">
+        <div class="form-group">
+            @Html.DisplayNameFor(a => a.Reason)
+            @Html.TextAreaFor(a => a.Reason, new { @class = "form-control", rows = 3, @readonly = "readonly", @style = "color:#000;font-size:medium" })
+            @Html.ValidationMessageFor(a => a.Reason, "", new { @style = "color:red;font-size:10px" })
+        </div>
+    </div>
+</div>
+
+<!-- ===== استلام العمولة ===== -->
+<div class="col-sm-3">
+    <div class="form-group">
+        @Html.DisplayNameFor(a => a.IsReceiveCommession)
+        <br />
+        @Html.CheckBoxFor(a => a.IsReceiveCommession, new { @class = "form-control", @style = "margin-top: 10px; width:5% !important" })
+    </div>
+</div>
+
+<!-- ===== إضافة الـ JS الخارجي ===== -->
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+<script src="~/assets/js/sport/sportreservation.js"></script>
+<script>
+    $(document).ready(function() {
+        // تهيئة النظام
+        SportReservation.init({
+            redeemRules: JSON.parse($('#RedeemRulesData').val() || '[]'),
+            customerPoints: parseFloat($('#CustomerPointsData').val()) || 0,
+            customerId: $('#CustomerIdData').val() || null
+        });
+
+        // تهيئة intl-tel-input
+        function initPhone(inputId) {
+            var input = document.querySelector(inputId);
+            var iti = window.intlTelInput(input, {
+                initialCountry: "auto",
+                geoIpLookup: function(callback) {
+                    $.get("https://ipapi.co/json/", function(data) {
+                        callback(data.country_code.toLowerCase());
+                    }).fail(function() {
+                        callback("eg");
+                    });
+                },
+                separateDialCode: true,
+                preferredCountries: ["eg", "sa", "ae", "jo"],
+                utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"
+            });
+            var existingValue = $(inputId).val();
+            if (existingValue) {
+                iti.setNumber(existingValue);
+            }
+            return iti;
+        }
+
+        var iti1 = initPhone("#CustomerPhone");
+
+        $("form").on("submit", function() {
+            if (!iti1.isValidNumber()) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'رقم الموبايل غير صحيح'
+                });
+                return false;
+            }
+            $("#CustomerPhone").val(iti1.getNumber());
+        });
+    });
+</script>
+

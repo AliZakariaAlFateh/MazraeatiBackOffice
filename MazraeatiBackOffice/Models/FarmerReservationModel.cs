@@ -1,4 +1,5 @@
-﻿using MazraeatiBackOffice.Core;
+﻿using MazraeatiBackOffice.Configuration;
+using MazraeatiBackOffice.Core;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,12 +14,13 @@ namespace MazraeatiBackOffice.Models
         [DisplayName("المزرعة")]
         //[Required(ErrorMessage = "برجاء تعبئة الحقل")]
         public int FarmerId { get; set; }
-
+        public int CustomerId { get; set; }
         [DisplayName("نوع الحجز")]
         [Required(ErrorMessage = "يرجى تعبئه الحقل")]
         public int ReservationTypeId { get; set; }
         public string ReservationTypeDesc { get; set; }
-
+        [DisplayName("العميل")]
+        public int CustomerDesc { get; set; }
         [DisplayName("تاريخ الحجز")]
         [Required(ErrorMessage = "يرجى تعبئه الحقل")]
         public DateTime ReservationDate { get; set; }
@@ -26,10 +28,11 @@ namespace MazraeatiBackOffice.Models
         [DisplayName("رقم هاتف العميل")]
         [Required(ErrorMessage = "يرجى تعبئه الحقل")]
         public string CustMobNum { get; set; }
-
+        public string Reason { get; set; }
         [DisplayName("اسم العميل")]
         [Required(ErrorMessage = "يرجى تعبئه الحقل")]
         public string CustomerName { get; set; }
+        public ReservStatusEnum ReservStatus { get; set; } = ReservStatusEnum.Pending;
 
         [DisplayName("ملاحظات")]
         public string Note { get; set; }
@@ -56,8 +59,8 @@ namespace MazraeatiBackOffice.Models
         public string AutomaticallyNote { get; set; }
         public string MobileOwnerAppUser { get; set; }
         public bool? IsMahjouzReservation { get; set; }
-        public List<LookupValue> LookupValues { get; set; }
-
-        public List<Farmer> Farms { get; set; }
+        public List<LookupValue> LookupValues { get; set; } = new List<LookupValue>();
+        public List<Farmer> Farms { get; set; } = new List<Farmer>();
+        public List<Customer>? Customers { get; set; } = new List<Customer>();
     }
 }

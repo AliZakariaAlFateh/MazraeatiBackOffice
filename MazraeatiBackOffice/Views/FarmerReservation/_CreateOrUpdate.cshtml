@@ -104,7 +104,7 @@
                 <div class="body">
                     <div class="row clearfix">
 
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
                             @Html.DisplayNameFor(a => a.FarmerId)
                                 <select asp-for="FarmerId"asp-items="@(new SelectList(Model.Farms,"Id","Name"))"
                                         class="form-control select2">
@@ -112,7 +112,7 @@
                                 @Html.ValidationMessageFor(a => a.FarmerId, "", new { @class = "text-danger" })
                         </div>
 
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
                             @Html.DisplayNameFor(a => a.ReservationTypeId)
                             <select class="form-control select2" name="ReservationTypeId" id="ReservationTypeId">
                                 @foreach (var item in Model.LookupValues)
@@ -122,8 +122,32 @@
                             </select>
                             @Html.ValidationMessageFor(a => a.ReservationTypeId, "", new { @style = "color:red;font-size:medium" })
                         </div>
-
-                        <div class="col-sm-4">
+                        <!-- ===== العميل ===== -->
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.DisplayNameFor(a => a.CustomerDesc)
+                                <select class="form-control select2" name="CustomerId" id="CustomerId"
+                                        @* data-points-url="@Url.Action("GetCustomerPoints", "LoyaltyTransactions")"
+                                        data-validate-url="@Url.Action("ValidateRedeemPoints", "SportReservations")" *@
+                                >
+                                    <option value="">-- اختر العميل --</option>
+                                    @if (Model.Customers != null)
+                                    {
+                                        foreach (var customer in Model.Customers)
+                                        {
+                                            <option value="@customer.Id"
+                                                    data-customername="@customer.FullName"
+                                                    data-customerphone="@customer.MobileNumber"
+                                                    selected="@(customer.Id == Model.CustomerId)">
+                                                @customer.FullName  /  @customer.MobileNumber
+                                            </option>
+                                        }
+                                    }
+                                </select>
+                                @Html.ValidationMessageFor(a => a.CustomerId, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
                             <div class="form-group" style="text-align:center;">
                                 @Html.DisplayNameFor(a => a.ReservationDate)
                                 <br>
@@ -143,7 +167,7 @@
                         <div class="col-sm-6">
                             <div class="form-group">
                                 @Html.DisplayNameFor(a => a.CustomerName)
-                                @Html.TextBoxFor(a => a.CustomerName, new { @class = "form-control", @autocomplete = "off", @maxlength = 50, @style = "color:#000;font-size:medium" })
+                                @Html.TextBoxFor(a => a.CustomerName, new { @class = "form-control", @autocomplete = "off", @maxlength = 50, @style = "color:#000;font-size:medium", @id = "CustomerName" })
                                 @Html.ValidationMessageFor(a => a.CustomerName, "", new { @style = "color:red;font-size:medium" })
                             </div>
                         </div>
@@ -239,9 +263,9 @@
 }
 <script>
     $(document).ready(function () {
+
         var typeId = '@Model.ReservationTypeId';
         $('select[name="ReservationTypeId"]').val(typeId).trigger('change');
-
         $('.select2').select2({
             placeholder: "اختر من القائمة",
             width: '100%'
@@ -322,6 +346,21 @@
             }
 
             $("#CustMobNumber").val(iti1.getNumber());
+        });
+
+
+        $('#CustomerId').on('change', function () {
+            var selectedOption = $(this).find('option:selected');
+            var Cname = selectedOption.data('customername');
+            var CPhone = selectedOption.data('customerphone');
+            $('#CustomerName').val(Cname);
+            $('#CustMobNumber').val(CPhone);
+
+            // var customerId = $(this).val();
+            // if (customerId) {
+            //     self.customerId = customerId;
+            //     self.getCustomerPoints(customerId);
+            // }
         });
 
 

@@ -1,0 +1,398 @@
+﻿@using MazraeatiBackOffice.Models.LoyaltyPoints
+@model List<CustomerLoyaltyAccountModel>
+
+@{
+    ViewBag.Title = "حسابات العملاء";
+    ViewBag.activePage = "حسابات العملاء";
+}
+
+<style>
+    .stat-card {
+        background: white;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        text-align: center;
+        margin-bottom: 15px;
+        cursor: default;
+        transition: transform 0.2s;
+    }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .stat-card .number {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .stat-card .label {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .stat-card.total {
+            border-left: 4px solid #007bff;
+        }
+
+        .stat-card.points {
+            border-left: 4px solid #ffc107;
+        }
+
+        .stat-card.active {
+            border-left: 4px solid #28a745;
+        }
+
+    .filter-section {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+
+        .filter-section .form-group {
+            margin-bottom: 5px;
+        }
+
+        .filter-section label {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+    .tier-badge {
+        display: inline-block;
+        padding: 3px 12px;
+        border-radius: 12px;
+        font-weight: bold;
+        font-size: 12px;
+    }
+
+    .tier-bronze {
+        background: #cd7f32;
+        color: #fff;
+    }
+
+    .tier-silver {
+        background: #c0c0c0;
+        color: #333;
+    }
+
+    .tier-gold {
+        background: #ffd700;
+        color: #333;
+    }
+
+    .tier-diamond {
+        background: #b9f2ff;
+        color: #333;
+    }
+</style>
+
+<div class="container-fluid">
+    <div class="row clearfix">
+        <div class="col-lg-12 col-md-12 col-sm-12">
+            <div class="card">
+                <div class="header">
+                    <h2><strong>حسابات</strong> العملاء</h2>
+                    <ul class="header-dropdown">
+                        <li>
+                            <a href="@Url.Action("Index", "LoyaltyTransactions")" class="btn btn-info btn-round">
+                                <i class="fa fa-history"></i> حركات النقاط
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="body">
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show">
+                            <strong>تم!</strong> @TempData["SuccessMessage"]
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        </div>
+                    }
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show">
+                            <strong>خطأ!</strong> @TempData["ErrorMessage"]
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        </div>
+                    }
+
+                    <!-- ===== الإحصائيات ===== -->
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="stat-card total">
+                                <div class="number">@ViewBag.TotalAccounts</div>
+                                <div class="label">إجمالي الحسابات</div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="stat-card points">
+                                <div class="number">@ViewBag.TotalPoints</div>
+                                <div class="label">إجمالي النقاط</div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="stat-card active">
+                                <div class="number">@ViewBag.ActiveAccounts</div>
+                                <div class="label">حسابات نشطة</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ===== الفلتر ===== -->
+                    <div class="filter-section">
+                        <form method="post">
+                            @Html.AntiForgeryToken()
+                            <div class="row clearfix">
+                                <!-- بحث -->
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label>بحث</label>
+                                        <input type="text" name="search" value="@ViewBag.search"
+                                               placeholder="اسم العميل أو رقم الجوال" class="form-control" />
+                                    </div>
+                                </div>
+
+                                <!-- المستوى -->
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label>المستوى</label>
+                                        <select class="form-control select2" name="tierId">
+                                            <option value="">-- الكل --</option>
+                                            @foreach (var item in ViewBag.Tiers)
+                                            {
+                                                <option value="@item.Id" selected="@(item.Id == ViewBag.SelectedTierId)">@item.NameAr</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- أزرار -->
+                                <div class="col-sm-5" style="padding-top:22px;">
+                                    <button type="submit" class="btn btn-primary btn-round">
+                                        <i class="fa fa-search"></i> بحث
+                                    </button>
+                                    <a href="@Url.Action("Index")" class="btn btn-default btn-round">
+                                        <i class="fa fa-refresh"></i> تفريغ
+                                    </a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- ===== الجدول ===== -->
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-hover">
+                            <thead class="bg-primary text-white">
+                                <tr>
+                                    <th>#</th>
+                                    <th>العميل</th>
+                                    <th>إجمالي النقاط</th>
+                                    <th>النقاط المتاحة</th>
+                                    <th>النقاط المستخدمة</th>
+                                    <th>النقاط المنتهية</th>
+                                    <th>المستوى</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.Any())
+                                {
+                                    int counter = 1;
+                                    foreach (var item in Model)
+                                    {
+                                        string tierClass = "";
+                                        switch (item.CurrentTierName)
+                                        {
+                                            case "برونز": tierClass = "tier-bronze"; break;
+                                            case "فضي": tierClass = "tier-silver"; break;
+                                            case "ذهبي": tierClass = "tier-gold"; break;
+                                            case "ألماس": tierClass = "tier-diamond"; break;
+                                            default: tierClass = "tier-bronze"; break;
+                                        }
+
+                                        <tr>
+                                            <td>@counter</td>
+                                            <td>
+                                                <strong>@item.CustomerName</strong>
+                                            </td>
+                                            <td>@item.TotalPoints</td>
+                                            <td><strong>@item.AvailablePoints</strong></td>
+                                            <td>@item.RedeemedPoints</td>
+                                            <td>@item.ExpiredPoints</td>
+                                            <td>
+                                                <span class="tier-badge @tierClass">
+                                                    <i class="fa @(item.CurrentTierName == "برونز" ? "fa-medal" :
+                                                                                                               item.CurrentTierName == "فضي" ? "fa-star" :
+                                                                                                               item.CurrentTierName == "ذهبي" ? "fa-crown" : "fa-gem")"></i>
+                                            @item.CurrentTierName
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <a href="@Url.Action("CustomerTransactions", "LoyaltyTransactions", new { customerId = item.CustomerId })" class="btn btn-info" title="الحركات">
+                                                <i class="fa fa-history"></i>
+                                            </a>
+                                            <a href="#" class="btn btn-warning" title="تعديل النقاط" onclick="adjustPoints(@item.CustomerId)">
+                                                <i class="fa fa-edit"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                                                counter++;
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="8" class="text-center">
+                                            <div class="alert alert-info">
+                                                <i class="fa fa-info-circle"></i> لا توجد حسابات عملاء
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: تعديل النقاط -->
+<div class="modal fade" id="adjustPointsModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title">تعديل نقاط العميل</h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <form id="adjustPointsForm">
+                <div class="modal-body">
+                    <input type="hidden" name="customerId" id="adjustCustomerId" />
+                    <div class="form-group">
+                        <label>عدد النقاط <span class="text-danger">*</span></label>
+                        <input type="number" name="points" id="adjustPoints" class="form-control" required />
+                        <small class="text-muted">استخدم رقم موجب للإضافة، رقم سالب للخصم</small>
+                    </div>
+                    <div class="form-group">
+                        <label>سبب التعديل <span class="text-danger">*</span></label>
+                        <input type="text" name="reason" id="adjustReason" class="form-control" required placeholder="مثال: تعويض عميل" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">إلغاء</button>
+                    <button type="submit" class="btn btn-warning">تأكيد التعديل</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ============================================================
+    // SweetAlert Configuration
+    // ============================================================
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer);
+            toast.addEventListener('mouseleave', Swal.resumeTimer);
+        }
+    });
+
+    // ============================================================
+    // تعديل نقاط العميل
+    // ============================================================
+    function adjustPoints(customerId) {
+        $('#adjustCustomerId').val(customerId);
+        $('#adjustPointsModal').modal('show');
+    }
+
+    $('#adjustPointsForm').on('submit', function(e) {
+        e.preventDefault();
+
+        var customerId = $('#adjustCustomerId').val();
+        var points = $('#adjustPoints').val();
+        var reason = $('#adjustReason').val();
+
+        if (!points || !reason) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'تنبيه',
+                text: 'يرجى ملء جميع الحقول',
+                confirmButtonText: 'حسناً',
+                confirmButtonColor: '#ffc107'
+            });
+            return;
+        }
+
+        // ===== إظهار Loading =====
+        Swal.fire({
+            title: 'جاري المعالجة...',
+            text: 'يرجى الانتظار',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        $.ajax({
+            url: '@Url.Action("AdjustPoints", "LoyaltyTransactions")',
+            type: 'POST',
+            data: {
+                customerId: customerId,
+                points: points,
+                reason: reason
+            },
+            success: function(data) {
+                if (data.success) {
+                    Toast.fire({
+                        icon: 'success',
+                        title: data.message
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'خطأ',
+                        text: data.message,
+                        confirmButtonText: 'حسناً',
+                        confirmButtonColor: '#dc3545'
+                    });
+                }
+            },
+            error: function() {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'حدث خطأ أثناء الاتصال بالخادم',
+                    confirmButtonText: 'حسناً',
+                    confirmButtonColor: '#dc3545'
+                });
+            }
+        });
+    });
+
+    $(document).ready(function() {
+        $('.select2').select2();
+    });
+</script>
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" />
+}
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/i18n/ar.js"></script>
+}

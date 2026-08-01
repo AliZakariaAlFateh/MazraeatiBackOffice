@@ -1,0 +1,83 @@
+﻿@using MazraeatiBackOffice.Models.LoyaltyPoints
+@model LoyaltyTierModel
+
+@{
+    ViewBag.Title = Model.Id > 0 ? "تعديل مستوى" : "إضافة مستوى جديد";
+    ViewBag.activePage = "مستويات العملاء";
+}
+
+<div class="container-fluid">
+    <div class="row clearfix">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="header">
+                    <h2><strong>@(Model.Id > 0 ? "تعديل" : "إضافة")</strong> مستوى</h2>
+                </div>
+                <div class="body">
+                    <form method="post">
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(a => a.Id)
+
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    @Html.DisplayNameFor(a => a.NameAr)
+                                    @Html.TextBoxFor(a => a.NameAr, new { @class = "form-control", required = "required" })
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    @Html.DisplayNameFor(a => a.NameEn)
+                                    @Html.TextBoxFor(a => a.NameEn, new { @class = "form-control" })
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    @Html.DisplayNameFor(a => a.IconClass)
+                                    @Html.TextBoxFor(a => a.IconClass, new { @class = "form-control", placeholder = "fa-medal" })
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    @Html.DisplayNameFor(a => a.MinPoints)
+                                    @Html.TextBoxFor(a => a.MinPoints, new { @class = "form-control", type = "number", required = "required" })
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    @Html.DisplayNameFor(a => a.MaxPoints)
+                                    @Html.TextBoxFor(a => a.MaxPoints, new { @class = "form-control", type = "number" })
+                                    <small class="text-muted">اتركه فارغاً إذا كان غير محدود</small>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    @Html.DisplayNameFor(a => a.DiscountPercent)
+                                    @Html.TextBoxFor(a => a.DiscountPercent, new { @class = "form-control", type = "number", step = "0.01" })
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    @Html.DisplayNameFor(a => a.IsActive)
+                                    <br />
+                                    @Html.CheckBoxFor(a => a.IsActive, new { @class = "form-control", style = "width:20px;height:20px;margin-top:5px;" })
+                                </div>
+                            </div>
+
+                            <div class="col-sm-12">
+                                <button type="submit" class="btn btn-primary">حفظ</button>
+                                <a href="@Url.Action("Index")" class="btn btn-default">رجوع</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

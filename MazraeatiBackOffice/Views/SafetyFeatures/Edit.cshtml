@@ -1,0 +1,11 @@
+﻿@model SafetyFeatureModel
+
+@{
+    ViewBag.Title = "تعديل ميزة أمان";
+    ViewBag.activePage = "ميزات الأمان";
+}
+
+@using (Html.BeginForm("Edit", "SafetyFeatures", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.Partial("_CreateOrUpdate", Model)
+}

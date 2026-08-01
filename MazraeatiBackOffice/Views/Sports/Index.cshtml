@@ -1,0 +1,277 @@
+﻿@model IEnumerable<SportModel>
+
+@{
+    ViewBag.Title = ViewBag.SelectedSportTypeName != null && !string.IsNullOrEmpty(ViewBag.SelectedSportTypeName)
+        ? ViewBag.SelectedSportTypeName
+        : "الأنشطة الرياضية";
+    ViewBag.activePage = "الأنشطة الرياضية";
+    var sportTypeId = ViewBag.SportTypeId ?? 0;
+}
+
+<style>
+    .sport-thumb {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 5px;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        text-align: center;
+        margin-bottom: 15px;
+        cursor: default;
+        transition: transform 0.2s;
+    }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .stat-card .number {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .stat-card .label {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .stat-card.total {
+            border-left: 4px solid #007bff;
+        }
+
+        .stat-card.approved {
+            border-left: 4px solid #28a745;
+        }
+
+        .stat-card.vip {
+            border-left: 4px solid #ff8800;
+        }
+
+        .stat-card.blocked {
+            border-left: 4px solid #ff0000;
+        }
+
+</style>
+
+<div class="container-fluid">
+    <div class="row clearfix">
+        <div class="col-lg-12 col-md-12 col-sm-12">
+            <div class="card">
+                <div class="header">
+                    <h2>
+                        <strong>
+                            @if (!string.IsNullOrEmpty(ViewBag.SelectedSportTypeName))
+                            {
+                                @ViewBag.SelectedSportTypeName
+                            }
+                            else
+                            {
+                                <span>الأنشطة الرياضية</span>
+                            }
+                        </strong>
+                    </h2>
+                    <ul class="header-dropdown">
+                        @if (ViewBag.SportTypeId != null && ViewBag.SportTypeId != 0)
+                        {
+                            <li>
+                                <a href="@Url.Action("Create", new { SportTypeId = ViewBag.SportTypeId })" class="btn btn-primary btn-round">
+                                    <i class="fa fa-plus"></i> إضافة نشاط جديد
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+                <!-- إحصائيات -->
+                <div class="row" style="margin:15px !important">
+                    <div class="col-sm-3"><div class="stat-card total"><div class="number">@ViewBag.TotalSports</div><div class="label">الإجمالي</div></div></div>
+                    <div class="col-sm-3"><div class="stat-card approved"><div class="number">@ViewBag.ApprovedSports</div><div class="label">موافق عليها</div></div></div>
+                    <div class="col-sm-3"><div class="stat-card vip"><div class="number">@ViewBag.VIPSports</div><div class="label">VIP</div></div></div>
+                    <div class="col-sm-3"><div class="stat-card blocked"><div class="number">@ViewBag.BlockedSports</div><div class="label">محظورة</div></div></div>
+                </div>
+                <!-- فلتر البحث -->
+                <form action="" method="post">
+                    <div class="row clearfix" style="padding: 0 15px;">
+                        <!-- فلتر نوع الرياضة -->
+                        <div class="col-sm-3" style="">
+                            <div class="form-group">
+                                <label>نوع الرياضة</label>
+                                <select class="form-control select2" name="sportTypeId" id="sportTypeSelect">
+                                    <option value="0">-- جميع الأنشطة --</option>
+                                    @foreach (var item in ViewBag.SportTypes)
+                                    {
+                                        <option selected="@(item.Id == ViewBag.SportTypeId)" value="@item.Id">@item.NameAr</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- بحث -->
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label>بحث</label>
+                                <input id="searchInput" type="text" name="search" value="@ViewBag.search" placeholder="الكلمة المفتاحية" class="form-control" />
+                            </div>
+                        </div>
+
+                        <!-- فلتر المدينة -->
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label>المدينة</label>
+                                <select class="form-control select2" name="cityId" id="citySelect">
+                                    <option value="0">-- جميع المدن --</option>
+                                    @foreach (var item in ViewBag.cities)
+                                    {
+                                        <option selected="@(item.Id == ViewBag.CityBy)" value="@item.Id">@item.DescAr</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- أزرار -->
+                        <div class="col-sm-3" style="padding-top:25px;">
+                            <button type="submit" class="btn btn-primary btn-round">بحث</button>
+                            <a href="@Url.Action("Index", new { sportTypeId = ViewBag.SportTypeId })" class="btn btn-default btn-round">تفضية الحقول</a>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="body">
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show"><strong>تم!</strong> @TempData["SuccessMessage"]<button type="button" class="close" data-dismiss="alert">&times;</button></div>
+                    }
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show"><strong>خطأ!</strong> @TempData["ErrorMessage"]<button type="button" class="close" data-dismiss="alert">&times;</button></div>
+                    }
+
+
+
+                    <!-- جدول -->
+
+
+
+
+
+                    <div class="table-responsive">
+                        <table class="tab-pane table-responsive active table-scroll table table-bordered" id="All" style="height:270px; overflow-y:auto;">
+                            <thead class="bg-primary text-white">
+                                <tr>
+                                    <th>#</th>
+                                    <th>الدولة</th>
+                                    <th>المدينة</th>
+                                    <th>المنطقة</th>
+                                    <th>رقم الهاتف</th>
+                                    <th>رقم الإعلان</th>
+                                    <th>الاسم</th>
+                                    <th>النوع</th>
+                                    <th>المالك</th>
+                                    <th>هل الإعلان موثوق</th>
+                                    <th>VIP</th>
+                                    <th>هل الإعلان موافق عليه</th>
+                                    <th>تعديل</th>
+                                    <th>عرض الإعلان</th>
+                                    <th>الحجوزات</th>
+                                    <th>مواعيد الحجوزات</th>
+                                    <th>حذف</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.Any())
+                                {
+                                    int counter = 1;
+                                    foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>@counter</td>
+                                            <td>@item.CountryDesc</td>
+                                            <td>@item.CityDesc</td>
+                                            <td>@item.RegionDesc</td>
+                                            <td>@item.MobileNumber</td>
+                                            <td>@item.Number</td>
+                                            <td><strong>@item.NameAr</strong><br /><small class="text-muted">@item.NameEn</small></td>
+                                            <td><span class="badge badge-info">@item.SportTypeDesc</span></td>
+                                            <td>@item.UserName</td>
+                                            <td>
+                                                @if (item.IsTrust)
+                                                {
+                                                    <span class='badge badge-success'>نعم</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class='badge badge-danger'>لا</span>
+                                                }
+                                            </td>
+
+                                            <td>
+                                                @if (item.IsVIP)
+                                                {
+                                                    <span class='badge badge-success'>نعم</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class='badge badge-danger'>لا</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (item.IsApprove)
+                                                {
+                                                    <span class='badge badge-success'>موافق</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class='badge badge-warning'>قيد المراجعة</span>
+                                                }
+                                            </td>
+                                            <td><a href="@Url.Content("~/Sports/Edit/")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
+                                            <td>
+                                                <a href="https://mahjoz.app/Sports/@item.Id" target="_blank" class="btn btn-primary btn-round" style="height: 25px;">
+                                                    <i class="zmdi zmdi-eye" style="color: white;margin-top: -10px;"></i>
+                                                </a>
+                                            </td>
+                                            <td><a href="@Url.Content("~/SportReservations/index?SportId=")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-assignment" style="color: white;margin-top: -10px;"></i></a></td>
+                                            <td><a href="@Url.Content("~/SportReservation/CalendarReservation?SportId=")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-time" style="color: white;margin-top: -10px;"></i></a></td>
+                                            <td>
+                                                @* onclick="return confirm('هل أنت متأكد؟')" *@
+                                                <a href="javascript:Delete('Sports',@item.Id,'Delete','Index')" class="btn btn-danger"><i class="zmdi zmdi-delete" style="color: white;margin-top: -10px;"></i></a>
+                                            </td>
+                                        </tr>
+                                        counter++;
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="17" class="text-center">
+                                            <div class="alert alert-info">
+                                                لا توجد بيانات بيتم عرضها
+                                                <br />
+                                               
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+
+
+
+
+
+
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

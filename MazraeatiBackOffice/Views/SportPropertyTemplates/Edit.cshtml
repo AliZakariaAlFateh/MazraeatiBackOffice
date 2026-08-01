@@ -1,0 +1,12 @@
+﻿@using MazraeatiBackOffice.Core
+@model SportPropertyTemplate
+
+@{
+    ViewBag.Title = "تعديل  تفاصيل العقار";
+    ViewBag.activePage = "تفاصيل العقار";
+}
+
+@using (Html.BeginForm("Edit", "SportPropertyTemplates", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.Partial("_CreateOrUpdate", Model)
+}

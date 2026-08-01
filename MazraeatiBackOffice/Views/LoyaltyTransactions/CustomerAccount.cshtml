@@ -1,0 +1,177 @@
+﻿@using MazraeatiBackOffice.Models.LoyaltyPoints
+@model CustomerLoyaltyAccountModel
+
+@{
+    ViewBag.Title = $"حساب العميل - {Model.CustomerName}";
+    ViewBag.activePage = "حسابات العملاء";
+}
+
+<div class="container-fluid">
+    <div class="row clearfix">
+        <div class="col-lg-12 col-md-12 col-sm-12">
+            <div class="card">
+                <div class="header">
+                    <h2>
+                        <strong>حساب</strong> العميل
+                        <small>@Model.CustomerName</small>
+                    </h2>
+                    <ul class="header-dropdown">
+                        <li>
+                            <a href="@Url.Action("Index")" class="btn btn-default btn-round">
+                                <i class="fa fa-arrow-right"></i> العودة للقائمة
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("CustomerTransactions", "LoyaltyTransactions", new { customerId = Model.CustomerId })" class="btn btn-info btn-round">
+                                <i class="fa fa-history"></i> الحركات
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="body">
+                    <div class="row">
+                        <!-- معلومات العميل -->
+                        <div class="col-sm-6">
+                            <div class="card">
+                                <div class="card-header bg-primary text-white">
+                                    <h5><i class="fa fa-user"></i> معلومات العميل</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p><strong>الاسم:</strong> @Model.CustomerName</p>
+                                    <p><strong>المستوى الحالي:</strong> @Model.CurrentTierName</p>
+                                    <p><strong>تاريخ إنشاء الحساب:</strong> @Model.CreatedDate.ToString("yyyy-MM-dd")</p>
+                                    <p><strong>تاريخ الانتهاء:</strong> @(Model.ExpireDate?.ToString("yyyy-MM-dd") ?? "غير محدد")</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- النقاط -->
+                        <div class="col-sm-6">
+                            <div class="card">
+                                <div class="card-header bg-success text-white">
+                                    <h5><i class="fa fa-star"></i> ملخص النقاط</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="alert alert-info text-center">
+                                                <h3>@Model.TotalPoints</h3>
+                                                <p>إجمالي النقاط</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="alert alert-success text-center">
+                                                <h3>@Model.AvailablePoints</h3>
+                                                <p>النقاط المتاحة</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="alert alert-warning text-center">
+                                                <h3>@Model.RedeemedPoints</h3>
+                                                <p>النقاط المستخدمة</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="alert alert-danger text-center">
+                                                <h3>@Model.ExpiredPoints</h3>
+                                                <p>النقاط المنتهية</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- أزرار إجراءات سريعة -->
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="card">
+                                <div class="card-header bg-info text-white">
+                                    <h5><i class="fa fa-cogs"></i> إجراءات سريعة</h5>
+                                </div>
+                                <div class="card-body">
+                                    <button class="btn btn-warning" onclick="adjustPoints(@Model.CustomerId)">
+                                        <i class="fa fa-edit"></i> تعديل النقاط
+                                    </button>
+                                    <a href="@Url.Action("CustomerTransactions", "LoyaltyTransactions", new { customerId = Model.CustomerId })" class="btn btn-info">
+                                        <i class="fa fa-history"></i> عرض الحركات
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: تعديل النقاط -->
+<div class="modal fade" id="adjustPointsModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title">تعديل نقاط العميل</h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <form id="adjustPointsForm">
+                <div class="modal-body">
+                    <input type="hidden" name="customerId" id="adjustCustomerId" value="@Model.CustomerId" />
+                    <div class="form-group">
+                        <label>عدد النقاط <span class="text-danger">*</span></label>
+                        <input type="number" name="points" id="adjustPoints" class="form-control" required />
+                        <small class="text-muted">استخدم رقم موجب للإضافة، رقم سالب للخصم</small>
+                    </div>
+                    <div class="form-group">
+                        <label>سبب التعديل <span class="text-danger">*</span></label>
+                        <input type="text" name="reason" id="adjustReason" class="form-control" required placeholder="مثال: تعويض عميل" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">إلغاء</button>
+                    <button type="submit" class="btn btn-warning">تأكيد التعديل</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function adjustPoints(customerId) {
+        $('#adjustCustomerId').val(customerId);
+        $('#adjustPointsModal').modal('show');
+    }
+
+    $('#adjustPointsForm').on('submit', function(e) {
+        e.preventDefault();
+
+        var customerId = $('#adjustCustomerId').val();
+        var points = $('#adjustPoints').val();
+        var reason = $('#adjustReason').val();
+
+        if (!points || !reason) {
+            alert('يرجى ملء جميع الحقول');
+            return;
+        }
+
+        $.ajax({
+            url: '@Url.Action("AdjustPoints", "LoyaltyTransactions")',
+            type: 'POST',
+            data: { customerId: customerId, points: points, reason: reason },
+            success: function(data) {
+                if (data.success) {
+                    alert(data.message);
+                    location.reload();
+                } else {
+                    alert(data.message);
+                }
+            },
+            error: function() {
+                alert('حدث خطأ أثناء التعديل');
+            }
+        });
+    });
+</script>

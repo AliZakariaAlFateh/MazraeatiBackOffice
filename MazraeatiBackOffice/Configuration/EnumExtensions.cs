@@ -1,4 +1,8 @@
-﻿namespace MazraeatiBackOffice.Configuration
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.Reflection;
+
+namespace MazraeatiBackOffice.Configuration
 {
     public static class EnumExtensions
     {
@@ -22,6 +26,14 @@
                 _ => "غير معروف"
             };
         }
+
+        public static string GetDisplayName(this Enum value)
+        {
+            var field = value.GetType().GetField(value.ToString());
+            var attribute = field?.GetCustomAttribute<DisplayAttribute>();
+            return attribute?.Name ?? value.ToString();
+        }
+
 
 
         //public static string ToArabic(this FarmAppUserStatus? status)

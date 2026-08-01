@@ -152,6 +152,10 @@ namespace MazraeatiBackOffice.Models
         [DisplayName("الموقع الجغرافي")]
         //[Required(ErrorMessage = "برجاء تعبئة الحقل")]
         public string Location { get; set; }
+        [DisplayName("خط الطول")]
+        public string Longitude { get; set; }
+        [DisplayName("خط العرض")]
+        public string Latitude { get; set; }
 
         [DisplayName("مبلغ التامين")]
         [Required(ErrorMessage = "برجاء تعبئة الحقل")]

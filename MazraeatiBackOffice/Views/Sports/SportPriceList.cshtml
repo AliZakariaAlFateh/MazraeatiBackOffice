@@ -1,0 +1,198 @@
+﻿@model SportPriceModel
+
+@{
+    ViewBag.Title = "أسعار النشاط الرياضي";
+    ViewBag.activePage = "أسعار النشاط الرياضي";
+}
+
+<style>
+    .form-group {
+        font-size: 13px;
+    }
+
+    .table td, .table th {
+        vertical-align: middle;
+        text-align: center;
+    }
+
+    .table input {
+        text-align: center;
+        font-size: 13px;
+    }
+
+    .time-input {
+        width: 110px;
+        display: inline-block;
+    }
+
+    .table-header {
+        background: #f5f5f5;
+        font-weight: bold;
+    }
+</style>
+
+<div class="container-fluid">
+    <div class="row clearfix">
+        <div class="col-lg-12 col-md-12 col-sm-12">
+            <div class="card">
+                <div class="header">
+                    <h2>
+                        <strong>تعديل الأسعار</strong>
+                        <small>@ViewBag.sportName</small>
+                    </h2>
+                    <ul class="header-dropdown">
+                        <li>
+                            <a href="@Url.Action("Edit", new { id = Model.SportId })" class="btn btn-default btn-round">
+                                <i class="fa fa-arrow-right"></i> العودة للقائمة
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="body">
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show">
+                            <strong>تم!</strong> @TempData["SuccessMessage"]
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        </div>
+                    }
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show">
+                            <strong>خطأ!</strong> @TempData["ErrorMessage"]
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        </div>
+                    }
+
+                    @using (Html.BeginForm("SportPriceList", "Sports", FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(a => a.SportId)
+
+                        <div class="row clearfix">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    @Html.DisplayNameFor(a => a.Person)
+                                    @Html.TextBoxFor(a => a.Person, new { @class = "form-control", type = "number", min = "1" })
+                                    @Html.ValidationMessageFor(a => a.Person, "", new { @style = "color:red;font-size:10px" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover text-center" id="priceTable">
+                                <thead class="table-header">
+                                    <tr>
+                                        <th style="width:8%">اليوم</th>
+                                        <th style="width:14%">سعر الساعة</th>
+                                        <th style="width:14%">سعر الذروة</th>
+                                        <th style="width:12%">بداية الذروة</th>
+                                        <th style="width:12%">نهاية الذروة</th>
+                                        <th style="width:14%">سعر العرض</th>
+                                        <th style="width:14%">أقل عدد ساعات مسموح به</th>
+                                        <th style="width:10%">حذف</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (int i = 0; i < Model.PriceList.Count; i++)
+                                    {
+                                        <tr>
+                                            <td style="font-weight:bold; background:#fafafa">
+                                                @switch (Model.PriceList[i].Day)
+                                                {
+                                                    case 1:
+                                                        @("الأحد")
+                                                        ; break;
+                                                    case 2:
+
+                                                        @("الإثنين")
+                                                        ; break;
+                                                    case 3:
+
+                                                        @("الثلاثاء")
+                                                        ; break;
+                                                    case 4:
+
+                                                        @("الأربعاء")
+                                                        ; break;
+                                                    case 5:
+
+                                                        @("الخميس")
+                                                        ; break;
+                                                    case 6:
+
+                                                        @("الجمعة")
+                                                        ; break;
+                                                    case 7:
+
+                                                        @("السبت")
+                                                        ; break;
+                                                }
+                                            </td>
+
+                                            @Html.HiddenFor(a => a.PriceList[i].Id)
+                                            @Html.HiddenFor(a => a.PriceList[i].Day)
+                                            @Html.HiddenFor(a => a.PriceList[i].SportId)
+
+                                            <td>
+                                                @Html.TextBoxFor(a => a.PriceList[i].HourlyPrice,
+                                                new { @class = "form-control form-control-sm", type = "number", step = "0.01", placeholder = "السعر" })
+                                    </td>
+
+                                    <td>
+                                        @Html.TextBoxFor(a => a.PriceList[i].PeakHourlyPrice,
+                                                                                new { @class = "form-control form-control-sm", type = "number", step = "0.01", placeholder = "سعر الذروة" })
+                                    </td>
+
+                                    <td>
+                                        @Html.TextBoxFor(a => a.PriceList[i].PeakStartTime, "{0:hh\\:mm}",
+                                                                                new { @class = "form-control form-control-sm time-input", type = "time" })
+                                    </td>
+
+                                    <td>
+                                        @Html.TextBoxFor(a => a.PriceList[i].PeakEndTime, "{0:hh\\:mm}",
+                                                                                new { @class = "form-control form-control-sm time-input", type = "time" })
+                                    </td>
+
+                                    <td>
+                                        @Html.TextBoxFor(a => a.PriceList[i].OfferHourlyPrice,
+                                                                                new { @class = "form-control form-control-sm", type = "number", step = "0.01", placeholder = "سعر العرض" })
+                                    </td>
+                                    <td>
+                                        @Html.TextBoxFor(a => Model.PriceList[i].MinBookingHours, new { @class = "form-control", type = "number" })
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger btn-sm" onclick="removePriceRow(this)">
+                                            <i class="fa fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="row m-t-20">
+                        <div class="col-sm-12">
+                            <button type="submit" class="btn btn-primary btn-round">
+                                <i class="fa fa-save"></i> حفظ الأسعار
+                            </button>
+                            <a href="@Url.Action("Edit", new { id = Model.SportId })" class="btn btn-default btn-round">
+                                <i class="fa fa-arrow-right"></i> رجوع
+                            </a>
+                        </div>
+                    </div>
+                                        }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function removePriceRow(btn) {
+        if (confirm('هل أنت متأكد من حذف هذا السعر؟')) {
+            $(btn).closest('tr').remove();
+        }
+    }
+</script>

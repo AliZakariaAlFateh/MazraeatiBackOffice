@@ -11,7 +11,9 @@
         width: 120px;
     }
 </style>
+
 @Html.HiddenFor(a => a.Id)
+@* @Html.HiddenFor(a => a.FarmNumber) *@
 <div class="container-fluid">
     <div class="row clearfix">
         <div class="col-lg-12 col-md-12 col-sm-12">
@@ -29,7 +31,7 @@
                                 <option selected="selected" disabled="disabled">--الرجاء اختيار المزرعة--</option>
                                 @foreach (var item in Model.Farmers)
                                 {
-                                    <option selected="@(item.Id  == Model.FarmerId)" value="@item.Id">@item.Name</option>
+                                    <option selected="@(item.Id == Model.FarmerId)" value="@item.Id" data-farmnumber="@item.Number" data-farmnamear="@item.Name" data-farmnameen="@item.Name">@item.Name</option>
                                 }
                             </select>
                             @Html.ValidationMessageFor(a => a.FarmerId, "", new { @style = "color:red;font-size:10px" })
@@ -131,6 +133,21 @@
         //BaseUrl_Pro
         //BaseUrl_Dev
        
+        $("select[name='FarmerId']").on("change", function () {
+            var selectedOption = $(this).find("option:selected");
+
+            var farmNameAr = selectedOption.data("farmnamear");
+            if (farmNameAr) {
+                $("#FarmerName").val(farmNameAr);
+            }
+
+            var farmNameEn = selectedOption.data("farmnameen");
+            if (farmNameEn) {
+                $("#FarmerNameEn").val(farmNameEn);
+            }
+        });
+
+
         function initPhone(inputId) {
 
             var input = document.querySelector(inputId);

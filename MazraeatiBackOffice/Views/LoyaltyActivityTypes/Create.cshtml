@@ -1,0 +1,6 @@
+﻿@using MazraeatiBackOffice.Models.LoyaltyPoints
+@model LoyaltyActivityTypeModel
+@using (Html.BeginForm("Create", "LoyaltyActivityTypes", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.Partial("_CreateOrUpdate",Model)
+}

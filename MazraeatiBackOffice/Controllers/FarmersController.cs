@@ -1,26 +1,29 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using ClosedXML.Excel;
+using MazraeatiBackOffice;
+using MazraeatiBackOffice.Configuration;
+using MazraeatiBackOffice.Controllers;
+using MazraeatiBackOffice.Core;
+using MazraeatiBackOffice.Extenstion;
+using MazraeatiBackOffice.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using MazraeatiBackOffice.Controllers;
-using MazraeatiBackOffice;
-using MazraeatiBackOffice.Core;
-using MazraeatiBackOffice.Models;
-using MazraeatiBackOffice.Extenstion;
-using MazraeatiBackOffice.Configuration;
-using ClosedXML.Excel;
-using System.IO;
-using System.IO.Compression;
-using System.Net;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
+using System.IO.Compression;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace MazraeatiBackOffice.Controllers
 {
+    
     public class FarmersController : BaseController
     {
         private readonly IRepository<Farmer> _FarmerRepository;
@@ -80,26 +83,39 @@ namespace MazraeatiBackOffice.Controllers
             List<LookupValue> lookupValue = _LookupValueRepository.Table.Where(l => l.LookupId == 2).ToList();
             foreach (LookupValue Value in lookupValue)
             {
-                model.ExtraFeature.Add(new FarmerExtraFeatureTypeDto()
-                {
-                    FarmerId = 0,
-                    TypeId = Value.Id,
-                    ExtraText = Value.ValueAr,
-                    ExtraTextDescriptionAr = "",
-                    IsCheck = false
 
-                });
+                    model.ExtraFeature.Add(new FarmerExtraFeatureTypeDto()
+                    {
+                        FarmerId = 0,
+                        TypeId = Value.Id,
+                        ExtraText = Value.ValueAr,
+                        ExtraTextDescriptionAr = "",
+                        SwimmingPoolLength="",
+                        SwimmingPoolWidth="",
+                        SwimmingPoolDepth="",
+                        Code=Value.Code,
+                        IsCheck = false
+
+                    });
+
+                
+                    
             }
-            model.PriceList = new List<FarmerPriceList>()
+            //model.PriceList = new List<FarmerPriceList>()
+            //{
+            //    new FarmerPriceList(){ Id = 0 , FarmerId = 0 , Day = 1 , MorningPrice = 0 , EveningPrice = 0, FullDayPrice = 0, OfferPrice = 0, OfferEveningPrice = 0, OfferFullDayPrice = 0,MorningPeriodText = "" , EveningPeriodText = "", FullDayPeriodText = "" },
+            //    new FarmerPriceList(){ Id = 0 , FarmerId = 0 , Day = 2 , MorningPrice = 0 , EveningPrice = 0, FullDayPrice = 0, OfferPrice = 0, OfferEveningPrice = 0, OfferFullDayPrice = 0,MorningPeriodText = "" , EveningPeriodText = "", FullDayPeriodText = "" },
+            //    new FarmerPriceList(){ Id = 0 , FarmerId = 0 , Day = 3 , MorningPrice = 0 , EveningPrice = 0, FullDayPrice = 0, OfferPrice = 0, OfferEveningPrice = 0, OfferFullDayPrice = 0,MorningPeriodText = "" , EveningPeriodText = "", FullDayPeriodText = "" },
+            //    new FarmerPriceList(){ Id = 0 , FarmerId = 0 , Day = 4 , MorningPrice = 0 , EveningPrice = 0, FullDayPrice = 0, OfferPrice = 0, OfferEveningPrice = 0, OfferFullDayPrice = 0,MorningPeriodText = "" , EveningPeriodText = "", FullDayPeriodText = "" },
+            //    new FarmerPriceList(){ Id = 0 , FarmerId = 0 , Day = 5 , MorningPrice = 0 , EveningPrice = 0, FullDayPrice = 0, OfferPrice = 0, OfferEveningPrice = 0, OfferFullDayPrice = 0,MorningPeriodText = "" , EveningPeriodText = "", FullDayPeriodText = "" },
+            //    new FarmerPriceList(){ Id = 0 , FarmerId = 0 , Day = 6 , MorningPrice = 0 , EveningPrice = 0, FullDayPrice = 0, OfferPrice = 0, OfferEveningPrice = 0, OfferFullDayPrice = 0,MorningPeriodText = "" , EveningPeriodText = "", FullDayPeriodText = "" },
+            //    new FarmerPriceList(){ Id = 0 , FarmerId = 0 , Day = 7 , MorningPrice = 0 , EveningPrice = 0, FullDayPrice = 0, OfferPrice = 0, OfferEveningPrice = 0, OfferFullDayPrice = 0, MorningPeriodText = "" , EveningPeriodText = "", FullDayPeriodText = "" }
+            //};
+            //model.PriceList ??= new List<FarmerPriceList>();
+            if (model.PriceList == null)
             {
-                new FarmerPriceList(){ Id = 0 , FarmerId = 0 , Day = 1 , MorningPrice = 0 , EveningPrice = 0, FullDayPrice = 0, OfferPrice = 0, OfferEveningPrice = 0, OfferFullDayPrice = 0,MorningPeriodText = "" , EveningPeriodText = "", FullDayPeriodText = "" },
-                new FarmerPriceList(){ Id = 0 , FarmerId = 0 , Day = 2 , MorningPrice = 0 , EveningPrice = 0, FullDayPrice = 0, OfferPrice = 0, OfferEveningPrice = 0, OfferFullDayPrice = 0,MorningPeriodText = "" , EveningPeriodText = "", FullDayPeriodText = "" },
-                new FarmerPriceList(){ Id = 0 , FarmerId = 0 , Day = 3 , MorningPrice = 0 , EveningPrice = 0, FullDayPrice = 0, OfferPrice = 0, OfferEveningPrice = 0, OfferFullDayPrice = 0,MorningPeriodText = "" , EveningPeriodText = "", FullDayPeriodText = "" },
-                new FarmerPriceList(){ Id = 0 , FarmerId = 0 , Day = 4 , MorningPrice = 0 , EveningPrice = 0, FullDayPrice = 0, OfferPrice = 0, OfferEveningPrice = 0, OfferFullDayPrice = 0,MorningPeriodText = "" , EveningPeriodText = "", FullDayPeriodText = "" },
-                new FarmerPriceList(){ Id = 0 , FarmerId = 0 , Day = 5 , MorningPrice = 0 , EveningPrice = 0, FullDayPrice = 0, OfferPrice = 0, OfferEveningPrice = 0, OfferFullDayPrice = 0,MorningPeriodText = "" , EveningPeriodText = "", FullDayPeriodText = "" },
-                new FarmerPriceList(){ Id = 0 , FarmerId = 0 , Day = 6 , MorningPrice = 0 , EveningPrice = 0, FullDayPrice = 0, OfferPrice = 0, OfferEveningPrice = 0, OfferFullDayPrice = 0,MorningPeriodText = "" , EveningPeriodText = "", FullDayPeriodText = "" },
-                new FarmerPriceList(){ Id = 0 , FarmerId = 0 , Day = 7 , MorningPrice = 0 , EveningPrice = 0, FullDayPrice = 0, OfferPrice = 0, OfferEveningPrice = 0, OfferFullDayPrice = 0, MorningPeriodText = "" , EveningPeriodText = "", FullDayPeriodText = "" }
-            };
+                model.PriceList = new List<FarmerPriceList>();
+            }
             return model;
         }
 
@@ -126,6 +142,9 @@ namespace MazraeatiBackOffice.Controllers
                         ExtraText = Value.ValueAr,
                         ExtraTextDescriptionAr = farmerExtraFeatureTypes.Where(f => f.TypeId == Value.Id).FirstOrDefault().ExtraTextDescriptionAr,
                         ExtraTextDescriptionEn = farmerExtraFeatureTypes.Where(f => f.TypeId == Value.Id).FirstOrDefault().ExtraTextDescriptionEn,
+                        SwimmingPoolLength = farmerExtraFeatureTypes.Where(f => f.TypeId == Value.Id).FirstOrDefault().SwimmingPoolLength,
+                        SwimmingPoolWidth = farmerExtraFeatureTypes.Where(f => f.TypeId == Value.Id).FirstOrDefault().SwimmingPoolWidth,
+                        SwimmingPoolDepth = farmerExtraFeatureTypes.Where(f => f.TypeId == Value.Id).FirstOrDefault().SwimmingPoolDepth,
                         IsCheck = farmerExtraFeatureTypes.Count(f => f.TypeId == Value.Id) > 0 ? true : false
                     });
                 }
@@ -137,6 +156,9 @@ namespace MazraeatiBackOffice.Controllers
                         TypeId = Value.Id,
                         ExtraText = Value.ValueAr,//lable
                         ExtraTextDescriptionAr = "",
+                        SwimmingPoolLength = "",
+                        SwimmingPoolWidth = "",
+                        SwimmingPoolDepth = "",
                         IsCheck = farmerExtraFeatureTypes.Count(f => f.TypeId == Value.Id) > 0 ? true : false
 
                     });
@@ -174,6 +196,7 @@ namespace MazraeatiBackOffice.Controllers
                 query = query.Where(a =>
                     a.Name.Contains(search) ||
                     a.MobileNumber.Contains(search) ||
+                    a.Number.ToString().Contains(search) ||
                     a.SerialFarmKey.Contains(search));
             }
             //a.Number.ToString().Contains(search) ||
@@ -221,72 +244,7 @@ namespace MazraeatiBackOffice.Controllers
                 ReservationDate = ReservationDate == DateTime.MinValue ? (DateTime?)null : ReservationDate
             });
         }
-        //public IActionResult Index()
-        //{
-
-        //    var Countries = _countryRepository.Table.Where(f => f.Id == 2).ToList();
-        //    var Cities = _cityRepository.Table.Where(f => f.CountryId == 2).ToList();
-        //    var Reservation = _FarmerReservation.Table.ToList();
-        //    var FarmerFeedback = _FarmerFeedback.Table.ToList();
-        //    var Users = _userRepository.Table.ToList();
-        //    var Regions = _regionRepository.Table.ToList();
-        //    var farmerBlackListIds = _UnitOfWork.FarmerBlackListRepository.Table.Where(a => a.FarmerId != null && a.IsBlocked == true)
-        //                             .Select(a => a.FarmerId).ToList();
-        //    var model = _FarmerRepository.Table.Where(f => f.CountryId == 2 && !farmerBlackListIds.Contains(f.Id)).OrderByDescending(a => a.Id)
-        //        .Select(c => c.ToModel(Countries, Cities, Reservation, FarmerFeedback, Users, Regions));
-
-        //    ViewBag.activePage = "المزارع";
-        //    ViewBag.cities = Cities.Where(c => c.CountryId == 2);
-        //    ViewBag.DefaultDate = DateTime.Now;
-        //    return View(model);
-        //}
-
-
-        //[HttpPost]
-        //public IActionResult Index(string search, int CityBy, DateTime ReservationDate)
-        //{
-        //    if (string.IsNullOrEmpty(search) && CityBy == 0 && ReservationDate == DateTime.MinValue)
-        //        return RedirectToAction("Index");
-
-        //    search = string.IsNullOrEmpty(search) ? "" : search;
-        //    //DateTime? _reservationDate = ReservationDate != null ? null : DateTime.Parse(ReservationDate);
-
-        //    var farmerBlackListIds = _UnitOfWork.FarmerBlackListRepository.Table.Where(a => a.FarmerId != null && a.IsBlocked == true)
-        //                             .Select(a => a.FarmerId).ToList();
-        //    var Countries = _countryRepository.Table.Where(f => f.Id == 2).ToList();
-        //    var Cities = _cityRepository.Table.Where(f => f.CountryId == 2).ToList();
-        //    var FarmerFeedback = _FarmerFeedback.Table.ToList();
-        //    var Users = _userRepository.Table.ToList();
-        //    var Regions = _regionRepository.Table.ToList();
-        //    IQueryable<FarmerModel> model;
-        //    var Reservation = _FarmerReservation.Table.ToList();
-        //    if (ReservationDate != DateTime.MinValue)
-        //    {
-        //        Reservation = Reservation.Where(r => r.ReservationDate.Date == ReservationDate.Date).ToList();
-        //        model = _FarmerRepository.Table.Where(f => f.CountryId == 2 && !farmerBlackListIds.Contains(f.Id)).OrderByDescending(a => a.Id).Where(a => (a.Name.Contains(search) ||
-        //                                                                                a.MobileNumber.Contains(search) ||
-        //                                                                                a.Number.ToString().Contains(search)) && (CityBy == 0 || (CityBy > 0 && a.CityId == CityBy)) &&
-        //                                                                                (!Reservation.Select(r => r.FarmerId).Contains(a.Id)) && a.CountryId == 2
-        //                                                                           ).Select(c => c.ToModel(Countries, Cities, Reservation, FarmerFeedback, Users, Regions));
-        //    }
-        //    else
-        //    {
-        //        model = _FarmerRepository.Table.Where(f => f.CountryId == 2 && !farmerBlackListIds.Contains(f.Id)).OrderByDescending(a => a.Id).Where(a => (a.Name.Contains(search) ||
-        //                                                                                               a.MobileNumber.Contains(search) ||
-        //                                                                                               a.Number.ToString().Contains(search)) && (CityBy == 0 || (CityBy > 0 && a.CityId == CityBy)) &&
-        //                                                                                               a.CountryId == 2
-        //                                                                           ).Select(c => c.ToModel(Countries, Cities, Reservation, FarmerFeedback, Users, Regions));
-        //    }
-
-        //    ViewBag.activePage = "المزارع";
-        //    ViewBag.search = search;
-        //    ViewBag.cities = Cities.Where(c => c.CountryId == 2);
-        //    //AZ
-        //    ViewBag.CityBy = CityBy;
-        //    ViewBag.DefaultDate = DateTime.Now;
-
-        //    return View(model);
-        //}
+        
 
         public IActionResult Farmer_IsApprove()
         {
@@ -406,220 +364,6 @@ namespace MazraeatiBackOffice.Controllers
             return View(model);
         }
 
-        //public IActionResult ReservationFarmers()
-        //{
-        //    var Reservation = _FarmerReservation.Table.ToList();
-        //    return View(Reservation);
-        //}
-        //public IActionResult ReservationFarmers(int id)
-        //{
-        //    var Farmers = _FarmerRepository.Table.ToList();
-        //    List<LookupValue> lookupValue = _LookupValueRepository.Table.Where(l => l.LookupId == 2).ToList();
-        //    List<LookupValue> lookupValueReservationTypeId = _LookupValueRepository.Table.Where(l => l.LookupId == 6).ToList();
-        //    var currentMonthesReservation = _FarmerReservation.Table.Where(f => f.ReservationDate.Month == DateTime.Now.Month)
-        //    .Select(x => new FarmerReservationModel
-        //    {
-        //        Id = x.Id,
-        //        FarmerId = x.FarmerId,
-        //        ReservationTypeId = x.ReservationTypeId,
-        //        ReservationDate = x.ReservationDate,
-        //        CustMobNum = x.CustMobNum,
-        //        CustomerName = x.CustomerName,
-        //        Note = x.Note,
-        //        IsReciveCommission = x.IsReciveCommission,
-        //        AutomaticallyNote = x.AutomaticallyNote,
-        //        CreatedDate = x.CreatedDate,
-        //        LookupValues = null
-        //    })
-        //    .ToList();
-        //    var previousMonthesReservation = _FarmerReservation.Table.Where(f => f.ReservationDate.Month == (DateTime.Now.Month - 1))
-        //    .Select(x => new FarmerReservationModel
-        //    {
-        //        Id = x.Id,
-        //        FarmerId = x.FarmerId,
-        //        ReservationTypeId = x.ReservationTypeId,
-        //        ReservationDate = x.ReservationDate,
-        //        CustMobNum = x.CustMobNum,
-        //        CustomerName = x.CustomerName,
-        //        Note = x.Note,
-        //        IsReciveCommission = x.IsReciveCommission,
-        //        AutomaticallyNote = x.AutomaticallyNote,
-        //        CreatedDate = x.CreatedDate,
-        //        LookupValues = null
-        //    })
-        //    .ToList();
-        //    //var now = DateTime.Today;
-        //    //var prev = now.AddMonths(-1);
-
-        //    //var currentMonthReservations = _FarmerReservation.Table
-        //    //    .Where(f => f.ReservationDate.Month == now.Month && f.ReservationDate.Year == now.Year)
-        //    //    .ToList();
-
-        //    //var previousMonthReservations = _FarmerReservation.Table
-        //    //    .Where(f => f.ReservationDate.Month == prev.Month && f.ReservationDate.Year == prev.Year)
-        //    //    .ToList();
-        //    var reservations = _FarmerReservation.Table
-        //        //.AsNoTracking() // uncomment if EF Core and read-only
-        //        .Select(x => new FarmerReservationModel
-        //        {
-        //            Id = x.Id,
-        //            FarmerId = x.FarmerId,
-        //            ReservationTypeId = x.ReservationTypeId,
-        //            ReservationDate = x.ReservationDate,
-        //            CustMobNum = x.CustMobNum,
-        //            CustomerName = x.CustomerName,
-        //            Note = x.Note,
-        //            IsReciveCommission = x.IsReciveCommission,
-        //            AutomaticallyNote = x.AutomaticallyNote,
-        //            CreatedDate = x.CreatedDate,
-        //            LookupValues = null // map if you actually need it
-        //        })
-        //        .ToList();
-
-
-        //    if (id == 1)
-        //        return View(currentMonthesReservation);
-        //    else if (id == -1)
-        //        return View(previousMonthesReservation);
-        //    else
-        //        return View(reservations);
-
-        //    // IMPORTANT: now you pass List<FarmerReservationModel> to the view
-        //    //return View(reservations);
-        //}
-
-        //12_4_2026
-        //public IActionResult ReservationFarmers(int id, int? year = null, int? month = null)
-        //{
-        //    // 1) Dictionary للأنواع (in-memory)
-        //    var typeMap = _LookupValueRepository.Table
-        //        .Where(l => l.LookupId == 6)
-        //        .Select(l => new { l.Id, l.ValueAr })
-        //        .ToList()
-        //        .ToDictionary(x => x.Id, x => x.ValueAr);
-
-        //    // 2) حدّد مرجع الشهر (anchor)
-        //    DateTime anchor;
-        //    if (year.HasValue && month.HasValue)
-        //    {
-        //        anchor = new DateTime(year.Value, month.Value, 1);
-        //    }
-        //    else
-        //    {
-        //        // لو المستخدم ما حدّدش، نبدأ من اليوم
-        //        //anchor = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
-        //        anchor = new DateTime(
-        //                            DateTime.Today.Year,
-        //                            DateTime.Today.Month,
-        //                            DateTime.Today.Day
-        //                        );
-        //    }
-
-        //    // 3) حدود الشهور
-        //    DateTime firstThis = anchor;
-        //    DateTime firstNext = firstThis.AddMonths(1);
-        //    DateTime firstPrev = firstThis.AddMonths(-1);
-
-        //    // 4) اختَر الفلترة حسب id (1 = الشهر الحالي، -1 = السابق، غير كده = الكل)
-        //    var baseQuery = _FarmerReservation.Table;
-
-        //    IQueryable<MazraeatiBackOffice.Core.FarmerReservation> filteredQuery = id switch
-        //    {
-        //        1 => baseQuery.Where(r => r.ReservationDate >= firstThis && r.ReservationDate < firstNext),
-        //        -1 => baseQuery.Where(r => r.ReservationDate >= firstPrev && r.ReservationDate < firstThis),
-        //        _ => baseQuery
-        //    };
-
-        //    // 5) هات البيانات بشكل قابل للترجمة لـ SQL
-        //    var raw = filteredQuery
-        //        .Select(x => new
-        //        {
-        //            x.Id,
-        //            x.FarmerId,
-        //            x.ReservationTypeId,
-        //            x.ReservationDate,
-        //            x.CustMobNum,
-        //            x.CustomerName,
-        //            x.Note,
-        //            x.IsReciveCommission,
-        //            x.AutomaticallyNote,
-        //            x.CreatedDate
-        //        })
-        //        .ToList();
-
-        //    // 6) في حالة “الشهر السابق” أو “الحالي” ومع ذلك فاضيين،
-        //    //    ولو المستخدم ما حدّدش year/month، نِفِل باك لأحدث شهر موجود في البيانات.
-        //    if ((id == 1 || id == -1) && !year.HasValue && !month.HasValue && raw.Count == 0)
-        //    {
-        //        var maxDate = _FarmerReservation.Table
-        //            .Select(r => r.ReservationDate)
-        //            .DefaultIfEmpty()
-        //            .Max();
-
-        //        if (maxDate != default)
-        //        {
-        //            if (id == 1)
-        //            {
-        //                anchor = new DateTime(
-        //                                    DateTime.Today.Year,
-        //                                    DateTime.Today.Month,
-        //                                    DateTime.Today.Day);
-        //            }
-        //            else
-        //            {
-        //                anchor = new DateTime(maxDate.Year, maxDate.Month, 1);
-        //            }
-
-        //            firstThis = anchor;
-        //            firstNext = firstThis.AddMonths(1);
-        //            firstPrev = firstThis.AddMonths(-1);
-
-        //            var retryQuery = id == 1
-        //                ? baseQuery.Where(r => r.ReservationDate >= firstThis && r.ReservationDate < firstNext)
-        //                : baseQuery.Where(r => r.ReservationDate >= firstPrev && r.ReservationDate < firstThis);
-
-        //            raw = retryQuery
-        //                .Select(x => new
-        //                {
-        //                    x.Id,
-        //                    x.FarmerId,
-        //                    x.ReservationTypeId,
-        //                    x.ReservationDate,
-        //                    x.CustMobNum,
-        //                    x.CustomerName,
-        //                    x.Note,
-        //                    x.IsReciveCommission,
-        //                    x.AutomaticallyNote,
-        //                    x.CreatedDate
-        //                })
-        //                .ToList();
-        //        }
-        //    }
-
-        //    // 7) ماب نهائي للـ ViewModel + اسم النوع بالعربي من الـ dictionary
-        //    var models = raw.Select(x =>
-        //    {
-        //        typeMap.TryGetValue(x.ReservationTypeId, out var typeNameAr);
-        //        return new FarmerReservationModel
-        //        {
-        //            Id = x.Id,
-        //            FarmerId = x.FarmerId,
-        //            ReservationTypeId = x.ReservationTypeId,
-        //            ReservationTypeDesc = typeNameAr,
-        //            ReservationDate = x.ReservationDate,
-        //            CustMobNum = x.CustMobNum,
-        //            CustomerName = x.CustomerName,
-        //            Note = x.Note,
-        //            IsReciveCommission = x.IsReciveCommission,
-        //            AutomaticallyNote = x.AutomaticallyNote,
-        //            CreatedDate = x.CreatedDate,
-        //            LookupValues = null
-        //        };
-        //    }).ToList();
-
-        //    return View(models);
-        //}
-        //12_4_2026
 
         public IActionResult ReservationFarmers(int id, int? year = null, int? month = null)
         {
@@ -1027,6 +771,7 @@ namespace MazraeatiBackOffice.Controllers
         [HttpPost]
         public IActionResult Create(FarmerModel model, IFormFile formFile)
         {
+
             LogFile logFile = new LogFile();
 
             try
@@ -1079,32 +824,38 @@ namespace MazraeatiBackOffice.Controllers
                         farmerExtraFeatureType.ExtraText = extra.ExtraText;
                         farmerExtraFeatureType.ExtraTextDescriptionAr = extra.ExtraTextDescriptionAr;
                         farmerExtraFeatureType.ExtraTextDescriptionEn = extra.ExtraTextDescriptionEn;
+                        farmerExtraFeatureType.SwimmingPoolLength = extra.SwimmingPoolLength;
+                        farmerExtraFeatureType.SwimmingPoolWidth = extra.SwimmingPoolWidth;
+                        farmerExtraFeatureType.SwimmingPoolDepth = extra.SwimmingPoolDepth;
 
 
                         _UnitOfWork.FarmerExtraFeatureTypeRepository.Insert(farmerExtraFeatureType);
 
                     }
 
-                    // add price list
-                    foreach (FarmerPriceList priceList in model.PriceList)
+                    if (model.PriceList != null && model.PriceList.Any())
                     {
-                        FarmerPriceList farmerPriceList = new FarmerPriceList();
-                        farmerPriceList.FarmerId = nFarmsId;
-                        farmerPriceList.Day = priceList.Day;
-                        farmerPriceList.MorningPrice = priceList.MorningPrice;
-                        farmerPriceList.EveningPrice = priceList.EveningPrice;
-                        farmerPriceList.FullDayPrice = priceList.FullDayPrice;
-                        farmerPriceList.OfferPrice = priceList.OfferPrice;
-                        farmerPriceList.OfferEveningPrice = priceList.OfferEveningPrice;
-                        farmerPriceList.OfferFullDayPrice = priceList.OfferFullDayPrice;
-                        farmerPriceList.MorningPeriodText = priceList.MorningPeriodText;
-                        farmerPriceList.EveningPeriodText = priceList.EveningPeriodText;
-                        farmerPriceList.FullDayPeriodText = string.IsNullOrEmpty(priceList.FullDayPeriodText) ? "" : priceList.FullDayPeriodText;
+                        // add price list
+                        foreach (FarmerPriceList priceList in model.PriceList)
+                        {
+                            FarmerPriceList farmerPriceList = new FarmerPriceList();
+                            farmerPriceList.FarmerId = nFarmsId;
+                            farmerPriceList.Day = priceList.Day;
+                            farmerPriceList.MorningPrice = priceList.MorningPrice;
+                            farmerPriceList.EveningPrice = priceList.EveningPrice;
+                            farmerPriceList.FullDayPrice = priceList.FullDayPrice;
+                            farmerPriceList.OfferPrice = priceList.OfferPrice;
+                            farmerPriceList.OfferEveningPrice = priceList.OfferEveningPrice;
+                            farmerPriceList.OfferFullDayPrice = priceList.OfferFullDayPrice;
+                            farmerPriceList.MorningPeriodText = priceList.MorningPeriodText;
+                            farmerPriceList.EveningPeriodText = priceList.EveningPeriodText;
+                            farmerPriceList.FullDayPeriodText = string.IsNullOrEmpty(priceList.FullDayPeriodText) ? "" : priceList.FullDayPeriodText;
 
-                        _UnitOfWork.FarmerPriceListRepository.Insert(farmerPriceList);
+                            _UnitOfWork.FarmerPriceListRepository.Insert(farmerPriceList);
 
+                        }
                     }
-
+                    
 
                     // add image
                     int nSortImage = 1;
@@ -1171,7 +922,8 @@ namespace MazraeatiBackOffice.Controllers
             model.Cities = _cityRepository.Table.Where(a => a.Active == true && a.CountryId == 2 && a.Id != 20).ToList();
             model.Users = _userRepository.Table.ToList();
             model.Regions = _regionRepository.Table.ToList();
-            //return View(NewFillModel(new FarmerModel()));"
+            //return View(NewFillModel(new FarmerModel()));
+            //return View(NewFillModel(model));
             return View(model);
         }
 
@@ -1189,134 +941,6 @@ namespace MazraeatiBackOffice.Controllers
 
         [HttpPost]
         [RequestFormLimits(MultipartBodyLengthLimit = int.MaxValue)]
-        //public IActionResult Edit(FarmerModel model, IFormFile formFile)
-        //{
-        //    try
-        //    {
-        //        if (ModelState.IsValid)
-        //        {
-        //            int maxOrderIdImage = 0;
-        //            int maxOrderIdVideo = 0;
-
-        //            if (_UnitOfWork.FarmerImageRepository.Table.ToList().Count(f => f.FarmerId == model.Id) > 0)
-        //                maxOrderIdImage = _UnitOfWork.FarmerImageRepository.Table.ToList().Where(f => f.FarmerId == model.Id).Select(x => x.Sort).DefaultIfEmpty(0).Max();
-
-        //            if (_UnitOfWork.FarmerVideoRepository.Table.ToList().Count(f => f.FarmerId == model.Id) > 0)
-        //                maxOrderIdVideo = _UnitOfWork.FarmerVideoRepository.Table.ToList().Where(f => f.FarmerId == model.Id).Select(x => x.Sort).DefaultIfEmpty(0).Max();
-
-        //            if (model.PriceList != null)
-        //            {
-        //                // edit price list
-        //                foreach (FarmerPriceList priceList in model.PriceList)
-        //                {
-        //                    _UnitOfWork.FarmerPriceListRepository.Update(priceList);
-        //                }
-        //            }
-
-        //            if (model.ExtraFeature != null)
-        //            {
-        //                // edit extra feature
-        //                foreach (FarmerExtraFeatureTypeDto extra in model.ExtraFeature)
-        //                {
-        //                    FarmerExtraFeatureType farmerExtraFeatureType = new FarmerExtraFeatureType();
-        //                    farmerExtraFeatureType.Id = extra.Id;
-        //                    farmerExtraFeatureType.FarmerId = model.Id;
-        //                    farmerExtraFeatureType.ExtraText = extra.ExtraText;
-        //                    farmerExtraFeatureType.ExtraTextDescriptionAr = extra.ExtraTextDescriptionAr;
-        //                    farmerExtraFeatureType.ExtraTextDescriptionEn = extra.ExtraTextDescriptionEn;
-        //                    farmerExtraFeatureType.TypeId = extra.TypeId;
-
-        //                    if (extra.Id > 0)
-        //                    {
-        //                        if (!extra.IsCheck)
-        //                        {
-        //                            _UnitOfWork.FarmerExtraFeatureTypeRepository.Delete(farmerExtraFeatureType);
-        //                        }
-        //                        else
-        //                        {
-        //                            if (_FarmerExtraFeatureType.Table.Count(f => f.FarmerId == model.Id && f.TypeId == extra.TypeId) == 0)
-        //                                _UnitOfWork.FarmerExtraFeatureTypeRepository.Insert(farmerExtraFeatureType);
-        //                            else if (_FarmerExtraFeatureType.Table.Count(f => f.FarmerId == model.Id && f.TypeId == extra.TypeId) == 1)
-        //                            {
-        //                                _UnitOfWork.FarmerExtraFeatureTypeRepository.Update(farmerExtraFeatureType);
-        //                            }
-        //                        }
-        //                    }
-        //                    else
-        //                    {
-        //                        if (extra.IsCheck)
-        //                            _UnitOfWork.FarmerExtraFeatureTypeRepository.Insert(farmerExtraFeatureType);
-        //                    }
-        //                }
-        //            }
-
-
-        //            // add new image
-        //            int nSortImage = maxOrderIdImage + 1;
-        //            if (model.Images != null)
-        //            {
-        //                foreach (IFormFile file in model.Images)
-        //                {
-        //                    FarmerImage farmerImage = new FarmerImage();
-
-        //                    if (file != null)
-        //                        farmerImage.Url = "farmer/" + GenericFunction.UploadedFile(file, webHostEnvironment, "farmer");
-
-        //                    farmerImage.FarmerId = model.Id;
-        //                    farmerImage.Sort = nSortImage;
-        //                    farmerImage.Vip = true;
-        //                    farmerImage.Active = true;
-
-        //                    _UnitOfWork.FarmerImageRepository.Insert(farmerImage);
-        //                    nSortImage++;
-        //                }
-        //            }
-
-
-        //            // add new video
-        //            int nSortVideo = maxOrderIdVideo + 1;
-        //            if (model.Videos != null)
-        //            {
-        //                foreach (IFormFile file in model.Videos)
-        //                {
-        //                    FarmerVideo farmerVideo = new FarmerVideo();
-
-        //                    if (file != null)
-        //                        farmerVideo.Url = GenericFunction.UploadedVideo(file, webHostEnvironment);
-
-        //                    farmerVideo.FarmerId = model.Id;
-        //                    farmerVideo.Sort = nSortVideo;
-        //                    farmerVideo.Active = true;
-
-        //                    _UnitOfWork.FarmerVideoRepository.Insert(farmerVideo);
-        //                    nSortVideo++;
-        //                }
-        //            }
-
-        //            _UnitOfWork.FarmerRepository.Update(model.ToEntity());
-        //            _UnitOfWork.Save();
-        //            SuccessNotification("تم تحديث السجل بنجاح");
-        //            return RedirectToAction("Index");
-        //        }
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        ErrorNotification("error while saving farms , please contact to administrator");
-        //    }
-        //    //AZ
-        //    model.Countries = _countryRepository.Table.Where(a => a.Id == 2 && a.Active == true).ToList();
-        //    model.Cities = _cityRepository.Table.Where(a => a.Active == true && a.CountryId == 2 && a.Id != 20).ToList();
-        //    return View(model);
-        //}
-
-
-
-
-
-
-
-
-
         public IActionResult Edit(FarmerModel model, IFormFile formFile)
         {
             LogFile logFile = new LogFile();
@@ -1355,6 +979,7 @@ namespace MazraeatiBackOffice.Controllers
                         foreach (FarmerPriceList priceList in model.PriceList)
                         {
                             _UnitOfWork.FarmerPriceListRepository.Update(priceList);
+
                         }
                     }
 
@@ -1369,6 +994,9 @@ namespace MazraeatiBackOffice.Controllers
                             farmerExtraFeatureType.ExtraText = extra.ExtraText;
                             farmerExtraFeatureType.ExtraTextDescriptionAr = extra.ExtraTextDescriptionAr;
                             farmerExtraFeatureType.ExtraTextDescriptionEn = extra.ExtraTextDescriptionEn;
+                            farmerExtraFeatureType.SwimmingPoolLength = extra.SwimmingPoolLength;
+                            farmerExtraFeatureType.SwimmingPoolWidth = extra.SwimmingPoolWidth;
+                            farmerExtraFeatureType.SwimmingPoolDepth = extra.SwimmingPoolDepth;
                             farmerExtraFeatureType.TypeId = extra.TypeId;
 
                             if (extra.Id > 0)
@@ -2119,6 +1747,50 @@ namespace MazraeatiBackOffice.Controllers
 
         #endregion
 
+        #region EditPriceList
+        [HttpPost]
+        //public IActionResult EditPriceList(List<FarmerPriceList> priceLists)
+        //{
+        //    if (priceLists != null && priceLists.Any())
+        //    {
+        //        // edit price list
+        //        foreach (FarmerPriceList priceList in priceLists)
+        //        {
+        //            _UnitOfWork.FarmerPriceListRepository.Update(priceList);
+        //            _UnitOfWork.Save();
+        //        }
+
+        //        return Json(new { success = true });
+        //    }
+        //    return Json(new { success = false, message = "No data to update" });
+        //}
+        //[ValidateAntiForgeryToken] // اختياري
+        public IActionResult EditPriceList([FromBody] List<FarmerPriceList> priceLists)
+        {
+            if (priceLists != null && priceLists.Any())
+            {
+                try
+                {
+                    foreach (FarmerPriceList priceList in priceLists)
+                    {
+                        if (priceList.Id > 0)
+                        {
+                            _UnitOfWork.FarmerPriceListRepository.Update(priceList);
+                        }
+                        _UnitOfWork.Save();
+                    }
+                    
+
+                    return Json(new { success = true, message = "تم التحديث بنجاح" });
+                }
+                catch (Exception ex)
+                {
+                    return Json(new { success = false, message = ex.Message });
+                }
+            }
+            return Json(new { success = false, message = "لا توجد بيانات للتحديث" });
+        }
+        #endregion
 
 
 
@@ -2210,6 +1882,32 @@ namespace MazraeatiBackOffice.Controllers
 
             return Json(regions);
         }
+
+        [HttpPost]
+        public JsonResult DeletePriceList_Full(int farmerId)
+        {
+            try
+            {
+                var priceList = _UnitOfWork.FarmerPriceListRepository.Table
+                    .Where(p => p.FarmerId == farmerId)
+                    .ToList();
+
+                foreach (var item in priceList)
+                {
+                    _UnitOfWork.FarmerPriceListRepository.Delete(item);
+                }
+
+                _UnitOfWork.Save();
+
+                return Json(new { success = true });
+            }
+            catch (Exception)
+            {
+                return Json(new { success = false });
+            }
+        }
+
+
 
     }
 }

@@ -1,94 +1,5 @@
 ﻿@model CommonQuestionsModel
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="~/assets/js/jquery-3.2.1.min.js"></script>
-<link href="~/assets/css/sliderimages_mahjoz.css" rel="stylesheet" />
-<style>
-    .form-group {
-        font-size: 13px;
-    }
-
-    .textboxWidth {
-        width: 120px;
-    }
-
-    .form-label {
-        font-weight: bold;
-        margin-bottom: 5px;
-        display: block;
-    }
-
-    .form-control {
-        border-radius: 10px;
-        padding: 10px;
-        border: 1px solid #ddd;
-        transition: 0.3s;
-    }
-
-        .form-control:focus {
-            border-color: #0d6efd;
-            box-shadow: 0 0 5px rgba(13, 110, 253, 0.3);
-        }
-
-    .form-card {
-        border-radius: 15px;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-        padding: 25px;
-        background: #fff;
-    }
-
-    .section-title {
-        font-weight: bold;
-        margin-bottom: 15px;
-        color: #0d6efd;
-    }
-
-    .btn-custom {
-        border-radius: 25px;
-        padding: 8px 25px;
-    }
-
-    .input-group-box {
-        margin-bottom: 15px;
-    }
-
-    /*DDL*/
-
-    .select2-container--default .select2-selection--single {
-        height: 45px;
-        border-radius: 10px;
-        padding: 8px;
-        border: 1px solid #ddd;
-    }
-
-    .select2-selection__rendered {
-        line-height: 28px !important;
-        font-weight: 500;
-    }
-
-    .select2-dropdown {
-        border-radius: 10px;
-        overflow: hidden;
-    }
-
-    .select2-results__option {
-        padding: 10px;
-        font-size: 14px;
-    }
-
-    .select2-results__option--highlighted {
-        background: #0d6efd !important;
-        color: #fff;
-    }
-
-    .select2-container--default .select2-selection--single .select2-selection__rendered {
-        line-height: 15px !important;
-    }
-</style>
-<script>
-    // Helper function for SweetAlerts (from previous discussions)
-</script>
-
-
+<link href="~/assets/css/commonquestions.css" rel="stylesheet" />
 @Html.HiddenFor(a => a.Id)
 @Html.HiddenFor(a => a.ImageUrl) @* This hidden field will carry the original image URL if no new file is selected *@
 
@@ -175,5 +86,6 @@
         </div>
     </div>
 </div>
-
-<script src="~/assets/js/slider_images_mahjoz.js"></script>
+@* @section Scripts { *@
+<script src="~/assets/js/commonquestions.js"></script>
+@* } *@

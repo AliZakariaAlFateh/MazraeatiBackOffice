@@ -117,33 +117,50 @@
                                     </button>
                                 </div>
                             </div>
-                            <table class="table m-b-0 table-hover">
-                                <thead style="background-color:#FD9C4E;color:white">
-                                    <tr>
-                                        <th>#</th>
-                                        <th>صور</th>
-                                        <th>فعال او لا</th>
-                                        <th>صور VIP</th>
-                                        <th> تحديد </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var item in Model.Images)
-                                    {
-                                    <tr>
-                                        <td>@item.Id</td>
-                                        <td>
-                                            <a href="@Url.Content("~/images/")@item.Url" target="_blank">
-                                                <img width="120" height="120" src="@Url.Content("~/images/")@item.Url" />
-                                            </a>
-                                        </td>
-                                        <td> <span class="badge badge-@(item.Active ? "success" : "danger")">@(item.Active ? "موافق عليها" : "غير موافق عليها")</span></td>
-                                        <td> <span class="badge badge-@(item.Vip ? "success" : "danger")">@(item.Vip ? "VIP" : "Not VIP")</span></td>
-                                        <td><input class="farmerImageCheckbox" type="checkbox" id="@item.Id" /></td>
-                                    </tr>
-                                    }
-                                </tbody>
-                            </table>
+                            
+                            @if (Model.Images.Any())
+                            {
+                                <table class="table m-b-0 table-hover">
+                                    <thead style="background-color:#FD9C4E;color:white">
+                                        <tr>
+                                            <th>#</th>
+                                            <th>صور</th>
+                                            <th>فعال او لا</th>
+                                            <th>صور VIP</th>
+                                            <th> تحديد </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.Images)
+                                        {
+                                            <tr>
+                                                <td>@item.Id</td>
+                                                <td>
+                                                    <a href="@Url.Content("~/images/")@item.Url" target="_blank">
+                                                        <img width="120" height="120" src="@Url.Content("~/images/")@item.Url" />
+                                                    </a>
+                                                </td>
+                                                <td> <span class="badge badge-@(item.Active ? "success" : "danger")">@(item.Active ? "موافق عليها" : "غير موافق عليها")</span></td>
+                                                <td> <span class="badge badge-@(item.Vip ? "success" : "danger")">@(item.Vip ? "VIP" : "Not VIP")</span></td>
+                                                <td><input class="farmerImageCheckbox" type="checkbox" id="@item.Id" /></td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            }
+                            else
+                            {
+
+                                <div class="empty-state-container">
+                                    <div class="empty-state-icon">
+                                        <i class="zmdi zmdi-search-for-wild"></i>
+
+                                    </div>
+                                    <div class="empty-state-title">لا توجد بيانات حالياً</div>
+                                    <div class="empty-state-description">لا توجد بيانات ليتم عرضها يمكنك اضافة بيانات ليتم عرضها هنا </div>
+                                </div>
+                            }
+
                         </div>
                     </div>
                 </div>

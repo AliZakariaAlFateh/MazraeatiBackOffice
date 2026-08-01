@@ -1,0 +1,11 @@
+﻿@model SportTypeModel
+
+@{
+    ViewBag.Title = "تعديل نوع رياضة";
+    ViewBag.activePage = "أنواع الرياضات";
+}
+
+@using (Html.BeginForm("Edit", "SportTypes", FormMethod.Post))
+{
+    @Html.Partial("_CreateOrUpdate", Model)
+}

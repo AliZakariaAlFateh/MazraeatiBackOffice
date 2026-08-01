@@ -57,36 +57,51 @@
                 <button type="button" onclick="window.location.href='@Url.Content("~/Farmers/index")'" class="btn btn-default btn-round btn-simple">رجوع</button>
             </div>
 
-            <div class="tab-content m-t-10">
-                <div class="tab-pane table-responsive active" id="All">
-                    <table class="table m-b-0 table-hover">
-                        <thead>
-                            <tr>
-                                <th>@Html.DisplayNameFor(a => a.FeedbackId)</th>
-                                <th>@Html.DisplayNameFor(a => a.Note)</th>
-                                <th>@Html.DisplayNameFor(a => a.IsSolved)</th>
-                                <th>تفاصيل</th>
-                                <th>حذف</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model)
-                            {
-                            <tr>
-                                <td>@item.FeedbackTypeDesc</td>
-                                <td>@(string.IsNullOrEmpty(item.Note) ? "" : (item.Note.Length > 40 ? item.Note.Substring(0,40) : item.Note))</td>
-                                <td>@(item.IsSolved == true ? "نعم" : "لا" )</td>
-                                <td><a href="@Url.Content("~/FarmerFeedBack/edit/")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
-                                <td>
-                                    <a href="javascript:DeleteFarmerReservationWithParampter('FarmerFeedBack',@item.Id,'Delete','Index',@item.FarmerId)" class="btn btn-danger btn-sm">حذف</a>
-                                </td>
-                            </tr>
-                            }
+            @if (Model.Any())
+            {
+                <div class="tab-content m-t-10">
+                    <div class="tab-pane table-responsive active table-scroll table table-bordered" id="All">
+                        <table class="table m-b-0 table-hover">
+                            <thead>
+                                <tr>
+                                    <th>@Html.DisplayNameFor(a => a.FeedbackId)</th>
+                                    <th>@Html.DisplayNameFor(a => a.Note)</th>
+                                    <th>@Html.DisplayNameFor(a => a.IsSolved)</th>
+                                    <th>تفاصيل</th>
+                                    <th>حذف</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>@item.FeedbackTypeDesc</td>
+                                        <td>@(string.IsNullOrEmpty(item.Note) ? "" : (item.Note.Length > 40 ? item.Note.Substring(0, 40) : item.Note))</td>
+                                        <td>@(item.IsSolved == true ? "نعم" : "لا")</td>
+                                        <td><a href="@Url.Content("~/FarmerFeedBack/edit/")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
+                                        <td>
+                                            <a href="javascript:DeleteFarmerReservationWithParampter('FarmerFeedBack',@item.Id,'Delete','Index',@item.FarmerId)" class="btn btn-danger btn-sm">حذف</a>
+                                        </td>
+                                    </tr>
+                                }
 
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
+            }
+            else
+            {
+
+                <div class="empty-state-container">
+                    <div class="empty-state-icon">
+                        <i class="zmdi zmdi-search-for-wild"></i> 
+
+                    </div>
+                    <div class="empty-state-title">لا توجد بيانات حالياً</div>
+                    <div class="empty-state-description">لا توجد بيانات ليتم عرضها يمكنك اضافة بيانات ليتم عرضها هنا </div>
+                </div>
+            }
 
 
 

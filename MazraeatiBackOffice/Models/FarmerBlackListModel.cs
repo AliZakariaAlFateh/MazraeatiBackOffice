@@ -36,7 +36,8 @@ namespace MazraeatiBackOffice.Models
         public int? FarmerId { get; set; }
         [DisplayName("هل  موافق علي حظر هذه المزرعه")]
         public bool IsBlocked { get; set; }
-
+        [DisplayName("رقم الإعلان")]
+        public long FarmNumber { get; set; }
         public List<Farmer> Farmers { get; set; }
     }
 }

@@ -1,0 +1,273 @@
+﻿@using MazraeatiBackOffice.Core
+@model IEnumerable<SportFeatureModel>
+
+@{
+    ViewBag.Title = "المرفقات الخاصة";
+    ViewBag.activePage = "المرفقات الخاصة";
+    var sportTypes = ViewBag.SportTypes as List<SportType>;
+}
+
+<style>
+    .stat-card {
+        background: white;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        text-align: center;
+        margin-bottom: 15px;
+        cursor: default;
+        transition: transform 0.2s;
+    }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .stat-card .number {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .stat-card .label {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .stat-card.total {
+            border-left: 4px solid #007bff;
+        }
+
+        .stat-card.active {
+            border-left: 4px solid #28a745;
+        }
+
+        .stat-card.inactive {
+            border-left: 4px solid #dc3545;
+        }
+
+    .filter-section {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+
+        .filter-section .form-group {
+            margin-bottom: 5px;
+        }
+
+        .filter-section label {
+            font-size: 13px;
+            font-weight: 600;
+        }
+</style>
+
+<div class="container-fluid">
+    <div class="row clearfix">
+        <div class="col-lg-12 col-md-12 col-sm-12">
+            <div class="card">
+                <div class="header">
+                    <h2>
+                        <strong>المرفقات الخاصة</strong>
+                        <small>@ViewBag.SelectedSportTypeName</small>
+                    </h2>
+                    <ul class="header-dropdown">
+                        <li>
+                            <a href="@Url.Action("Create")" class="btn btn-primary btn-round">
+                                <i class="fa fa-plus"></i> إضافة مرفق جديد
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="body">
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show">
+                            <strong>تم!</strong> @TempData["SuccessMessage"]
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        </div>
+                    }
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show">
+                            <strong>خطأ!</strong> @TempData["ErrorMessage"]
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        </div>
+                    }
+
+                    <!-- ===== الإحصائيات (Cards) ===== -->
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="stat-card total">
+                                <div class="number">@ViewBag.TotalFeatures</div>
+                                <div class="label">إجمالي المرفقات</div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="stat-card active">
+                                <div class="number">@ViewBag.ActiveFeatures</div>
+                                <div class="label">نشطة</div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="stat-card inactive">
+                                <div class="number">@ViewBag.InactiveFeatures</div>
+                                <div class="label">غير نشطة</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ===== الفلتر ===== -->
+                    <div class="filter-section">
+                        <form method="post" action="@Url.Action("Index", "SportFeatures")">
+                            @Html.AntiForgeryToken()
+                            <div class="row clearfix">
+                                <!-- فلتر القسم الرياضي -->
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label>القسم الرياضي</label>
+                                        <select class="form-control select2" name="sportTypeId">
+                                            <option value="">-- الكل --</option>
+                                            @foreach (var item in ViewBag.SportTypes)
+                                            {
+                                                <option value="@item.Id" selected="@(item.Id == ViewBag.SelectedSportTypeId)">@item.NameAr</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- بحث -->
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label>بحث</label>
+                                        <input type="text" name="search" value="@ViewBag.search"
+                                               placeholder="الكلمة المفتاحية" class="form-control" />
+                                    </div>
+                                </div>
+
+                                <!-- أزرار -->
+                                <div class="col-sm-4" style="padding-top:22px;">
+                                    <button type="submit" class="btn btn-primary btn-round">
+                                        <i class="fa fa-search"></i> بحث
+                                    </button>
+                                    <a href="@Url.Action("Index")" class="btn btn-default btn-round">
+                                        <i class="fa fa-refresh"></i> تفريغ
+                                    </a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- ===== جدول المرفقات ===== -->
+                    <div class="table-scroll" style="overflow-x: auto; overflow-y: visible;max-height:300px">
+                        <table class="table table-bordered table-striped table-hover">
+                            <thead class="bg-info text-white">
+                                <tr>
+                                    <th>#</th>
+                                    <th>القسم الرياضي</th>
+                                    <th>المرفق (عربي)</th>
+                                    <th>المرفق (إنجليزي)</th>
+                                    <th>الأيقونة</th>
+                                    <th>الحالة</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.Any())
+                                {
+                                    int counter = 1;
+                                    foreach (var item in Model)
+                                    {
+                                        // ===== استخدام sportTypes بعد التحويل =====
+                                        var sportType = sportTypes?.FirstOrDefault(s => s.Id == item.SportTypeId);
+                                        <tr>
+                                            <td>@counter</td>
+                                            <td>
+                                                <span class="badge badge-primary">@sportType?.NameAr</span>
+                                            </td>
+                                            <td><strong>@item.FeatureTextAr</strong></td>
+                                            <td>@item.FeatureTextEn</td>
+                                            <td>
+                                                @if (!string.IsNullOrEmpty(item.IconClass))
+                                                {
+                                                    <i class="@item.IconClass"></i>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (item.IsActive)
+                                                {
+                                                    <span class="badge badge-success">نشط</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge badge-danger">غير نشط</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm">
+                                                    <a href="@Url.Action("Edit", new { id = item.Id })" class="btn btn-warning" title="تعديل">
+                                                        <i class="fa fa-edit" style="color: white;margin-top: -10px;"></i>
+                                                    </a>
+                                                    @* <a href="javascript:DeleteFeature(@item.Id)" class="btn btn-danger" title="حذف">
+                                                        <i class="fa fa-trash"></i>
+                                                    </a> *@
+                                                    @* <a href="javascript:Delete('SportFeatures', @item.Id, 'Delete', 'Index')"
+                                                       class="btn-action btn-delete"
+                                                       title="حذف الحجز">
+                                                        <i class="fa fa-trash"></i> حذف
+                                                    </a> *@
+                                                    <a href="javascript:Delete('SportFeatures',@item.Id,'Delete','Index')" title="حذف" class="btn btn-danger"><i class="fa fa-trash" style=""></i></a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        counter++;
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="7" class="text-center">
+                                            <div class="alert alert-info">
+                                                لا توجد مرفقات خاصة
+                                                <br />
+                                                <a href="@Url.Action("Create")" class="btn btn-primary btn-sm mt-2">
+                                                    <i class="fa fa-plus"></i> أضف مرفق جديد
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- ===== إجمالي النتائج ===== -->
+                    @if (Model != null && Model.Any())
+                    {
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <span class="text-muted">إجمالي النتائج: @Model.Count()</span>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('.select2').select2();
+    });
+</script>
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" />
+}
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/i18n/ar.js"></script>
+}

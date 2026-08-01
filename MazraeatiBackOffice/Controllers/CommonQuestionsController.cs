@@ -38,7 +38,7 @@ namespace MazraeatiBackOffice.Controllers
         public IActionResult Index()
         {
             var model = _CommonQuestionsRepository.Table.OrderByDescending(a => a.Id).Select(c => c.ToModel());
-            ViewBag.activePage = "الأسئلة الشائعة";
+            ViewBag.activePage = "الأسئلة الشائعة لأصحاب المزارع";
             return View(model);
         }
 
@@ -61,7 +61,7 @@ namespace MazraeatiBackOffice.Controllers
 
         public IActionResult Create()
         {
-            ViewBag.activePage = "الأسئلة الشائعة";
+            ViewBag.activePage = "الأسئلة الشائعة لأصحاب المزارع";
             return View(FillModel(new CommonQuestionsModel()));
         }
 
@@ -90,12 +90,12 @@ namespace MazraeatiBackOffice.Controllers
 
         public IActionResult Edit(int id)
         {
-            CommonQuestions imageSlider = _CommonQuestionsRepository.GetById(id);
-            if (imageSlider == null)
+            CommonQuestions commonQuestions = _CommonQuestionsRepository.GetById(id);
+            if (commonQuestions == null)
                 return RedirectToAction("Index");
 
-            ViewBag.activePage = "الأسئلة الشائعة";
-            return View(FillModel(imageSlider.ToModel()));
+            ViewBag.activePage = "الأسئلة الشائعة لأصحاب المزارع";
+            return View(FillModel(commonQuestions.ToModel()));
         }
 
         [HttpPost]

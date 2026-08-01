@@ -1,0 +1,249 @@
+﻿/*@import url('bootstrap.min.css');*/
+.rtl .table th, .rtl .table td {
+    text-align: center;
+}
+/* Professional Table Styling */
+.rtl .table th, .rtl .table td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* Modern Role Badges */
+.role-badge {
+    display: inline-block;
+    padding: 0.35rem 0.75rem;
+    margin: 0.2rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 20px;
+    letter-spacing: 0.3px;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.role-badge:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Role-specific colors */
+.role-badge.role-admin {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: white;
+}
+
+.role-badge.role-superadmin {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+    color: white;
+}
+
+.role-badge.role-employee {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%) !important;
+    color: white;
+}
+
+.role-badge.role-accountant {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%) !important;
+    color: white;
+}
+
+.role-badge.role-viewer {
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%) !important;
+    color: white;
+}
+
+/* Status Badges */
+.status-badge {
+    display: inline-block;
+    padding: 0.35rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 20px;
+    letter-spacing: 0.3px;
+    transition: all 0.2s ease;
+}
+
+.status-badge.active {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%) !important;
+    color: white;
+}
+
+.status-badge.inactive {
+    background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%) !important;
+    color: white;
+}
+
+/* Modern Action Buttons */
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn-action {
+    padding: 0.35rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-action i {
+    font-size: 0.8rem;
+}
+
+.btn-action:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.btn-action:active {
+    transform: translateY(0);
+}
+
+.btn-edit {
+    background: linear-gradient(135deg, #f2994a 0%, #f2c94c 100%);
+    color: white;
+}
+
+.btn-edit:hover {
+    background: linear-gradient(135deg, #e08e3e 0%, #e0b840 100%);
+    color: white;
+}
+
+.btn-toggle {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+    .btn-toggle:hover {
+        background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+        color: white;
+    }
+
+.btn-delete {
+    background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+    color: white;
+}
+
+    .btn-delete:hover {
+        background: linear-gradient(135deg, #d63031 0%, #e74c3c 100%);
+        color: white;
+    }
+
+/* Enhanced Table */
+.table {
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+}
+
+.table thead th {
+    /* background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); */
+    background: linear-gradient(135deg, #2d8027 0% 0%, #0a2811 100%);
+    color: white;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 1rem;
+    border: none;
+}
+
+.table tbody tr {
+    transition: all 0.2s ease;
+    background-color: white;
+}
+
+    .table tbody tr:hover {
+        background-color: #f8f9fc;
+        transform: scale(1.01);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+.table tbody td {
+    padding: 1rem;
+    vertical-align: middle;
+    border-bottom: 1px solid #e3e6f0;
+}
+
+/* Card Enhancement */
+.card {
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08);
+}
+
+.card-header {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-bottom: 2px solid #667eea;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .action-buttons {
+        flex-direction: column;
+        gap: 0.3rem;
+    }
+
+    .btn-action {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .table thead th {
+        font-size: 0.7rem;
+        padding: 0.75rem;
+    }
+
+    .table tbody td {
+        padding: 0.75rem;
+    }
+}
+
+/* Animation for row updates */
+@keyframes fadeInUpdate {
+    from {
+        opacity: 0;
+        background-color: #fff3cd;
+    }
+
+    to {
+        opacity: 1;
+        background-color: transparent;
+    }
+}
+
+.row-updated {
+    animation: fadeInUpdate 0.5s ease;
+}
+
+/* Empty state styling */
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: #858796;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}

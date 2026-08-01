@@ -21,14 +21,18 @@ namespace MazraeatiBackOffice.Controllers
         private readonly IUnitOfWork _UnitOfWork;
         private readonly IWebHostEnvironment webHostEnvironment;
         private IConfiguration _configuration;
+        private readonly IRepository<Farmer> _FarmerRepository;
 
         public FarmerBlackListController(IRepository<FarmerBlackList> farmerBlackListRepository
-            , IUnitOfWork UnitOfWork, IWebHostEnvironment hostEnvironment, IConfiguration configuration)
+            , IUnitOfWork UnitOfWork, IWebHostEnvironment hostEnvironment, IConfiguration configuration
+            , IRepository<Farmer> farmerRepository)
         {
             _FarmerBlackListRepository = farmerBlackListRepository;
             _UnitOfWork = UnitOfWork;
             webHostEnvironment = hostEnvironment;
             _configuration = configuration;
+            _FarmerRepository = farmerRepository;
+           
         }
 
 
@@ -44,7 +48,9 @@ namespace MazraeatiBackOffice.Controllers
 
         public IActionResult Index()
         {
-            var model = _FarmerBlackListRepository.Table.Select(c => c.ToModel());
+            var farms = _FarmerRepository.Table
+                 .Where(f => f.CountryId == 2).ToList();
+            var model = _FarmerBlackListRepository.Table.Select(c => c.ToModel(farms));
             ViewBag.activePage = "قائمة المزارع المحظوريين";
             return View(model);
         }
@@ -55,11 +61,18 @@ namespace MazraeatiBackOffice.Controllers
             if (string.IsNullOrEmpty(search))
                 return RedirectToAction("Index");
 
+            var farms = _FarmerRepository.Table
+               .Where(f => f.CountryId == 2).ToList();
             search = string.IsNullOrEmpty(search) ? "" : search;
-            var model = _FarmerBlackListRepository.Table.Where(t => (t.Reason.Contains(search) || t.FarmerMobNum.Contains(search) || t.FarmerName.Contains(search) 
-            || t.FarmerNameEn.Contains(search)|| t.ReasonEn.Contains(search)))
-                .OrderByDescending(a=>a.Id).Select(c => c.ToModel());
 
+            var model = _FarmerBlackListRepository.Table.Where(t => (t.Reason.Contains(search) || t.FarmerMobNum.Contains(search) 
+            || t.FarmerName.Contains(search) || t.FarmerNameEn.Contains(search)|| t.ReasonEn.Contains(search)
+            ))
+                .OrderByDescending(a=>a.Id).Select(c => c.ToModel(farms)).ToList();
+
+            //model = model.Where(m => m.FarmNumber != null && m.FarmNumber.ToString().Contains(search))
+            //             .ToList();
+            //m.FarmNumber.ToString().Contains(search)
             ViewBag.activePage = "قائمة المزارع المحظوريين";
             ViewBag.search = search;
             return View(model);
