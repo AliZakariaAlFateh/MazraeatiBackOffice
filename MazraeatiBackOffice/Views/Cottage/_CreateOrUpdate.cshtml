@@ -1,0 +1,637 @@
+﻿@model CottageModel
+
+@{
+    ViewBag.Title = Model.Id > 0 ? "تعديل كوخ" : "إضافة كوخ";
+    ViewBag.activePage = "الأكواخ";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.min.css" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+
+<style>
+    .form-group {
+        font-size: 13px;
+    }
+
+    .delete-image-btn {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background-color: rgba(255,0,0,0.7);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 25px;
+        height: 25px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 0.8em;
+    }
+
+    .cottage-image-item.removing, .cottage-video-item.removing {
+        opacity: 0;
+        transition: opacity 0.3s ease-out;
+    }
+
+    .table input {
+        min-width: 90px;
+    }
+
+    .text-center td, .text-center th {
+        vertical-align: middle;
+    }
+</style>
+
+<link href="~/assets/css/style_main_mahjouz.css" rel="stylesheet" />
+
+@Html.HiddenFor(a => a.Id)
+@Html.HiddenFor(a => a.Number)
+@Html.HiddenFor(a => a.IssueDate)
+@Html.HiddenFor(a => a.ExpiryDate)
+@Html.HiddenFor(a => a.SerialCottageKey)
+@Html.Hidden("hdnRegionId", Model.RegionId)
+<div class="container-fluid">
+    <div class="row clearfix">
+        <div class="col-lg-12 col-md-12 col-sm-12">
+            <div class="card">
+                <div class="header">
+                    <h2><strong>@(Model.Id > 0 ? "تعديل" : "إضافة")</strong> 
+                        @* @ViewBag.cottageTypeTitle *@
+                    </h2>
+                    <ul class="header-dropdown">
+                        @if (Model.Id > 0)
+                        {
+                            <li>
+                                <a href="@Url.Action("Create")" class="btn btn-primary btn-round">
+                                    <i class="fa fa-plus"></i> إضافة / جديد
+                                </a>
+                            </li>
+                        }
+                        <li>
+                            <a href="@Url.Action("Index")" class="btn btn-default btn-round">
+                                <i class="fa fa-arrow-right"></i> العودة للقائمة
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="body">
+                    <form method="post" enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
+
+                        <div class="row clearfix">
+                            <!-- ===== معلومات الموقع (مثل Farmer) ===== -->
+                            <div class="col-sm-12"><h5 style="text-decoration:underline">معلومات الدولة والمدينة</h5></div>
+
+                            <div class="col-sm-3">
+                                @Html.DisplayNameFor(a => a.CountryDesc)
+                                <select class="form-control select2" name="CountryId">
+                                    <option value="">-- الرجاء اختيار الدولة --</option>
+                                    @foreach (var item in Model.Countries)
+                                    {
+                                        <option selected="@(item.Id == Model.CountryId)" value="@item.Id">@item.DescAr</option>
+                                    }
+                                </select>
+                                @Html.ValidationMessageFor(a => a.CountryId, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+
+                            <div class="col-sm-3">
+                                @Html.DisplayNameFor(a => a.CityDesc)
+                                <select class="form-control select2" name="CityId" id="CityId">
+                                    <option value="">-- الرجاء اختيار المدينة --</option>
+                                    @foreach (var item in Model.Cities)
+                                    {
+                                        <option selected="@(item.Id == Model.CityId)" value="@item.Id">@item.DescAr</option>
+                                    }
+                                </select>
+                                @Html.ValidationMessageFor(a => a.CityId, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+
+                            <div class="col-sm-3">
+                                @Html.DisplayNameFor(a => a.RegionDesc)
+                                <select class="form-control select2" name="RegionId" id="RegionId">
+                                    <option value="">-- الرجاء اختيار المنطقة --</option>
+                                    @foreach (var item in Model.Regions)
+                                    {
+                                        <option value="@item.Id" selected="@(item.Id == Model.RegionId)">@item.DescAr</option>
+                                    }
+                                </select>
+                                @Html.ValidationMessageFor(a => a.RegionId, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+
+                            <!-- ===== المالك ===== -->
+                            <div class="col-sm-3">
+                                @Html.DisplayNameFor(a => a.UserDesc)
+                                <select class="form-control select2" name="UserId" id="UserId">
+                                    <option value="">-- اختر المالك --</option>
+                                    @if (ViewBag.Users != null)
+                                    {
+                                        //Model.Users
+                                        foreach (var user in ViewBag.Users)
+                                        {
+                                            <option selected="@(user.Id == Model.UserId)" value="@user.Id">@user.UserName - @user.MobileNumber</option>
+                                        }
+                                    }
+                                </select>
+                                @* @Html.ValidationMessageFor(a => a.PrimaryOwnerId, "", new { @style = "color:red;font-size:10px" }) *@
+                                @* <small class="text-muted">يظهر فقط المستخدمين من نفس نوع الرياضة</small> *@
+                            </div>
+
+                            <!-- ===== معلومات أساسية (مثل Farmer) ===== -->
+                            <div class="col-sm-12" style="margin-bottom:20px">&nbsp;</div>
+                            <div class="col-sm-12"><h5 style="text-decoration:underline">معلومات النشاط الرياضى</h5></div>
+
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    @Html.DisplayNameFor(a => a.NameAr)
+                                    @Html.TextBoxFor(a => a.NameAr, new { @class = "form-control", @autocomplete = "off", @maxlength = 200 })
+                                    @Html.ValidationMessageFor(a => a.NameAr, "", new { @style = "color:red;font-size:10px" })
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    @Html.DisplayNameFor(a => a.NameEn)
+                                    @Html.TextBoxFor(a => a.NameEn, new { @class = "form-control", @autocomplete = "off", @maxlength = 200 })
+                                    @Html.ValidationMessageFor(a => a.NameEn, "", new { @style = "color:red;font-size:10px" })
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    @Html.DisplayNameFor(a => a.LocationDesc)
+                                    @Html.TextBoxFor(a => a.LocationDesc, new { @class = "form-control", @autocomplete = "off", @maxlength = 200, @id = "LocationDesc" })
+                                    @Html.ValidationMessageFor(a => a.LocationDesc, "", new { @style = "color:red;font-size:10px" })
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    @Html.DisplayNameFor(a => a.LocationDescEn)
+                                    @Html.TextBoxFor(a => a.LocationDescEn, new { @class = "form-control", @autocomplete = "off", @maxlength = 200, @id = "LocationDescEn" })
+                                    @Html.ValidationMessageFor(a => a.LocationDescEn, "", new { @style = "color:red;font-size:10px" })
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    @Html.DisplayNameFor(a => a.MobileNumber)
+                                    @Html.TextBoxFor(a => a.MobileNumber, new { @class = "form-control", @autocomplete = "off", @id = "phone1", @dir = "ltr" })
+                                    @Html.ValidationMessageFor(a => a.MobileNumber, "", new { @style = "color:red;font-size:10px" })
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6">
+                                @Html.DisplayNameFor(a => a.Owner)
+                                <select class="form-control select2" name="Owner">
+                                    <option value="">-- الرجاء اختيار نوع المالك --</option>
+                                    <option selected="@(Model.Owner?.Trim() == "من المالك")" value="من المالك">من المالك</option>
+                                    <option selected="@(Model.Owner?.Trim() == "من المسوق")" value="من المسوق">من المسوق</option>
+                                    <option selected="@(Model.Owner?.Trim() == "من المتضمن")" value="من المتضمن">من المتضمن</option>
+                                </select>
+                                @Html.ValidationMessageFor(a => a.Owner, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    @Html.DisplayNameFor(a => a.DescriptionAr)
+                                    @Html.TextAreaFor(a => a.DescriptionAr, new { @class = "form-control", @autocomplete = "off", @maxlength = 500, rows = 2 })
+                                    @Html.ValidationMessageFor(a => a.DescriptionAr, "", new { @style = "color:red;font-size:10px" })
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    @Html.DisplayNameFor(a => a.DescriptionEn)
+                                    @Html.TextAreaFor(a => a.DescriptionEn, new { @class = "form-control", @autocomplete = "off", @maxlength = 500, rows = 2 })
+                                    @Html.ValidationMessageFor(a => a.DescriptionEn, "", new { @style = "color:red;font-size:10px" })
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    @Html.DisplayNameFor(a => a.ConfidentialMessageAr)
+                                    @Html.TextAreaFor(a => a.ConfidentialMessageAr, new { @class = "form-control", @autocomplete = "off", @maxlength = 500, rows = 2 })
+                                    @Html.ValidationMessageFor(a => a.ConfidentialMessageAr, "", new { @style = "color:red;font-size:10px" })
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    @Html.DisplayNameFor(a => a.ConfidentialMessageEn)
+                                    @Html.TextAreaFor(a => a.ConfidentialMessageEn, new { @class = "form-control", @autocomplete = "off", @maxlength = 500, rows = 2 })
+                                    @Html.ValidationMessageFor(a => a.ConfidentialMessageEn, "", new { @style = "color:red;font-size:10px" })
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    @Html.DisplayNameFor(a => a.GeographicLocation)
+                                    @Html.TextAreaFor(a => a.GeographicLocation, new { @class = "form-control", @autocomplete = "off", @maxlength = 500, rows = 2 })
+                                    @Html.ValidationMessageFor(a => a.GeographicLocation, "", new { @style = "color:red;font-size:10px" })
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    @Html.DisplayNameFor(a => a.Longitude)
+                                    @Html.TextAreaFor(a => a.Longitude, new { @class = "form-control", @autocomplete = "off", @maxlength = 500, rows = 2 })
+                                    @Html.ValidationMessageFor(a => a.Longitude, "", new { @style = "color:red;font-size:10px" })
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    @Html.DisplayNameFor(a => a.Latitude)
+                                    @Html.TextAreaFor(a => a.Latitude, new { @class = "form-control", @autocomplete = "off", @maxlength = 500, rows = 2 })
+                                    @Html.ValidationMessageFor(a => a.Latitude, "", new { @style = "color:red;font-size:10px" })
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    @Html.DisplayNameFor(a => a.ReservationDetails)
+                                    @Html.TextAreaFor(a => a.ReservationDetails, new { @class = "form-control", @autocomplete = "off", @maxlength = 500, rows = 2 })
+                                    @Html.ValidationMessageFor(a => a.ReservationDetails, "", new { @style = "color:red;font-size:10px" })
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    @Html.DisplayNameFor(a => a.ExtraDetails)
+                                    @Html.TextAreaFor(a => a.ExtraDetails, new { @class = "form-control", @autocomplete = "off", @maxlength = 500, rows = 2 })
+                                    @Html.ValidationMessageFor(a => a.ExtraDetails, "", new { @style = "color:red;font-size:10px" })
+                                </div>
+                            </div>
+                            
+                            <!-- ===== تفاصيل العقار  ===== -->
+                            <div class="col-sm-12" style="margin-bottom:20px">&nbsp;</div>
+                            
+
+                            @await Html.PartialAsync(
+                            "Partials/_CottagePropertyDetails",
+                                                        Model,
+                                                        ViewData
+                                                        )
+
+                            <!-- ===== تفاصيل الحجز (مثل Farmer) ===== -->
+                            <div class="col-sm-12" style="margin-bottom:20px">&nbsp;</div>
+                            <div class="col-sm-12"><h5 style="text-decoration:underline">تفاصيل الحجز</h5></div>
+
+
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.DisplayNameFor(a => a.MaxPerson)
+                                    @Html.TextBoxFor(a => a.MaxPerson, new { @class = "form-control", type = "number" })
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.DisplayNameFor(a => a.InsuranceAmt)
+                                    @Html.TextBoxFor(a => a.InsuranceAmt, new { @class = "form-control", @autocomplete = "off", @type = "number", @max = "9999" })
+                                    @Html.ValidationMessageFor(a => a.InsuranceAmt, "", new { @style = "color:red;font-size:10px" })
+                                </div>
+                            </div>
+
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.DisplayNameFor(a => a.DepositAmt)
+                                    @Html.TextBoxFor(a => a.DepositAmt, new { @class = "form-control", @autocomplete = "off", @type = "number", @max = "9999" })
+                                    @Html.ValidationMessageFor(a => a.DepositAmt, "", new { @style = "color:red;font-size:10px" })
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    @Html.DisplayNameFor(a => a.Image3DLink)
+                                    @Html.TextBoxFor(a => a.Image3DLink, new { @class = "form-control", @autocomplete = "off", @maxlength = 500 })
+                                    @Html.ValidationMessageFor(a => a.Image3DLink, "", new { @style = "color:red;font-size:10px" })
+                                </div>
+                            </div>
+                            <!-- ===== الخصائص العامة (مثل Farmer) ===== -->
+                            <div class="col-sm-12" style="margin-bottom:20px">&nbsp;</div>
+                            <div class="col-sm-12"><h5 style="text-decoration:underline">الخصائص العامة</h5></div>
+
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    @Html.DisplayNameFor(a => a.IsTrust)
+                                    <br />
+                                    @Html.CheckBoxFor(a => a.IsTrust, new { @class = "form-control", style = "width:20px;height:20px;margin-top:5px;" })
+                                </div>
+                            </div>
+
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    @Html.DisplayNameFor(a => a.IsVIP)
+                                    <br />
+                                    @Html.CheckBoxFor(a => a.IsVIP, new { @class = "form-control", style = "width:20px;height:20px;margin-top:5px;" })
+                                </div>
+                            </div>
+
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    @Html.DisplayNameFor(a => a.IsOffer)
+                                    <br />
+                                    @Html.CheckBoxFor(a => a.IsOffer, new { @class = "form-control", style = "width:20px;height:20px;margin-top:5px;" })
+                                </div>
+                            </div>
+
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    @Html.DisplayNameFor(a => a.IsWinter)
+                                    <br />
+                                    @Html.CheckBoxFor(a => a.IsWinter, new { @class = "form-control", style = "width:20px;height:20px;margin-top:5px;" })
+                                </div>
+                            </div>
+
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    @Html.DisplayNameFor(a => a.IsApprove)
+                                    <br />
+                                    @Html.CheckBoxFor(a => a.IsApprove, new { @class = "form-control", style = "width:20px;height:20px;margin-top:5px;" })
+                                </div>
+                            </div>
+
+                            
+
+                            
+
+
+                            <!-- ===== المرافق العامة (مثل Farmer ExtraFeature) ===== -->
+                            <div class="col-sm-12" style="margin-bottom:20px">&nbsp;</div>
+                            <div class="col-sm-12"><h5 style="text-decoration:underline">المرافق العامة</h5></div>
+                            <div class="container">
+                                <div class="row clearfix">
+                                    @for (int i = 0; i < Model.GeneralFacilities.Count; i++)
+                                    {
+                                        <div class="col-sm-4">
+                                            <div class="form-group">
+                                                @Html.HiddenFor(a => a.GeneralFacilities[i].FacilityId)
+                                                @Html.HiddenFor(a => a.GeneralFacilities[i].FacilityText)
+                                                @Html.DisplayFor(a => a.GeneralFacilities[i].FacilityText)
+                                                <br />
+                                                @Html.CheckBoxFor(a => a.GeneralFacilities[i].IsCheck, new { @class = "form-control", style = "width:20px;height:20px;margin-top:5px;" })
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                            
+
+
+                            <div class="col-sm-12" style="margin-bottom:20px">&nbsp;</div>
+                            <div class="col-sm-12"><h5 style="text-decoration:underline">الأسعار</h5></div>
+                            <div class="col-sm-12" style="margin-bottom:20px">&nbsp;</div>
+
+                            @if (Model?.PriceList?.Count() == 0)
+                            {
+                                <button type="button"
+                                        onclick="window.location.href='@Url.Content("~/Cottage/CottagePriceList?cottageId=")@Model.Id'"
+                                        class="btn btn-primary btn-round mb-3">
+                                    اضافة اسعار جديدة
+                                </button>
+                            }
+
+                            @if (Model?.PriceList?.Count() > 0)
+                            {
+                                <div style="overflow-x:auto">
+
+                                    <table class="table table-bordered table-striped table-hover text-center">
+
+                                        <thead class="bg-Secondary text-white">
+                                            <tr>
+                                                <th>اليوم</th>
+                                                <th>سعر الفترة الصباحية</th>
+                                                <th>سعر الفترة المسائية</th>
+                                                <th>سعر يوم كامل</th>
+                                                <th>سعر عرض الفتره الصباحية</th>
+                                                <th>سعر عرض الفتره المسائية</th>
+                                                <th>سعر عرض يوم كامل</th>
+                                                <th>الفترة الصباحية</th>
+                                                <th>الفترة المسائية</th>
+                                                <th>يوم كامل</th>
+                                                <th>حذف</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+
+
+                                            @for (int i = 0; i < Model.PriceList.OrderBy(c => c.Person).ThenBy(n => n.Day).Count(); i++)
+                                            {
+                                                //Title for All Person
+                                                if (i == 0 || Model.PriceList[i].Person != Model.PriceList[i - 1].Person)
+                                                {
+                                                    <tr style="background:#e9f7ef;font-weight:bold">
+                                                        <td colspan="10">
+                                                            عدد الاشخاص المسموح بهم:
+                                                            <div class="col-sm-3" style="display: inline-flex;">
+                                                                <div class="form-group">
+                                                                    @Html.TextBoxFor(a => Model.PriceList[i].Person, new { @class = "form-control", type = "number", id = "person_" + Model.PriceList[i].Day })
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <a href="javascript:DeletePriceList_Full(@Model.PriceList[i].CottageId);"
+                                                               class="btn btn-danger btn-sm">
+                                                                حذف
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                }
+
+                                                <tr>
+                                                    <!-- اليوم -->
+                                                    <td>
+                                                        @switch (Model.PriceList[i].Day)
+                                                        {
+                                                            case 1:
+                                                                @("الاحد")
+                                                                ; break;
+                                                            case 2:
+
+                                                                @("الاثنين")
+                                                                ; break;
+                                                            case 3:
+
+                                                                @("الثلاثاء")
+                                                                ; break;
+                                                            case 4:
+
+                                                                @("الاربعاء")
+                                                                ; break;
+                                                            case 5:
+
+                                                                @("الخميس")
+                                                                ; break;
+                                                            case 6:
+
+                                                                @("الجمعة")
+                                                                ; break;
+                                                            case 7:
+
+                                                                @("السبت")
+                                                                ; break;
+                                                        }
+                                                    </td>
+
+                                                    @Html.HiddenFor(a => Model.PriceList[i].Id)
+                                                    @Html.HiddenFor(a => Model.PriceList[i].Day)
+                                                    @Html.HiddenFor(a => Model.PriceList[i].CottageId)
+                                                    @* ===== التعديل هنا ===== *@
+                                                    @* بدل ما نخبي الـ Person، هنستخدم JavaScript عشان ننقل القيمة *@
+                                                    @Html.HiddenFor(a => Model.PriceList[i].Person, new { @class = "person-hidden", data_day = Model.PriceList[i].Day })
+
+                                                    <td>
+                                                        @Html.TextBoxFor(a => Model.PriceList[i].MorningPrice, new { @class = "form-control", type = "number" })
+                                                    </td>
+
+                                                    <td>
+                                                        @Html.TextBoxFor(a => Model.PriceList[i].EveningPrice, new { @class = "form-control", type = "number" })
+                                                    </td>
+
+                                                    <td>
+                                                        @Html.TextBoxFor(a => Model.PriceList[i].FullDayPrice, new { @class = "form-control", type = "number" })
+                                                    </td>
+
+                                                    <td>
+                                                        @Html.TextBoxFor(a => Model.PriceList[i].OfferPrice, new { @class = "form-control", type = "number" })
+                                                    </td>
+
+                                                    <td>
+                                                        @Html.TextBoxFor(a => Model.PriceList[i].OfferEveningPrice, new { @class = "form-control", type = "number" })
+                                                    </td>
+
+                                                    <td>
+                                                        @Html.TextBoxFor(a => Model.PriceList[i].OfferFullDayPrice, new { @class = "form-control", type = "number" })
+                                                    </td>
+
+                                                    <td>
+                                                        @Html.TextBoxFor(a => Model.PriceList[i].MorningPeriodText, new { @class = "form-control" })
+                                                    </td>
+
+                                                    <td>
+                                                        @Html.TextBoxFor(a => Model.PriceList[i].EveningPeriodText, new { @class = "form-control" })
+                                                    </td>
+
+                                                    <td>
+                                                        @Html.TextBoxFor(a => Model.PriceList[i].FullDayPeriodText, new { @class = "form-control" })
+                                                    </td>
+
+                                                    <td>
+                                                        <!-- حذف اليوم -->
+                                                    </td>
+                                                </tr>
+                                            }
+
+
+
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                            }
+
+                            @* For Price Table *@
+
+
+
+
+
+                            <div class="col-sm-12" style="margin-bottom:20px">
+                                &nbsp;
+                            </div>
+
+                            @* For Price Table *@
+
+
+
+
+                            <!-- ===== الصور (مثل Farmer) ===== -->
+                            <div class="col-sm-12" style="margin-bottom:20px">&nbsp;</div>
+                            <div class="col-sm-12"><h5 style="text-decoration:underline">إضافة صور</h5></div>
+
+                            <div class="col-sm-12">
+                                @Html.TextBoxFor(model => model.Images, new { type = "file", multiple = "", accept = "image/*" })
+                            </div>
+
+                            <div class="col-sm-12" style="margin-bottom:20px">&nbsp;</div>
+
+                            <div class="col-sm-12">
+                                <div id="imagePreviews" class="cottage-image-container"></div>
+                            </div>
+
+                            @if (Model.CottageImages != null && Model.CottageImages.Any())
+                            {
+                                <div class="col-sm-12" style="margin-bottom:20px">
+                                    <h5>الصور الحالية</h5>
+                                    <div class="cottage-image-container">
+                                        @foreach (var image in Model.CottageImages)
+                                        {
+                                            <div class="cottage-image-item" style="display:inline-block;margin:5px;position:relative;">
+                                                <img src="~/Images/@image.Url" alt="صورة" style="width:150px;height:100px;object-fit:cover;border-radius:5px;" />
+                                                <button type="button" class="delete-image-btn" onclick="deletecottageImage(@image.Id)"><i class="fa fa-times"></i></button>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+
+                            <!-- ===== الفيديوهات (مثل Farmer) ===== -->
+                            <div class="col-sm-12" style="margin-bottom:20px">&nbsp;</div>
+                            <div class="col-sm-12"><h5 style="text-decoration:underline">إضافة فيديوهات</h5></div>
+
+                            <div class="col-sm-12">
+                                @Html.TextBoxFor(model => model.Videos, new { type = "file", multiple = "", accept = "video/*" })
+                            </div>
+
+                            <div class="col-sm-12" style="margin-bottom:20px">&nbsp;</div>
+
+                            <div class="col-sm-12">
+                                <div id="videoPreviews" class="cottage-video-container"></div>
+                            </div>
+
+                            @if (Model.CottageVideos != null && Model.CottageVideos.Any())
+                            {
+                                <div class="col-sm-12" style="margin-bottom:20px">
+                                    <h5>الفيديوهات الحالية</h5>
+                                    <div class="cottage-video-container">
+                                        @foreach (var video in Model.CottageVideos)
+                                        {
+                                            <div class="cottage-video-item" style="display:inline-block;margin:5px;position:relative;">
+                                                <video controls style="width:200px;border-radius:5px;"><source src="~/Videos/@video.Url"></video>
+                                                <button type="button" class="delete-image-btn" onclick="deletecottageVideo(@video.Id)"><i class="fa fa-times"></i></button>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+
+                            <!-- ===== أزرار ===== -->
+                            <div class="col-sm-12" style="margin-bottom:20px">&nbsp;</div>
+
+                            <div class="col-sm-12">
+                                <button type="submit" class="btn btn-primary btn-round"><i class="fa fa-save"></i> @(Model.Id > 0 ? "تحديث" : "حفظ")</button>
+                                <a href="@Url.Action("Index")" class="btn btn-default btn-round"><i class="fa fa-arrow-right"></i> رجوع</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+
+<script src="~/assets/js/cottage/cottage_createedit.js"></script>
+<script>
+    $(document).ready(function() {
+
+    // ===== عند تغيير المدينة =====
+    });
+
+    // ===== حذف صورة =====
+
+
+    // ===== إضافة صف أسعار =====
+
+</script>

@@ -1,4 +1,9 @@
-﻿@model CustomerModel
+﻿@using MazraeatiBackOffice.Models.UserManagementModel
+@model CustomerModel
+@{
+    ViewBag.Title = "تعديل عملاء";
+    ViewBag.activePage = "تعديل عميل";
+}
 @using (Html.BeginForm("Edit", "Customer", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.Partial("_CreateOrUpdate", Model)

@@ -1,4 +1,6 @@
 ﻿using MazraeatiBackOffice.Configuration;
+using MazraeatiBackOffice.Configuration.Enums;
+using MazraeatiBackOffice.Controllers;
 using MazraeatiBackOffice.Core.LoyaltyPoints;
 using MazraeatiBackOffice.Models.LoyaltyPoints;
 using Microsoft.AspNetCore.Http;
@@ -109,11 +111,11 @@ namespace MazraeatiBackOffice.Controllers.LoyaltyPoints
 
             return RedirectToAction("Index", new
             {
-                search = search,
-                customerId = customerId,
-                fromDate = fromDate,
-                toDate = toDate,
-                transactionType = transactionType
+                search,
+                customerId,
+                fromDate,
+                toDate,
+                transactionType
             });
         }
 

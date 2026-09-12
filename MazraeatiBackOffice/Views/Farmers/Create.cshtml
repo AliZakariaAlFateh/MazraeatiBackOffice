@@ -1,4 +1,9 @@
-﻿@model FarmerModel
+﻿@using MazraeatiBackOffice.Models.FarmModel
+@model FarmerModel
+@{
+    ViewBag.Title = " إضافة المزارع";
+    ViewBag.activePage = "إضافة مزرعة أو شاليه ";
+}
 @using (Html.BeginForm("Create", "Farmers", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.Partial("_CreateOrUpdate",Model)

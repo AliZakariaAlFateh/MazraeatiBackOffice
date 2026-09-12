@@ -1,0 +1,397 @@
+﻿@model IEnumerable<NotificationDto>
+
+@{
+    ViewData["Title"] = "الإشعارات";
+    ViewBag.activePage = "الإشعارات";
+}
+
+@section Styles {
+    <style>
+        .notification-page {
+            padding: 20px 0;
+        }
+
+        .notification-card {
+            border-right: 4px solid #667eea;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+        }
+
+            .notification-card:hover {
+                transform: translateX(-5px);
+                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            }
+
+            .notification-card.unread {
+                background: #fff8e1;
+                border-right-color: #ff9800;
+            }
+
+            .notification-card.confirmed {
+                border-right-color: #28a745;
+            }
+
+            .notification-card.cancelled {
+                border-right-color: #dc3545;
+                opacity: 0.7;
+            }
+
+        .badge-type {
+            font-size: 12px;
+            padding: 3px 10px;
+            border-radius: 20px;
+        }
+
+            .badge-type.farm {
+                background: #d4edda;
+                color: #155724;
+            }
+
+            .badge-type.price {
+                background: #cce5ff;
+                color: #004085;
+            }
+
+        .old-price {
+            color: #dc3545;
+            text-decoration: line-through;
+        }
+
+        .new-price {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .price-change.increase {
+            color: #28a745;
+        }
+
+        .price-change.decrease {
+            color: #dc3545;
+        }
+
+        .price-table {
+            font-size: 13px;
+            margin-top: 10px;
+        }
+
+            .price-table th {
+                background: #f8f9fa;
+                text-align: center;
+            }
+
+            .price-table td {
+                text-align: center;
+                padding: 4px 8px;
+            }
+
+            .price-table .day-cell {
+                font-weight: bold;
+            }
+
+            .price-table .old-cell {
+                color: #dc3545;
+                text-decoration: line-through;
+            }
+
+            .price-table .new-cell {
+                color: #28a745;
+                font-weight: bold;
+            }
+
+            .price-table .change-cell {
+                font-weight: bold;
+            }
+
+                .price-table .change-cell.increase {
+                    color: #28a745;
+                }
+
+                .price-table .change-cell.decrease {
+                    color: #dc3545;
+                }
+
+                .price-table .change-cell.unchanged {
+                    color: #6c757d;
+                }
+    </style>
+}
+
+<div class="container notification-page">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>📋 الإشعارات</h2>
+        <div>
+            <span class="badge bg-warning text-dark me-2">
+                🆕 غير مقروء: @ViewBag.UnreadCount
+            </span>
+            <button class="btn btn-success btn-sm" onclick="markAllAsReadNotifications()">
+                ✅ تعيين الكل كمقروء
+            </button>
+            <a href="/Notification/All" class="btn btn-info btn-sm">
+                📋 عرض الكل
+            </a>
+        </div>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5">
+            <i class="fas fa-bell-slash" style="font-size: 64px; color: #dee2e6;"></i>
+            <h4 class="mt-3 text-muted">🎉 لا توجد إشعارات غير مقروءة</h4>
+            <p class="text-muted">كل الإشعارات مقروءة. تصفح الإشعارات السابقة من "عرض الكل"</p>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var item in Model)
+            {
+                <div class="col-12">
+                    <div class="card notification-card @(!item.IsRead ? "unread" : "") @(item.IsConfirmed ? "confirmed" : "") @(item.IsCancelled ? "cancelled" : "")">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h5 class="card-title mb-1">
+                                        @if (item.Type == "Farm")
+                                        {
+                                            <span class="badge-type farm">🌾 مزرعة</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge-type price">📊 سعر</span>
+                                        }
+                                        @item.Title
+                                    </h5>
+                                    <p class="card-text text-muted">@item.Message</p>
+
+                                    @if (item.Type == "Price" && !string.IsNullOrEmpty(item.OldData) && !string.IsNullOrEmpty(item.NewData))
+                                    {
+                                        try
+                                        {
+                                            // ✅ استخدام Newtonsoft.Json لتحليل البيانات
+                                            var oldPrices = Newtonsoft.Json.JsonConvert.DeserializeObject<List<dynamic>>(item.OldData);
+                                            var newPrices = Newtonsoft.Json.JsonConvert.DeserializeObject<List<dynamic>>(item.NewData);
+
+                                            if (oldPrices != null && newPrices != null && oldPrices.Count > 0)
+                                            {
+                                                <div class="table-responsive price-table">
+                                                    <table class="table table-bordered table-sm">
+                                                        <thead>
+                                                            <tr>
+                                                                <th style="width: 15%;">اليوم</th>
+                                                                <th style="width: 28%; color: #dc3545;">السعر القديم</th>
+                                                                <th style="width: 28%; color: #28a745;">السعر الجديد</th>
+                                                                <th style="width: 29%;">التغيير</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @for (int i = 0; i < newPrices.Count; i++)
+                                                            {
+                                                                var oldPrice = oldPrices[i];
+                                                                var newPrice = newPrices[i];
+
+                                                                // ✅ حساب الفروق
+                                                                decimal morningDiff = (decimal)(newPrice.MorningPrice ?? 0) - (decimal)(oldPrice.MorningPrice ?? 0);
+                                                                decimal eveningDiff = (decimal)(newPrice.EveningPrice ?? 0) - (decimal)(oldPrice.EveningPrice ?? 0);
+                                                                decimal fullDayDiff = (decimal)(newPrice.FullDayPrice ?? 0) - (decimal)(oldPrice.FullDayPrice ?? 0);
+
+                                                                bool hasChange = morningDiff != 0 || eveningDiff != 0 || fullDayDiff != 0;
+                                                                decimal totalDiff = morningDiff + eveningDiff + fullDayDiff;
+
+                                                                string diffClass = totalDiff > 0 ? "increase" : totalDiff < 0 ? "decrease" : "unchanged";
+                                                                string diffSymbol = totalDiff > 0 ? "▲" : totalDiff < 0 ? "▼" : "=";
+                                                                string diffText = totalDiff != 0 ? $"{diffSymbol} {Math.Abs(totalDiff):F2}" : "=";
+
+                                                                <tr style="@(hasChange ? "background: #fff8e1;" : "")">
+                                                                    <td class="day-cell">@newPrice.DayDescAr</td>
+                                                                    <td class="old-cell">
+                                                                        صباح: @oldPrice.MorningPrice<br />
+                                                                        مساء: @oldPrice.EveningPrice<br />
+                                                                        كامل: @oldPrice.FullDayPrice
+                                                                    </td>
+                                                                    <td class="new-cell">
+                                                                        صباح: @newPrice.MorningPrice<br />
+                                                                        مساء: @newPrice.EveningPrice<br />
+                                                                        كامل: @newPrice.FullDayPrice
+                                                                    </td>
+                                                                    <td>
+                                                                        <span class="change-cell @diffClass">
+                                                                            @diffText
+                                                                        </span>
+                                                                        <br />
+                                                                        <small style="color: #6c757d; font-size: 11px;">
+                                                                            @(hasChange ? "🔄 تغير" : "✅ ثابت")
+                                                                        </small>
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="alert alert-warning mt-2">
+                                                    <i class="fas fa-exclamation-triangle"></i> لا توجد بيانات أسعار لعرضها
+                                                </div>
+                                            }
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            <div class="alert alert-danger mt-2">
+                                                <i class="fas fa-exclamation-circle"></i> خطأ في عرض البيانات: @ex.Message
+                                            </div>
+                                        }
+                                    }
+                                </div>
+                                <div>
+                                    @if (item.IsConfirmed)
+                                    {
+                                        <span class="badge bg-success">✅ مؤكد</span>
+                                    }
+                                    else if (item.IsCancelled)
+                                    {
+                                        <span class="badge bg-danger">❌ ملغي</span>
+                                    }
+                                    else if (item.IsRead)
+                                    {
+                                        <span class="badge bg-secondary">📖 مقروء</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning text-dark">🆕 جديد</span>
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <small class="text-muted">🕐 @item.CreatedDate.ToString("yyyy-MM-dd HH:mm")</small>
+                                <div>
+                                    @if (item.Type == "Price" && !item.IsConfirmed && !item.IsCancelled)
+                                    {
+                                        <button class="btn btn-success btn-sm" onclick="confirmNotif(@item.Id, true)">
+                                            ✅ تأكيد التحديث
+                                        </button>
+                                        <button class="btn btn-danger btn-sm" onclick="confirmNotif(@item.Id, false)">
+                                            ❌ إلغاء
+                                        </button>
+                                    }
+                                    @if (!item.IsRead)
+                                    {
+                                        <button class="btn btn-secondary btn-sm" onclick="markRead(@item.Id)">
+                                            👁️ تم المشاهدة
+                                        </button>
+                                    }
+                                    <a href="/Notification/Details/@item.Id" class="btn btn-info btn-sm">
+                                        📋 تفاصيل
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        // ==========================
+        // تأكيد الإشعار
+        // ==========================
+        async function confirmNotif(id, isConfirmed) {
+            try {
+                const response = await $.ajax({
+                    url: '/Notification/Confirm',
+                    type: 'POST',
+                    data: { id: id, isConfirmed: isConfirmed }
+                });
+
+                if (response.success) {
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'success',
+                        title: response.message,
+                        timer: 2000,
+                        timerProgressBar: true
+                    });
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'error',
+                        title: response.message || '❌ حدث خطأ',
+                        timer: 2000,
+                        timerProgressBar: true
+                    });
+                }
+            } catch (error) {
+                console.error('❌ Error:', error);
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'error',
+                    title: '❌ حدث خطأ في الاتصال',
+                    timer: 2000,
+                    timerProgressBar: true
+                });
+            }
+        }
+
+        // ==========================
+        // تعيين كمقروء
+        // ==========================
+        async function markRead(id) {
+            try {
+                const response = await $.ajax({
+                    url: '/Notification/MarkAsRead',
+                    type: 'POST',
+                    data: { id: id }
+                });
+
+                if (response.success) {
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'success',
+                        title: '✅ تم التعيين كمقروء',
+                        timer: 2000,
+                        timerProgressBar: true
+                    });
+                    setTimeout(() => location.reload(), 1500);
+                }
+            } catch (error) {
+                console.error('❌ Error:', error);
+            }
+        }
+
+        // ==========================
+        // تعيين الكل كمقروء
+        // ==========================
+        async function markAllAsReadNotifications() {
+            try {
+                const response = await $.ajax({
+                    url: '/Notification/MarkAllAsRead',
+                    type: 'POST'
+                });
+
+                if (response.success) {
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'success',
+                        title: '✅ تم تعيين الكل كمقروء',
+                        timer: 2000,
+                        timerProgressBar: true
+                    });
+                    setTimeout(() => location.reload(), 1500);
+                }
+            } catch (error) {
+                console.error('❌ Error:', error);
+            }
+        }
+    </script>
+}

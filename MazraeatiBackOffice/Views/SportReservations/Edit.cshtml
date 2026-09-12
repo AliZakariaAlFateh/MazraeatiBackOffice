@@ -1,15 +1,4 @@
-﻿@* @model SportReservationModel
-
-@{
-    ViewBag.Title = "تعديل حجز";
-    ViewBag.activePage = "الحجوزات الرياضية";
-}
-
-@using (Html.BeginForm("Edit", "SportReservations", FormMethod.Post, new { enctype = "multipart/form-data" }))
-{
-    @Html.Partial("_CreateOrUpdate", Model)
-} *@
-
+﻿@using MazraeatiBackOffice.Models.SportModels
 @model SportReservationModel
 
 @{
@@ -24,6 +13,11 @@
                 <div class="header">
                     <h2><strong>تعديل</strong> حجز</h2>
                     <ul class="header-dropdown">
+                        <li>
+                            <a href="@Url.Action("Create")" class="btn btn-primary btn-round">
+                                <i class="fa fa-plus"></i> إضافة / جديد
+                            </a>
+                        </li>
                         <li>
                             <a href="@Url.Action("Index")" class="btn btn-default btn-round">
                                 <i class="fa fa-arrow-right"></i> العودة للقائمة

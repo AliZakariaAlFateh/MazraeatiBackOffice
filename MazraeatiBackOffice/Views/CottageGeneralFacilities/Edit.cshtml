@@ -1,0 +1,9 @@
+﻿@model CottageGeneralFacilityModel
+@{
+    ViewBag.Title = "تعديل المرافق العامة للأكواخ";
+    ViewBag.activePage = "تعديل مرفق عام للأكواخ";
+}
+@using (Html.BeginForm("Edit", "CottageGeneralFacilities", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.Partial("_CreateOrUpdate", Model)
+}

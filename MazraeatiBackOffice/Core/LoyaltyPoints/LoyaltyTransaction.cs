@@ -1,4 +1,5 @@
-﻿using MazraeatiBackOffice.Configuration;
+﻿using MazraeatiBackOffice.Configuration.Enums;
+using MazraeatiBackOffice.Core.UserManagementCore;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;

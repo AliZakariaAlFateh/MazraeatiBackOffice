@@ -1,0 +1,11 @@
+﻿@model CottagePropertyTemplate
+
+@{
+    ViewBag.Title = "إضافة تفاصيل العقار للأكواخ";
+    ViewBag.activePage = "تفاصيل العقار للأكواخ";
+}
+
+@using (Html.BeginForm("Create", "CottagePropertyTemplates", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.Partial("_CreateOrUpdate", Model)
+}

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MazraeatiBackOffice.Core.FarmCore;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 

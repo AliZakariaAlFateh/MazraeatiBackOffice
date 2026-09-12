@@ -1,4 +1,5 @@
-﻿@model CustomerBlackListModel
+﻿@using MazraeatiBackOffice.Models.UserManagementModel
+@model CustomerBlackListModel
 @using (Html.BeginForm("Edit", "CustomerBlackList", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.Partial("_CreateOrUpdate", Model)

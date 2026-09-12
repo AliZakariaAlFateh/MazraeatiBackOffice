@@ -1,4 +1,5 @@
-﻿@model FarmerModel
+﻿@using MazraeatiBackOffice.Models.FarmModel
+@model FarmerModel
 @using (Html.BeginForm("Edit", "FarmersSyria", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.Partial("_CreateOrUpdate", Model)

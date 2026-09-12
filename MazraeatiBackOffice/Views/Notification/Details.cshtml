@@ -1,0 +1,628 @@
+﻿@model NotificationDto
+
+@{
+    ViewData["Title"] = "تفاصيل الإشعار";
+    ViewBag.activePage = "تفاصيل الإشعار";
+}
+
+@section Styles {
+    <style>
+        .details-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px 0;
+        }
+
+        .details-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px 30px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+            .details-header h2 {
+                margin: 0;
+                font-size: 24px;
+            }
+
+            .details-header .subtitle {
+                opacity: 0.9;
+                margin-top: 8px;
+                font-size: 14px;
+            }
+
+        .details-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+            .details-card .label {
+                font-weight: bold;
+                color: #6c757d;
+                font-size: 13px;
+                display: block;
+                margin-bottom: 3px;
+            }
+
+            .details-card .value {
+                font-size: 15px;
+                color: #2c3e50;
+                padding: 8px 12px;
+                background: #f8f9fa;
+                border-radius: 6px;
+                margin-bottom: 15px;
+            }
+
+                .details-card .value:last-child {
+                    margin-bottom: 0;
+                }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+            .status-badge.confirmed {
+                background: #d4edda;
+                color: #155724;
+            }
+
+            .status-badge.cancelled {
+                background: #f8d7da;
+                color: #721c24;
+            }
+
+            .status-badge.read {
+                background: #e2e3e5;
+                color: #383d41;
+            }
+
+            .status-badge.unread {
+                background: #fff3cd;
+                color: #856404;
+            }
+
+        .price-comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+            .price-comparison-table thead {
+                background: #f8f9fa;
+                border-bottom: 2px solid #dee2e6;
+            }
+
+            .price-comparison-table th {
+                padding: 10px 12px;
+                text-align: center;
+                font-weight: 600;
+                color: #495057;
+            }
+
+            .price-comparison-table td {
+                padding: 8px 12px;
+                text-align: center;
+                border-bottom: 1px solid #f0f0f0;
+                vertical-align: middle;
+            }
+
+            .price-comparison-table tbody tr:hover {
+                background: #f8f9fa;
+            }
+
+            .price-comparison-table .old-price {
+                color: #dc3545;
+                text-decoration: line-through;
+                background: #fff5f5;
+                padding: 4px 8px;
+                border-radius: 4px;
+            }
+
+            .price-comparison-table .new-price {
+                color: #28a745;
+                font-weight: bold;
+                background: #e8f5e9;
+                padding: 4px 8px;
+                border-radius: 4px;
+            }
+
+        .price-change {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+            .price-change.increase {
+                color: #28a745;
+            }
+
+            .price-change.decrease {
+                color: #dc3545;
+            }
+
+            .price-change.unchanged {
+                color: #6c757d;
+            }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+            .action-buttons .btn {
+                padding: 8px 25px;
+                border-radius: 8px;
+                font-size: 14px;
+                font-weight: 600;
+                border: none;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+                .action-buttons .btn:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                }
+
+        .btn-confirm {
+            background: #28a745;
+            color: white;
+        }
+
+            .btn-confirm:hover {
+                background: #218838;
+            }
+
+        .btn-cancel {
+            background: #dc3545;
+            color: white;
+        }
+
+            .btn-cancel:hover {
+                background: #c82333;
+            }
+
+        .btn-back {
+            background: #6c757d;
+            color: white;
+        }
+
+            .btn-back:hover {
+                background: #5a6268;
+            }
+
+        .btn-read {
+            background: #17a2b8;
+            color: white;
+        }
+
+            .btn-read:hover {
+                background: #138496;
+            }
+
+        .data-row {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+            .data-row .col {
+                flex: 1;
+                min-width: 200px;
+            }
+
+        .json-data {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Consolas', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 5px;
+        }
+
+            .json-data .key {
+                color: #9cdcfe;
+            }
+
+            .json-data .string {
+                color: #ce9178;
+            }
+
+            .json-data .number {
+                color: #b5cea8;
+            }
+
+            .json-data .boolean {
+                color: #569cd6;
+            }
+
+            .json-data .null {
+                color: #569cd6;
+            }
+
+        @@media (max-width: 768px) {
+            .price-comparison-table {
+                font-size: 12px;
+            }
+
+                .price-comparison-table th,
+                .price-comparison-table td {
+                    padding: 4px 6px;
+                }
+
+            .data-row .col {
+                min-width: 100%;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+                .action-buttons .btn {
+                    width: 100%;
+                }
+        }
+    </style>
+}
+
+<div class="details-container">
+    <!-- Header -->
+    <div class="details-header">
+        <h2>📋 تفاصيل الإشعار</h2>
+        <div class="subtitle">#@Model.Id - @Model.Title</div>
+    </div>
+
+    <!-- معلومات الإشعار -->
+    <div class="details-card">
+        <div class="row">
+            <div class="col-md-6">
+                <span class="label">🆔 رقم الإشعار</span>
+                <div class="value">@Model.Id</div>
+            </div>
+            <div class="col-md-6">
+                <span class="label">📂 النوع</span>
+                <div class="value">
+                    @if (Model.Type == "Farm")
+                    {
+                        <span class="badge bg-success">🌾 مزرعة</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-primary">📊 سعر</span>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-2">
+            <div class="col-md-12">
+                <span class="label">📝 العنوان</span>
+                <div class="value">@Model.Title</div>
+            </div>
+        </div>
+
+        <div class="row mt-2">
+            <div class="col-md-12">
+                <span class="label">💬 الرسالة</span>
+                <div class="value">@Model.Message</div>
+            </div>
+        </div>
+
+        <div class="row mt-2">
+            <div class="col-md-6">
+                <span class="label">📅 تاريخ الإنشاء</span>
+                <div class="value">@Model.CreatedDate.ToString("yyyy-MM-dd HH:mm:ss")</div>
+            </div>
+            <div class="col-md-6">
+                <span class="label">📌 الحالة</span>
+                <div class="value">
+                    @if (Model.IsConfirmed)
+                    {
+                        <span class="status-badge confirmed">✅ مؤكد</span>
+                    }
+                    else if (Model.IsCancelled)
+                    {
+                        <span class="status-badge cancelled">❌ ملغي</span>
+                    }
+                    else if (Model.IsRead)
+                    {
+                        <span class="status-badge read">📖 مقروء</span>
+                    }
+                    else
+                    {
+                        <span class="status-badge unread">🆕 جديد</span>
+                    }
+                </div>
+            </div>
+        </div>
+
+        @if (Model.ReadDate.HasValue)
+        {
+            <div class="row mt-2">
+                <div class="col-md-6">
+                    <span class="label">📖 تاريخ القراءة</span>
+                    <div class="value">@Model.ReadDate.Value.ToString("yyyy-MM-dd HH:mm:ss")</div>
+                </div>
+            </div>
+        }
+
+        @if (Model.ConfirmedDate.HasValue)
+        {
+            <div class="row mt-2">
+                <div class="col-md-6">
+                    <span class="label">✅ تاريخ التأكيد</span>
+                    <div class="value">@Model.ConfirmedDate.Value.ToString("yyyy-MM-dd HH:mm:ss")</div>
+                </div>
+            </div>
+        }
+
+        @if (Model.CancelledDate.HasValue)
+        {
+            <div class="row mt-2">
+                <div class="col-md-6">
+                    <span class="label">❌ تاريخ الإلغاء</span>
+                    <div class="value">@Model.CancelledDate.Value.ToString("yyyy-MM-dd HH:mm:ss")</div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- بيانات الأسعار (لو نوع الإشعار Price) -->
+    @if (Model.Type == "Price")
+    {
+        <div class="details-card">
+            <h5 class="mb-3">📊 مقارنة الأسعار</h5>
+
+            @{
+                var oldData = ViewBag.OldData as Newtonsoft.Json.Linq.JArray;
+                var newData = ViewBag.NewData as Newtonsoft.Json.Linq.JArray;
+
+                if (oldData != null && newData != null && oldData.Count > 0)
+                {
+                    <div class="table-responsive">
+                        <table class="price-comparison-table">
+                            <thead>
+                                <tr>
+                                    <th>اليوم</th>
+                                    <th style="color: #dc3545;">السعر القديم</th>
+                                    <th style="color: #28a745;">السعر الجديد</th>
+                                    <th>التغيير</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (int i = 0; i < newData.Count; i++)
+                                {
+                                    var oldPrice = oldData[i];
+                                    var newPrice = newData[i];
+
+                                    var morningDiff = (decimal)(newPrice["MorningPrice"] ?? 0) - (decimal)(oldPrice["MorningPrice"] ?? 0);
+                                    var eveningDiff = (decimal)(newPrice["EveningPrice"] ?? 0) - (decimal)(oldPrice["EveningPrice"] ?? 0);
+                                    var fullDayDiff = (decimal)(newPrice["FullDayPrice"] ?? 0) - (decimal)(oldPrice["FullDayPrice"] ?? 0);
+
+                                    var hasChange = morningDiff != 0 || eveningDiff != 0 || fullDayDiff != 0;
+                                    var totalDiff = morningDiff + eveningDiff + fullDayDiff;
+
+                                    var diffClass = totalDiff > 0 ? "increase" : totalDiff < 0 ? "decrease" : "unchanged";
+                                    var diffSymbol = totalDiff > 0 ? "▲" : totalDiff < 0 ? "▼" : "=";
+                                    var diffText = totalDiff != 0 ? $"{diffSymbol} {Math.Abs(totalDiff):F2}" : "=";
+
+                                    <tr class="@(hasChange ? "table-warning" : "")">
+                                        <td><strong>@newPrice["DayDescAr"]</strong></td>
+                                        <td>
+                                            <div class="old-price">
+                                                صباح: @oldPrice["MorningPrice"]<br />
+                                                مساء: @oldPrice["EveningPrice"]<br />
+                                                كامل: @oldPrice["FullDayPrice"]
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="new-price">
+                                                صباح: @newPrice["MorningPrice"]<br />
+                                                مساء: @newPrice["EveningPrice"]<br />
+                                                كامل: @newPrice["FullDayPrice"]
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="price-change @diffClass">
+                                                @diffText
+                                            </span>
+                                            <br />
+                                            <small style="color: #6c757d;">
+                                                @(hasChange ? "🔄 تغير" : "✅ ثابت")
+                                            </small>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> لا توجد بيانات أسعار لعرضها
+                    </div>
+                }
+            }
+        </div>
+    }
+
+    <!-- بيانات المزرعة (لو نوع الإشعار Farm) -->
+    @if (Model.Type == "Farm")
+    {
+        <div class="details-card">
+            <h5 class="mb-3">🌾 بيانات المزرعة</h5>
+
+            @{
+                var farmData = ViewBag.NewData as Newtonsoft.Json.Linq.JObject;
+                if (farmData != null)
+                {
+                    <div class="row">
+                        <div class="col-md-6">
+                            <span class="label">🏷️ اسم المزرعة</span>
+                            <div class="value">@farmData["Name"]</div>
+                        </div>
+                        <div class="col-md-6">
+                            <span class="label">📍 الموقع</span>
+                            <div class="value">@farmData["LocationDesc"]</div>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-md-6">
+                            <span class="label">📝 الوصف</span>
+                            <div class="value">@farmData["Description"]</div>
+                        </div>
+                        <div class="col-md-6">
+                            <span class="label">📱 رقم الجوال</span>
+                            <div class="value">@farmData["MobileNumber"]</div>
+                        </div>
+                    </div>
+
+                    @if (farmData["ExtraFeatures"] != null && farmData["ExtraFeatures"].Any())
+                    {
+                        <div class="row mt-2">
+                            <div class="col-md-12">
+                                <span class="label">🔗 معلومات إضافية</span>
+                                <div class="value">
+                                    @foreach (var feature in farmData["ExtraFeatures"])
+                                    {
+                                        <span class="badge bg-info me-1">
+                                            FarmerId: @feature["FarmerId"]
+                                        </span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            }
+        </div>
+    }
+
+    <!-- الأزرار -->
+    <div class="details-card">
+        <div class="action-buttons">
+            @if (!Model.IsConfirmed && !Model.IsCancelled)
+            {
+                @if (Model.Type == "Price")
+                {
+                    <button class="btn btn-confirm" onclick="confirmNotif(@Model.Id, true)">
+                        ✅ تأكيد التحديث
+                    </button>
+                    <button class="btn btn-cancel" onclick="confirmNotif(@Model.Id, false)">
+                        ❌ إلغاء
+                    </button>
+                }
+                @if (!Model.IsRead)
+                {
+                    <button class="btn btn-read" onclick="markRead(@Model.Id)">
+                        👁️ تعيين كمقروء
+                    </button>
+                }
+            }
+            <a href="/Notification/Index" class="btn btn-back">
+                🔙 العودة للإشعارات
+            </a>
+            <a href="/Notification/All" class="btn btn-back" style="background: #6f42c1;">
+                📋 عرض الكل
+            </a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // ==========================
+        // تأكيد الإشعار
+        // ==========================
+        async function confirmNotif(id, isConfirmed) {
+            try {
+                const result = await Swal.fire({
+                    title: isConfirmed ? '⏳ جاري التأكيد...' : '⏳ جاري الإلغاء...',
+                    text: 'يرجى الانتظار',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                const response = await $.ajax({
+                    url: '/Notification/Confirm',
+                    type: 'POST',
+                    data: { id: id, isConfirmed: isConfirmed }
+                });
+
+                if (response.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: isConfirmed ? '✅ تم التأكيد بنجاح' : '❌ تم الإلغاء',
+                        text: response.message,
+                        timer: 2000,
+                        timerProgressBar: true
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: '❌ فشل العملية',
+                        text: response.message || 'حدث خطأ'
+                    });
+                }
+            } catch (error) {
+                console.error('❌ Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: '❌ خطأ',
+                    text: error.responseText || 'حدث خطأ في الاتصال'
+                });
+            }
+        }
+
+        // ==========================
+        // تعيين كمقروء
+        // ==========================
+        async function markRead(id) {
+            try {
+                const response = await $.ajax({
+                    url: '/Notification/MarkAsRead',
+                    type: 'POST',
+                    data: { id: id }
+                });
+
+                if (response.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '✅ تم التعيين كمقروء',
+                        timer: 2000,
+                        timerProgressBar: true
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                }
+            } catch (error) {
+                console.error('❌ Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: '❌ خطأ',
+                    text: error.responseText || 'حدث خطأ'
+                });
+            }
+        }
+    </script>
+}

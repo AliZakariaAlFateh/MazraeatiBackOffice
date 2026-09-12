@@ -1,4 +1,9 @@
-﻿@model UserModel
+﻿@using MazraeatiBackOffice.Models.UserManagementModel
+@model UserModel
+@{
+    ViewBag.Title = "إضافة الملاك";
+    ViewBag.activePage = "إضافة مالك";
+}
 @using (Html.BeginForm("Create", "AppUser", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.Partial("_CreateOrUpdate", Model)

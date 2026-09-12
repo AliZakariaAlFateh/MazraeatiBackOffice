@@ -1,3 +1,20 @@
 ﻿@using MazraeatiBackOffice
+@using MazraeatiBackOffice.Configuration
+@using MazraeatiBackOffice.Configuration.Permissions
 @using MazraeatiBackOffice.Models
+@using MazraeatiBackOffice.Models.SportModels
+@using MazraeatiBackOffice.Models.LoyaltyPoints
+@using MazraeatiBackOffice.Core
+@using MazraeatiBackOffice.Configuration.Enums
+@using MazraeatiBackOffice.Core.FarmCore
+@using MazraeatiBackOffice.Models.FarmModel
+@using MazraeatiBackOffice.Core.LoyaltyPoints
+@using MazraeatiBackOffice.Core.SportCore
+@using MazraeatiBackOffice.Dto.NotificationDtos
+@using MazraeatiBackOffice.Dto.SportDtos
+@using MazraeatiBackOffice.Dto
+@using MazraeatiBackOffice.Models.CottageModel
+@using MazraeatiBackOffice.Core.CottageCore
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@inject IPermissionUIService PermissionUIService
+@inject IUserService UserService

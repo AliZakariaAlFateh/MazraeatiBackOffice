@@ -1,4 +1,5 @@
-﻿@model SettingModel
+﻿@using MazraeatiBackOffice.Models.SystemModel
+@model SettingModel
 <style>
     .form-group {
         font-size: 13px;
@@ -25,6 +26,19 @@
                 <div class="header">
                     <h2><strong>معالجة </strong> السجل   </h2>
                     <ul class="header-dropdown">
+                        @* @if (Model.Id > 0)
+                        {
+                            <li>
+                                <a href="@Url.Action("Create")" class="btn btn-primary btn-round">
+                                    <i class="fa fa-plus"></i> إضافة / جديد
+                                </a>
+                            </li>
+                        } *@
+                        <li>
+                            <a href="@Url.Action("Index")" class="btn btn-default btn-round">
+                                <i class="fa fa-arrow-right"></i> العودة للقائمة
+                            </a>
+                        </li>
                     </ul>
                 </div>
                 <div class="body">

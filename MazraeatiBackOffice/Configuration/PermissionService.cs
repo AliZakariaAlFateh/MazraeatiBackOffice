@@ -1,5 +1,6 @@
 ﻿using Google;
-using MazraeatiBackOffice.Core;
+using MazraeatiBackOffice.Core.SystemCore;
+using MazraeatiBackOffice.Core.UserManagementCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

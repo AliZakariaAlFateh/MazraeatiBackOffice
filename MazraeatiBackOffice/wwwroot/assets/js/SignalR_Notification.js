@@ -1,970 +1,12 @@
-﻿//// ==========================
-//// Start SignalR
-//// ==========================
-// ==========================
-// notifications.js
-// SignalR Notifications - External File
-// ==========================
-
-
-// While Page be Ready
-
-// ==========================
-// notifications.js
-// SignalR Notifications - With LocalStorage & FarmId
-// ==========================
-
-
-//$(document).ready(function () {
-
-//    // ==========================
-//    // CONFIGURATION
-//    // ==========================
-//    const API_URL = window.location.hostname === 'localhost'
-//        ? "http://localhost:61366/farmHub"
-//        : "http://5.189.180.190/MazareatiAPI/farmHub";
-
-//    const STORAGE_KEY = 'farm_notifications';
-//    const EXPIRE_DAYS = 3; // 3 days
-
-//    // ==========================
-//    // STATE
-//    // ==========================
-//    let notificationCount = 0;
-//    let notificationList = [];
-
-//    // ==========================
-//    // DOM REFS
-//    // ==========================
-//    const countElement = document.getElementById("notificationCount");
-//    const listElement = document.getElementById("notiItems");
-//    const dropdown = document.getElementById("notificationList");
-//    const wrapper = document.querySelector(".notification-wrapper");
-
-//    // ==========================
-//    // LOCALSTORAGE HELPERS
-//    // ==========================
-//    function getStoredNotifications() {
-//        try {
-//            const data = localStorage.getItem(STORAGE_KEY);
-//            if (!data) return [];
-
-//            const parsed = JSON.parse(data);
-
-//            // Filter expired notifications
-//            const now = new Date().getTime();
-//            const valid = parsed.filter(item => {
-//                return (now - item.timestamp) < (EXPIRE_DAYS * 24 * 60 * 60 * 1000);
-//            });
-
-//            // If some expired, update storage
-//            if (valid.length !== parsed.length) {
-//                saveNotifications(valid);
-//            }
-
-//            return valid;
-//        } catch (e) {
-//            console.error('Error reading localStorage:', e);
-//            return [];
-//        }
-//    }
-
-//    function saveNotifications(notifications) {
-//        try {
-//            localStorage.setItem(STORAGE_KEY, JSON.stringify(notifications));
-//        } catch (e) {
-//            console.error('Error saving to localStorage:', e);
-//        }
-//    }
-
-//    function addToStorage(message, farmData) {
-//        const notifications = getStoredNotifications();
-//        notifications.unshift({
-//            message: message,
-//            farmData: farmData,
-//            timestamp: new Date().getTime()
-//        });
-//        saveNotifications(notifications);
-//    }
-
-//    function clearStorage() {
-//        localStorage.removeItem(STORAGE_KEY);
-//    }
-
-//    // ==========================
-//    // GET FARMER ID FROM EXTRA FEATURES
-//    // ==========================
-//    function getFarmerIdFromExtraFeatures(extraFeatures) {
-//        if (!extraFeatures || extraFeatures.length === 0) {
-//            return null;
-//        }
-
-//        // Try to get farmerId from first extra feature
-//        const firstFeature = extraFeatures[0];
-//        return firstFeature?.farmerId || null;
-//    }
-
-//    // ==========================
-//    // BUILD NOTIFICATION MESSAGE
-//    // ==========================
-//    function buildNotificationMessage(farm) {
-//        const farmName = farm.name ?? farm.Name ?? 'غير معروف';
-//        const location = farm.locationDesc ?? farm.LocationDesc ?? '';
-
-//        // Get farmerId from extraFeatures (if exists)
-//        let farmerId = null;
-//        if (farm.extraFeatures && Array.isArray(farm.extraFeatures) && farm.extraFeatures.length > 0) {
-//            farmerId = getFarmerIdFromExtraFeatures(farm.extraFeatures);
-//        }
-
-//        // Build the message
-//        let message = `✅ تم اضافة مزرعة : <strong>${farmName}</strong>`;
-
-//        if (location) {
-//            message += `<br/><small>📍 ${location}</small>`;
-//        }
-
-//        // Add link based on farmerId
-//        if (farmerId) {
-//            // لو فيه farmerId → رابط التعديل
-//            message += `<br/><small>🔗 <a href='/MazraeatiBackOffice/Farmers/Edit/${farmerId}' target='_blank' style='color: #4CAF50; text-decoration: underline;'>تعديل المزرعة</a></small>`;
-//        } else {
-//            // لو مفيش farmerId → رابط عرض جميع المزارع
-//            message += `<br/><small>🔗 <a href='/MazraeatiBackOffice/Farmers/Index' target='_blank' style='color: #2196F3; text-decoration: underline;'>عرض جميع المزارع</a></small>`;
-//        }
-
-//        return message;
-//    }
-
-//    // ==========================
-//    // LOAD FROM LOCALSTORAGE
-//    // ==========================
-//    function loadFromStorage() {
-//        const stored = getStoredNotifications();
-
-//        if (stored.length > 0) {
-//            // Clear current list
-//            notificationList = [];
-
-//            // Load from storage and rebuild messages
-//            stored.forEach(item => {
-//                if (item.farmData) {
-//                    const message = buildNotificationMessage(item.farmData);
-//                    notificationList.push(message);
-//                } else {
-//                    notificationList.push(item.message);
-//                }
-//            });
-
-//            notificationCount = notificationList.length;
-//            updateNotificationUI();
-//            console.log(`📦 Loaded ${notificationCount} notifications from localStorage`);
-//        }
-//    }
-
-//    // ==========================
-//    // SIGNALR
-//    // ==========================
-//    const connection = new signalR.HubConnectionBuilder()
-//        .withUrl(API_URL)
-//        .withAutomaticReconnect()
-//        .build();
-
-//    connection.on("FarmAdded", function (farm) {
-//        console.log('📨 New Farm Added:', farm);
-
-//        // Build message
-//        const message = buildNotificationMessage(farm);
-
-//        // Save farm data for later use (keep all data)
-//        const farmData = {
-//            name: farm.name ?? farm.Name ?? 'غير معروف',
-//            locationDesc: farm.locationDesc ?? farm.LocationDesc ?? '',
-//            extraFeatures: farm.extraFeatures || []
-//        };
-
-//        // Add to list
-//        notificationList.unshift(message);
-//        notificationCount++;
-
-//        // Save to localStorage with farm data
-//        addToStorage(message, farmData);
-
-//        // Update UI
-//        updateNotificationUI();
-//        showToast(message);
-//    });
-
-//    connection.start().catch(err => console.error('SignalR Error:', err));
-
-//    // ==========================
-//    // UI UPDATE
-//    // ==========================
-//    function updateNotificationUI() {
-//        if (!countElement || !listElement) return;
-
-//        countElement.textContent = notificationCount;
-//        countElement.style.display = notificationCount > 0 ? "inline-block" : "none";
-
-//        listElement.innerHTML = "";
-
-//        if (notificationList.length === 0) {
-//            listElement.innerHTML = '<li class="noti-empty">لا توجد إشعارات</li>';
-//            return;
-//        }
-
-//        notificationList.forEach(n => {
-//            const li = document.createElement("li");
-//            li.innerHTML = n;
-//            listElement.appendChild(li);
-//        });
-
-//        // Add clear button
-//        const clearBtn = document.createElement("li");
-//        clearBtn.className = "noti-clear-btn";
-//        clearBtn.innerHTML = `<button onclick="clearAllNotifications()">🗑️ مسح الكل</button>`;
-//        listElement.appendChild(clearBtn);
-//    }
-
-//    // ==========================
-//    // TOGGLE
-//    // ==========================
-//    window.toggleNotifications = function () {
-//        if (!dropdown) return;
-
-//        dropdown.classList.toggle("active");
-
-//        if (dropdown.classList.contains("active")) {
-//            notificationCount = 0;
-//            if (countElement) {
-//                countElement.style.display = "none";
-//            }
-//        }
-//    };
-
-//    // ==========================
-//    // CLEAR ALL - SweetAlert2
-//    // ==========================
-//    window.clearAllNotifications = function () {
-//        if (notificationList.length === 0) return;
-
-//        Swal.fire({
-//            title: '🧹 مسح الإشعارات',
-//            text: 'هل أنت متأكد من مسح جميع الإشعارات؟',
-//            icon: 'question',
-//            showCancelButton: true,
-//            confirmButtonColor: '#d33',
-//            cancelButtonColor: '#3085d6',
-//            confirmButtonText: 'نعم، امسح الكل',
-//            cancelButtonText: 'إلغاء',
-//            reverseButtons: true
-//        }).then((result) => {
-//            if (result.isConfirmed) {
-//                notificationList = [];
-//                notificationCount = 0;
-//                clearStorage();
-//                updateNotificationUI();
-//                dropdown.classList.remove('active');
-
-//                Swal.fire({
-//                    toast: true,
-//                    position: 'top-end',
-//                    icon: 'success',
-//                    title: '✅ تم مسح جميع الإشعارات',
-//                    showConfirmButton: false,
-//                    timer: 2000,
-//                    timerProgressBar: true
-//                });
-//            }
-//        });
-//    };
-
-//    // ==========================
-//    // CLOSE ON OUTSIDE CLICK
-//    // ==========================
-//    document.addEventListener("click", function (e) {
-//        if (!wrapper) return;
-
-//        if (!wrapper.contains(e.target)) {
-//            if (dropdown) {
-//                dropdown.classList.remove("active");
-//            }
-//        }
-//    });
-
-//    // ==========================
-//    // SWEET TOAST
-//    // ==========================
-//    function showToast(message, type = 'success') {
-//        if (typeof Swal === 'undefined') {
-//            console.log('🔔', message);
-//            return;
-//        }
-
-//        Swal.fire({
-//            toast: true,
-//            position: 'top-end',
-//            icon: type,
-//            html: message,
-//            showConfirmButton: false,
-//            timer: 3000,
-//            timerProgressBar: true
-//        });
-//    }
-
-//    // ==========================
-//    // KEYBOARD SHORTCUTS
-//    // ==========================
-//    document.addEventListener("keydown", function (e) {
-//        if (e.key === 'Escape' && dropdown) {
-//            dropdown.classList.remove('active');
-//        }
-//    });
-
-//    // ==========================
-//    // INIT - LOAD FROM STORAGE
-//    // ==========================
-//    loadFromStorage();
-
-//    // Check expired every hour
-//    setInterval(() => {
-//        const stored = getStoredNotifications();
-//        if (stored.length !== notificationList.length) {
-//            loadFromStorage();
-//        }
-//    }, 60 * 60 * 1000);
-
-//    console.log('✅ Notifications system loaded successfully');
-//    console.log(`📦 ${notificationList.length} notifications loaded from storage`);
-
-//}); // end document ready
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//All in One .....
-// signalr_notification.js
-
-//$(document).ready(function () {
-
-//    // ==========================
-//    // CONFIGURATION
-//    // ==========================
-//    const FARM_API_URL = window.location.hostname === 'localhost'
-//        ? "http://localhost:61366/farmHub"
-//        : "http://5.189.180.190/MazareatiAPI/farmHub";
-
-//    const PRICE_API_URL = window.location.hostname === 'localhost'
-//        ? "http://localhost:61366/priceHub"
-//        : "http://5.189.180.190/MazareatiAPI/priceHub";
-
-//    const STORAGE_KEY = 'all_notifications';
-//    const EXPIRE_DAYS = 3;
-
-//    // ==========================
-//    // STATE
-//    // ==========================
-//    let notificationCount = 0;
-//    let notificationList = [];
-
-//    // ==========================
-//    // DOM REFS
-//    // ==========================
-//    const countElement = document.getElementById("notificationCount");
-//    const listElement = document.getElementById("notiItems");
-//    const dropdown = document.getElementById("notificationList");
-//    const wrapper = document.querySelector(".notification-wrapper");
-
-//    console.log('🚀 SignalR Notifications System Starting...');
-//    console.log('📌 DOM Elements found:', {
-//        countElement: !!countElement,
-//        listElement: !!listElement,
-//        dropdown: !!dropdown,
-//        wrapper: !!wrapper
-//    });
-
-//    // ==========================
-//    // LOCALSTORAGE HELPERS
-//    // ==========================
-//    function getStoredNotifications() {
-//        try {
-//            const data = localStorage.getItem(STORAGE_KEY);
-//            if (!data) return [];
-
-//            const parsed = JSON.parse(data);
-//            const now = new Date().getTime();
-//            const valid = parsed.filter(item => {
-//                return (now - item.timestamp) < (EXPIRE_DAYS * 24 * 60 * 60 * 1000);
-//            });
-
-//            if (valid.length !== parsed.length) {
-//                saveNotifications(valid);
-//            }
-
-//            return valid;
-//        } catch (e) {
-//            console.error('Error reading localStorage:', e);
-//            return [];
-//        }
-//    }
-
-//    function saveNotifications(notifications) {
-//        try {
-//            localStorage.setItem(STORAGE_KEY, JSON.stringify(notifications));
-//        } catch (e) {
-//            console.error('Error saving to localStorage:', e);
-//        }
-//    }
-
-//    function addToStorage(message, data, type) {
-//        const notifications = getStoredNotifications();
-//        notifications.unshift({
-//            message: message,
-//            data: data,
-//            type: type,
-//            timestamp: new Date().getTime()
-//        });
-//        saveNotifications(notifications);
-//    }
-
-//    function clearStorage() {
-//        localStorage.removeItem(STORAGE_KEY);
-//    }
-
-//    // ==========================
-//    // BUILD NOTIFICATION MESSAGE - FARM
-//    // ==========================
-//    function buildFarmNotificationMessage(farm) {
-//        console.log('🏗️ Building farm notification for:', farm);
-
-//        const farmName = farm.name || farm.Name || 'غير معروف';
-//        const location = farm.locationDesc || farm.LocationDesc || '';
-
-//        let message = `
-//            <div class="notification-item farm-notification">
-//                <div class="noti-icon">🌾</div>
-//                <div class="noti-content">
-//                    <div class="noti-title">✅ تم اضافة مزرعة</div>
-//                    <div class="noti-text"><strong>${farmName}</strong></div>
-//                    ${location ? `<div class="noti-location">📍 ${location}</div>` : ''}
-//                    <div class="noti-time">🕐 ${new Date().toLocaleString('ar-EG')}</div>
-//                </div>
-//            </div>
-//        `;
-
-//        // رابط التعديل
-//        message += `
-//            <div class="noti-action">
-//                <a href='/MazraeatiBackOffice/Farmers/Index' target='_blank'
-//                   style='color: #2196F3; text-decoration: none; font-size: 12px;'>
-//                    🔗 عرض جميع المزارع
-//                </a>
-//            </div>
-//        `;
-
-//        return message;
-//    }
-
-//    // ==========================
-//    // BUILD NOTIFICATION MESSAGE - PRICE
-//    // ==========================
-//    function buildPriceNotificationMessage(priceData) {
-//        console.log('🏗️ Building price notification for:', priceData);
-
-//        const farmerName = priceData.farmerName || 'مزارع';
-//        const farmName = priceData.farmName || 'مزرعة';
-//        const totalCount = priceData.totalCount || 0;
-
-//        let changedCount = 0;
-//        let increasedCount = 0;
-//        let decreasedCount = 0;
-
-//        if (priceData.priceDiffs && priceData.priceDiffs.length > 0) {
-//            changedCount = priceData.priceDiffs.filter(d => d.hasChanges).length;
-//            increasedCount = priceData.priceDiffs.filter(d => d.morningDiff > 0 || d.eveningDiff > 0 || d.fullDayDiff > 0).length;
-//            decreasedCount = priceData.priceDiffs.filter(d => d.morningDiff < 0 || d.eveningDiff < 0 || d.fullDayDiff < 0).length;
-//        }
-
-//        let message = `
-//            <div class="notification-item price-notification">
-//                <div class="noti-icon">📊</div>
-//                <div class="noti-content">
-//                    <div class="noti-title">🔄 تحديث قائمة الأسعار</div>
-//                    <div class="noti-text">
-//                        <div class="farmer-name">👨‍🌾 ${farmerName}</div>
-//                        <div class="farm-name">🏠 ${farmName}</div>
-//                    </div>
-//                    <div class="price-summary">
-//                        <span class="total">📊 ${totalCount} سعر</span>
-//                        ${changedCount > 0 ? `<span class="changed">🔄 ${changedCount} تغير</span>` : ''}
-//                        ${increasedCount > 0 ? `<span class="increase">📈 ${increasedCount} زيادة</span>` : ''}
-//                        ${decreasedCount > 0 ? `<span class="decrease">📉 ${decreasedCount} انخفاض</span>` : ''}
-//                    </div>
-//                    <div class="noti-time">🕐 ${new Date(priceData.updatedDate).toLocaleString('ar-EG')}</div>
-//                </div>
-//            </div>
-//        `;
-
-//        // زر عرض التفاصيل
-//        const encodedData = encodeURIComponent(JSON.stringify(priceData));
-//        message += `
-//            <div class="noti-action">
-//                <button onclick="showPriceDetails('${encodedData}')"
-//                        style="color: #2196F3; background: none; border: none; cursor: pointer; font-size: 12px; padding: 5px 10px;">
-//                    📋 عرض التفاصيل
-//                </button>
-//            </div>
-//        `;
-
-//        return message;
-//    }
-
-//    // ==========================
-//    // SHOW PRICE DETAILS IN MODAL
-//    // ==========================
-//    window.showPriceDetails = function (priceDataJson) {
-//        try {
-//            const priceData = JSON.parse(decodeURIComponent(priceDataJson));
-//            console.log('📋 Showing price details:', priceData);
-
-//            let tableHtml = '';
-//            if (priceData.newPrices && priceData.newPrices.length > 0) {
-//                tableHtml = `
-//                    <table style="width: 100%; border-collapse: collapse; font-size: 13px; direction: rtl; margin-top: 10px;">
-//                        <thead>
-//                            <tr style="background: #f8f9fa; border-bottom: 2px solid #dee2e6;">
-//                                <th style="padding: 8px; text-align: center;">اليوم</th>
-//                                <th style="padding: 8px; text-align: center; color: #dc3545;">القديم</th>
-//                                <th style="padding: 8px; text-align: center; color: #28a745;">الجديد</th>
-//                                <th style="padding: 8px; text-align: center;">التغيير</th>
-//                            </tr>
-//                        </thead>
-//                        <tbody>
-//                            ${priceData.newPrices.map((newPrice) => {
-//                    const oldPrice = priceData.oldPrices ? priceData.oldPrices.find(x => x.id === newPrice.id) : {};
-//                    const diff = priceData.priceDiffs ? priceData.priceDiffs.find(x => x.id === newPrice.id) : null;
-//                    const hasChange = diff && diff.hasChanges;
-
-//                    return `
-//                                    <tr style="border-bottom: 1px solid #f0f0f0; ${hasChange ? 'background: #fff8e1;' : ''}">
-//                                        <td style="padding: 6px; text-align: center; font-weight: bold;">${newPrice.dayDescAr}</td>
-//                                        <td style="padding: 6px; text-align: center; color: #dc3545; text-decoration: line-through;">
-//                                            ${oldPrice && oldPrice.morningPrice ? oldPrice.morningPrice : '-'}
-//                                            /
-//                                            ${oldPrice && oldPrice.eveningPrice ? oldPrice.eveningPrice : '-'}
-//                                            /
-//                                            ${oldPrice && oldPrice.fullDayPrice ? oldPrice.fullDayPrice : '-'}
-//                                        </td>
-//                                        <td style="padding: 6px; text-align: center; color: #28a745; font-weight: bold;">
-//                                            ${newPrice.morningPrice}
-//                                            /
-//                                            ${newPrice.eveningPrice}
-//                                            /
-//                                            ${newPrice.fullDayPrice}
-//                                        </td>
-//                                        <td style="padding: 6px; text-align: center;">
-//                                            ${hasChange ?
-//                            `<span style="color: #ff9800;">🔄 تغير</span>` :
-//                            `<span style="color: #28a745;">✅ ثابت</span>`
-//                        }
-//                                        </td>
-//                                    </tr>
-//                                `;
-//                }).join('')}
-//                        </tbody>
-//                    </table>
-//                `;
-//            }
-
-//            Swal.fire({
-//                title: `📊 تفاصيل تحديث الأسعار - ${priceData.farmerName || 'مزارع'}`,
-//                html: `
-//                    <div style="text-align: right;">
-//                        <div style="margin-bottom: 10px; padding: 10px; background: #f8f9fa; border-radius: 8px;">
-//                            <strong>👨‍🌾 ${priceData.farmerName || 'مزارع'}</strong><br/>
-//                            <strong>🏠 ${priceData.farmName || 'مزرعة'}</strong><br/>
-//                            <small>🕐  ${new Date(priceData.updatedDate).toLocaleString('ar-EG')}</small>
-//                        </div>
-//                        <div style="max-height: 400px; overflow-y: auto;">
-//                            ${tableHtml}
-//                        </div>
-//                        <div style="margin-top: 10px; font-size: 12px; color: #6c757d; padding: 5px; background: #f8f9fa; border-radius: 4px;">
-//                            📋 القديم (مشطوب) | 📋 الجديد (أخضر) | 🔄 تغير | ✅ ثابت
-//                        </div>
-//                    </div>
-//                `,
-//                icon: 'info',
-//                confirmButtonText: 'إغلاق',
-//                width: 750,
-//                confirmButtonColor: '#2196F3'
-//            });
-//        } catch (e) {
-//            console.error('❌ Error showing price details:', e);
-//            showToast('حدث خطأ في عرض التفاصيل', 'error');
-//        }
-//    };
-
-//    // ==========================
-//    // LOAD FROM LOCALSTORAGE
-//    // ==========================
-//    function loadFromStorage() {
-//        const stored = getStoredNotifications();
-//        console.log('📦 Loading from storage:', stored.length);
-
-//        if (stored.length > 0) {
-//            notificationList = [];
-
-//            stored.forEach(item => {
-//                let message = '';
-//                if (item.type === 'farm' && item.data) {
-//                    message = buildFarmNotificationMessage(item.data);
-//                } else if (item.type === 'price' && item.data) {
-//                    message = buildPriceNotificationMessage(item.data);
-//                } else if (item.message) {
-//                    message = item.message;
-//                }
-
-//                if (message) {
-//                    notificationList.push(message);
-//                }
-//            });
-
-//            notificationCount = notificationList.length;
-//            updateNotificationUI();
-//            console.log(`📦 Loaded ${notificationCount} notifications from localStorage`);
-//        }
-//    }
-
-//    // ==========================
-//    // SIGNALR - FARM CONNECTION
-//    // ==========================
-//    console.log('📡 Connecting to Farm Hub...');
-//    const farmConnection = new signalR.HubConnectionBuilder()
-//        .withUrl(FARM_API_URL)
-//        .withAutomaticReconnect()
-//        .build();
-
-//    // مستمع إضافة مزرعة
-//    farmConnection.on("FarmAdded", function (farm) {
-//        console.log('🌾✅ FarmAdded event received!', farm);
-
-//        try {
-//            // بناء الرسالة
-//            const message = buildFarmNotificationMessage(farm);
-
-//            // إضافة للإشعارات
-//            notificationList.unshift(message);
-//            notificationCount++;
-
-//            // حفظ في localStorage
-//            const farmData = {
-//                name: farm.name || farm.Name || 'غير معروف',
-//                locationDesc: farm.locationDesc || farm.LocationDesc || '',
-//                extraFeatures: farm.extraFeatures || []
-//            };
-//            addToStorage(message, farmData, 'farm');
-
-//            // تحديث الواجهة
-//            updateNotificationUI();
-
-//            // عرض Toast
-//            const farmName = farm.name || farm.Name || 'مزرعة';
-//            showToast(`🌾 تم إضافة مزرعة: ${farmName}`, 'success');
-
-//            console.log('✅ Farm notification added successfully');
-//        } catch (error) {
-//            console.error('❌ Error processing farm notification:', error);
-//        }
-//    });
-
-//    // بدء اتصال Farm
-//    farmConnection.start()
-//        .then(() => {
-//            console.log('✅ Farm Hub connected successfully to:', FARM_API_URL);
-//        })
-//        .catch(err => {
-//            console.error('❌ Farm Hub connection error:', err);
-//        });
-
-//    // ==========================
-//    // SIGNALR - PRICE CONNECTION
-//    // ==========================
-//    console.log('📡 Connecting to Price Hub...');
-//    const priceConnection = new signalR.HubConnectionBuilder()
-//        .withUrl(PRICE_API_URL)
-//        .withAutomaticReconnect()
-//        .build();
-
-//    // مستمع تحديث الأسعار
-//    priceConnection.on("PricesBatchUpdated", function (batchData) {
-//        debugger
-//        console.log("Ia any thing of prices updated !!!!!!!!!!!!!")
-//        console.log(batchData)
-//        console.log('📊✅ PricesBatchUpdated event received!', batchData);
-
-//        try {
-//            // بناء الرسالة
-//            const message = buildPriceNotificationMessage(batchData);
-
-//            // إضافة للإشعارات
-//            notificationList.unshift(message);
-//            notificationCount++;
-
-//            // حفظ في localStorage
-//            addToStorage(message, batchData, 'price');
-
-//            // تحديث الواجهة
-//            updateNotificationUI();
-
-//            // عرض Toast مع ملخص
-//            const changedCount = batchData.priceDiffs ? batchData.priceDiffs.filter(d => d.hasChanges).length : 0;
-//            const totalCount = batchData.totalCount || 0;
-//            const farmerName = batchData.farmerName || 'مزارع';
-
-//            showToast(
-//                `📊 تم تحديث أسعار ${farmerName}<br/>${totalCount} سعر ${changedCount > 0 ? `(${changedCount} تغيير)` : ''}`,
-//                changedCount > 0 ? 'info' : 'success'
-//            );
-
-//            console.log('✅ Price notification added successfully');
-//        } catch (error) {
-//            console.error('❌ Error processing price notification:', error);
-//        }
-//    });
-
-//    // مستمع إضافة سعر فردي (اختياري)
-//    priceConnection.on("PriceAdded", function (priceData) {
-//        console.log('💰 PriceAdded event received:', priceData);
-//        // يمكنك إضافة معالجة هنا لو حبيت
-//    });
-
-//    // مستمع تحديث سعر فردي (اختياري)
-//    priceConnection.on("PriceUpdated", function (priceData) {
-//        console.log('💰 PriceUpdated event received:', priceData);
-//        // يمكنك إضافة معالجة هنا لو حبيت
-//    });
-
-//    // بدء اتصال Price
-//    priceConnection.start()
-//        .then(() => {
-//            console.log('✅ Price Hub connected successfully to:', PRICE_API_URL);
-//        })
-//        .catch(err => {
-//            console.error('❌ Price Hub connection error:', err);
-//        });
-
-//    // ==========================
-//    // UI UPDATE
-//    // ==========================
-//    function updateNotificationUI() {
-//        console.log('🔄 Updating UI, count:', notificationCount);
-
-//        if (!countElement || !listElement) {
-//            console.error('❌ DOM elements not found!');
-//            return;
-//        }
-
-//        // تحديث العدد
-//        countElement.textContent = notificationCount;
-//        countElement.style.display = notificationCount > 0 ? "inline-block" : "none";
-
-//        // تحديث القائمة
-//        listElement.innerHTML = "";
-
-//        if (notificationList.length === 0) {
-//            listElement.innerHTML = '<li class="noti-empty">لا توجد إشعارات</li>';
-//            return;
-//        }
-
-//        // إضافة كل الإشعارات
-//        notificationList.forEach((n, index) => {
-//            const li = document.createElement("li");
-//            li.className = "noti-item";
-//            li.setAttribute('data-index', index);
-//            li.innerHTML = n;
-//            listElement.appendChild(li);
-//        });
-
-//        // زر مسح الكل
-//        const clearLi = document.createElement("li");
-//        clearLi.className = "noti-clear";
-//        clearLi.innerHTML = `<button onclick="clearAllNotifications()" class="clear-btn">🗑️ مسح الكل</button>`;
-//        listElement.appendChild(clearLi);
-
-//        console.log('✅ UI updated successfully');
-//    }
-
-//    // ==========================
-//    // TOGGLE NOTIFICATIONS
-//    // ==========================
-//    window.toggleNotifications = function () {
-//        console.log('🔄 Toggling notifications');
-
-//        if (!dropdown) {
-//            console.error('❌ Dropdown element not found!');
-//            return;
-//        }
-
-//        dropdown.classList.toggle("active");
-
-//        if (dropdown.classList.contains("active")) {
-//            // تصفير العداد عند الفتح
-//            notificationCount = 0;
-//            if (countElement) {
-//                countElement.style.display = "none";
-//            }
-//            console.log('📬 Notifications opened, count reset');
-//        }
-//    };
-
-//    // ==========================
-//    // CLEAR ALL NOTIFICATIONS
-//    // ==========================
-//    window.clearAllNotifications = function () {
-//        console.log('🗑️ Clearing all notifications');
-
-//        if (notificationList.length === 0) {
-//            showToast('لا توجد إشعارات لمسحها', 'info');
-//            return;
-//        }
-
-//        Swal.fire({
-//            title: '🧹 مسح الإشعارات',
-//            text: 'هل أنت متأكد من مسح جميع الإشعارات؟',
-//            icon: 'question',
-//            showCancelButton: true,
-//            confirmButtonColor: '#d33',
-//            cancelButtonColor: '#3085d6',
-//            confirmButtonText: 'نعم، امسح الكل',
-//            cancelButtonText: 'إلغاء',
-//            reverseButtons: true
-//        }).then((result) => {
-//            if (result.isConfirmed) {
-//                notificationList = [];
-//                notificationCount = 0;
-//                clearStorage();
-//                updateNotificationUI();
-//                if (dropdown) {
-//                    dropdown.classList.remove('active');
-//                }
-
-//                Swal.fire({
-//                    toast: true,
-//                    position: 'top-end',
-//                    icon: 'success',
-//                    title: '✅ تم مسح جميع الإشعارات',
-//                    showConfirmButton: false,
-//                    timer: 2000,
-//                    timerProgressBar: true
-//                });
-//                console.log('✅ All notifications cleared');
-//            }
-//        });
-//    };
-
-//    // ==========================
-//    // CLOSE ON OUTSIDE CLICK
-//    // ==========================
-//    document.addEventListener("click", function (e) {
-//        if (!wrapper) return;
-
-//        if (!wrapper.contains(e.target)) {
-//            if (dropdown) {
-//                dropdown.classList.remove("active");
-//            }
-//        }
-//    });
-
-//    // ==========================
-//    // SWEET TOAST
-//    // ==========================
-//    function showToast(message, type = 'success') {
-//        console.log('🔔 Toast:', message);
-
-//        if (typeof Swal === 'undefined') {
-//            console.log('⚠️ Swal not defined, showing console notification:', message);
-//            return;
-//        }
-
-//        Swal.fire({
-//            toast: true,
-//            position: 'top-end',
-//            icon: type,
-//            html: message,
-//            showConfirmButton: false,
-//            timer: 4000,
-//            timerProgressBar: true
-//        });
-//    }
-
-//    // ==========================
-//    // KEYBOARD SHORTCUTS
-//    // ==========================
-//    document.addEventListener("keydown", function (e) {
-//        if (e.key === 'Escape' && dropdown) {
-//            dropdown.classList.remove('active');
-//            console.log('🔑 Esc pressed, closing notifications');
-//        }
-//    });
-
-//    // ==========================
-//    // INIT - LOAD FROM STORAGE
-//    // ==========================
-//    loadFromStorage();
-
-//    // Check expired every hour
-//    setInterval(() => {
-//        const stored = getStoredNotifications();
-//        if (stored.length !== notificationList.length) {
-//            console.log('🔄 Refreshing notifications from storage');
-//            loadFromStorage();
-//        }
-//    }, 60 * 60 * 1000);
-
-//    // ==========================
-//    // FINAL LOG
-//    // ==========================
-//    console.log('✅ Notifications system loaded successfully');
-//    console.log(`📦 ${notificationList.length} notifications loaded from storage`);
-//    console.log('🎯 Listening for FarmAdded and PricesBatchUpdated events');
-
-//}); // end document ready
-
-
-
-
-
-
-
-
-
-
-
-///All In One
-$(document).ready(function () {
+﻿$(document).ready(function () {
 
     // ==========================
     // CONFIGURATION
     // ==========================
+    const NOTIFICATION_URL = window.location.hostname === 'localhost'
+        ? '/Notification'
+        : 'http://5.189.180.190/MazraeatiBackOffice/Notification';
+
     const FARM_API_URL = window.location.hostname === 'localhost'
         ? "http://localhost:61366/farmHub"
         : "http://5.189.180.190/MazareatiAPI/farmHub";
@@ -973,19 +15,19 @@ $(document).ready(function () {
         ? "http://localhost:61366/priceHub"
         : "http://5.189.180.190/MazareatiAPI/priceHub";
 
-    // MVC API URL للتحديث
     const MVC_UPDATE_URL = window.location.hostname === 'localhost'
         ? "/Farmers/EditPriceList"
-        : "/MazraeatiBackOffice/Farmers/EditPriceList";
-
-    const STORAGE_KEY = 'all_notifications';
-    const EXPIRE_DAYS = 3;
+        : "http://5.189.180.190/MazraeatiBackOffice/Farmers/EditPriceList";
 
     // ==========================
     // STATE
     // ==========================
     let notificationCount = 0;
     let notificationList = [];
+    let notificationIds = [];
+    let isFirstLoad = true;
+    let isLoading = false;
+    let isDropdownOpen = false;
 
     // ==========================
     // DOM REFS
@@ -995,173 +37,465 @@ $(document).ready(function () {
     const dropdown = document.getElementById("notificationList");
     const wrapper = document.querySelector(".notification-wrapper");
 
-    console.log('🚀 SignalR Notifications System Starting...');
-    console.log('📌 DOM Elements found:', {
-        countElement: !!countElement,
-        listElement: !!listElement,
-        dropdown: !!dropdown,
-        wrapper: !!wrapper
-    });
+    console.log('🚀 Notifications System Starting...');
 
     // ==========================
-    // LOCALSTORAGE HELPERS
+    // API CALLS (خفيفة وسريعة)
     // ==========================
-    function getStoredNotifications() {
+    async function fetchNotifications() {
         try {
-            const data = localStorage.getItem(STORAGE_KEY);
-            if (!data) return [];
-
-            const parsed = JSON.parse(data);
-            const now = new Date().getTime();
-            const valid = parsed.filter(item => {
-                return (now - item.timestamp) < (EXPIRE_DAYS * 24 * 60 * 60 * 1000);
+            const response = await $.ajax({
+                url: `${NOTIFICATION_URL}/GetNotifications`,
+                type: 'GET',
+                timeout: 5000 // 5 ثواني فقط
             });
+            return response;
+        } catch (error) {
+            console.error('❌ Error fetching notifications:', error);
+            return { success: false, count: 0, notifications: [] };
+        }
+    }
 
-            if (valid.length !== parsed.length) {
-                saveNotifications(valid);
+    async function fetchNotificationsCount() {
+        try {
+            const response = await $.ajax({
+                url: `${NOTIFICATION_URL}/GetUnreadCount`,
+                type: 'GET',
+                timeout: 3000 // 3 ثواني فقط
+            });
+            return response;
+        } catch (error) {
+            console.error('❌ Error fetching count:', error);
+            return { success: false, count: 0 };
+        }
+    }
+
+    async function markAsRead(id) {
+        try {
+            const response = await $.ajax({
+                url: `${NOTIFICATION_URL}/MarkAsRead`,
+                type: 'POST',
+                data: { id: id },
+                timeout: 5000
+            });
+            return response;
+        } catch (error) {
+            console.error('❌ Error marking as read:', error);
+            return { success: false };
+        }
+    }
+
+    async function markAllAsRead() {
+        try {
+            const response = await $.ajax({
+                url: `${NOTIFICATION_URL}/MarkAllAsRead`,
+                type: 'POST',
+                timeout: 5000
+            });
+            return response;
+        } catch (error) {
+            console.error('❌ Error marking all as read:', error);
+            return { success: false };
+        }
+    }
+
+    async function confirmNotification(id, isConfirmed) {
+        try {
+            const response = await $.ajax({
+                url: `${NOTIFICATION_URL}/Confirm`,
+                type: 'POST',
+                data: { id: id, isConfirmed: isConfirmed },
+                timeout: 10000
+            });
+            return response;
+        } catch (error) {
+            console.error('❌ Error confirming notification:', error);
+            return { success: false, message: error.message };
+        }
+    }
+
+
+
+
+
+
+
+
+    // wwwroot/js/notifications.js
+
+    // ==========================
+    // إضافة إشعار فوري (بدون تحميل)
+    // ==========================
+    function addNotificationDirectly(notification) {
+        console.log('⚡ Adding notification directly:', notification);
+
+        // ✅ التحقق من وجود بيانات
+        if (!notification || !notification.Id && !notification.id) {
+            console.error('❌ Invalid notification data:', notification);
+            return;
+        }
+
+        // ✅ توحيد أسماء الخصائص
+        const id = notification.Id || notification.id;
+        const type = notification.Type || notification.type;
+        const title = notification.Title || notification.title;
+        const message = notification.Message || notification.message;
+        const createdDate = notification.CreatedDate || notification.createdDate || new Date();
+
+        // ✅ معالجة البيانات (Farm)
+        let newData = notification.NewData || notification.newData || notification.Data || notification.data;
+        let oldData = notification.OldData || notification.oldData;
+
+        // ✅ لو البيانات جايه كـ object مش string
+        if (typeof newData === 'object') {
+            newData = JSON.stringify(newData);
+        }
+        if (typeof oldData === 'object') {
+            oldData = JSON.stringify(oldData);
+        }
+
+        const formattedNotification = {
+            id: id,
+            type: type,
+            title: title || (type === 'Farm' ? '🌾 إضافة مزرعة جديدة' : '📊 تحديث قائمة الأسعار'),
+            message: message || (type === 'Farm' ? 'تم إضافة مزرعة جديدة' : 'تم استلام تحديث جديد لقائمة الأسعار'),
+            newData: newData,
+            oldData: oldData,
+            createdDate: createdDate
+        };
+
+        console.log('📋 Formatted notification:', formattedNotification);
+
+        let html = '';
+        if (formattedNotification.type === 'Farm') {
+            html = buildFarmNotification(formattedNotification);
+        } else if (formattedNotification.type === 'Price') {
+            html = buildPriceNotification(formattedNotification);
+        }
+
+        if (html) {
+            // ✅ إضافة في أول القائمة
+            notificationList.unshift(html);
+            notificationIds.unshift(formattedNotification.id);
+            notificationCount++;
+
+            // ✅ تحديث الواجهة فوراً
+            updateUI();
+
+            // ✅ عرض Toast
+            const toastMessage = formattedNotification.type === 'Farm'
+                ? '🌾 تم إضافة مزرعة جديدة'
+                : '📊 تم تحديث الأسعار';
+            showToast(toastMessage, 'success');
+
+            console.log(`⚡ Notification added instantly: ${formattedNotification.id}`);
+        } else {
+            console.error('❌ Failed to build notification HTML');
+            // ✅ لو فشل، نعمل reload عشان نجيب البيانات من قاعدة البيانات
+            loadNotifications();
+        }
+    }
+
+    // ==========================
+    // بناء رسالة إشعار المزرعة (مطور)
+    // ==========================
+    function buildFarmNotification(notification) {
+        console.log('🏗️ Building farm notification:', notification);
+
+        let data = {};
+        try {
+            // ✅ محاولة parse البيانات
+            if (typeof notification.newData === 'string') {
+                data = JSON.parse(notification.newData);
+            } else if (typeof notification.newData === 'object') {
+                data = notification.newData;
+            } else {
+                data = {};
+            }
+        } catch (e) {
+            console.error('❌ Error parsing farm data:', e);
+            data = {};
+        }
+
+        console.log('🌾 Farm Data:', data);
+
+        // ✅ جلب اسم المزرعة من عدة أماكن
+        const farmName = data.Name || data.name || data.FarmName || data.farmName || 'غير معروف';
+        const location = data.LocationDesc || data.locationDesc || data.Location || data.location || '';
+
+        // ✅ جلب الـ FarmerId من عدة أماكن
+        let farmerId = null;
+
+        // ١- من ExtraFeatures
+        if (data.ExtraFeatures && Array.isArray(data.ExtraFeatures) && data.ExtraFeatures.length > 0) {
+            farmerId = data.ExtraFeatures[0]?.FarmerId || data.ExtraFeatures[0]?.farmerId || null;
+        }
+
+        // ٢- من FarmerId المباشر
+        if (!farmerId && data.FarmerId) {
+            farmerId = data.FarmerId;
+        }
+        if (!farmerId && data.farmerId) {
+            farmerId = data.farmerId;
+        }
+
+        console.log('✅ FarmerId:', farmerId);
+
+        let html = `
+        <div class="notification-item farm-notification" data-id="${notification.id}">
+            <div class="noti-icon">🌾</div>
+            <div class="noti-content">
+                <div class="noti-title">✅ تم اضافة مزرعة</div>
+                <div class="noti-text"><strong>${farmName}</strong></div>
+                ${location ? `<div class="noti-location">📍 ${location}</div>` : ''}
+                <div class="noti-time">🕐 ${new Date(notification.createdDate).toLocaleString('ar-EG')}</div>
+                <div class="noti-actions">
+                    <button onclick="markAsReadNotification(${notification.id})" 
+                            style="background: #28a745; color: white; border: none; padding: 2px 12px; border-radius: 4px; cursor: pointer; font-size: 11px;">
+                        👁️ تم المشاهدة
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+
+        // ✅ رابط التعديل
+        if (farmerId) {
+            html += `<div class="noti-action">
+            <a href='/MazraeatiBackOffice/Farmers/Edit/${farmerId}' target='_blank' 
+               style='color: #4CAF50; text-decoration: underline; font-size: 12px;'>
+                🔗 تعديل المزرعة
+            </a>
+        </div>`;
+        } else {
+            html += `<div class="noti-action">
+            <a href='/MazraeatiBackOffice/Farmers/Index' target='_blank' 
+               style='color: #2196F3; text-decoration: underline; font-size: 12px;'>
+                🔗 عرض جميع المزارع
+            </a>
+        </div>`;
+        }
+
+        return html;
+    }
+
+    // ==========================
+    // بناء رسالة إشعار الأسعار (مطور)
+    // ==========================
+    function buildPriceNotification(notification) {
+        console.log('🏗️ Building price notification:', notification);
+
+        let oldData = [];
+        let newData = [];
+
+        try {
+            // ✅ parse البيانات
+            if (typeof notification.oldData === 'string') {
+                oldData = JSON.parse(notification.oldData);
+            } else if (typeof notification.oldData === 'object') {
+                oldData = notification.oldData;
             }
 
-            return valid;
+            if (typeof notification.newData === 'string') {
+                newData = JSON.parse(notification.newData);
+            } else if (typeof notification.newData === 'object') {
+                newData = notification.newData;
+            }
         } catch (e) {
-            console.error('Error reading localStorage:', e);
-            return [];
-        }
-    }
-
-    function saveNotifications(notifications) {
-        try {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(notifications));
-        } catch (e) {
-            console.error('Error saving to localStorage:', e);
-        }
-    }
-
-    function addToStorage(message, data, type) {
-        const notifications = getStoredNotifications();
-        notifications.unshift({
-            message: message,
-            data: data,
-            type: type,
-            timestamp: new Date().getTime()
-        });
-        saveNotifications(notifications);
-    }
-
-    function clearStorage() {
-        localStorage.removeItem(STORAGE_KEY);
-    }
-
-    // ==========================
-    // BUILD NOTIFICATION MESSAGE - FARM
-    // ==========================
-    function buildFarmNotificationMessage(farm) {
-        debugger
-        const firstFeature = farm.extraFeatures[0];
-        console.log("Extra Features ....")
-        console.log(firstFeature)
-        let farmerId= firstFeature?.farmerId || null;
-        console.log('🏗️ Building farm notification for:', farm);
-
-        const farmName = farm.name  || 'غير معروف';
-        const location = farm.locationDesc || farm.LocationDesc || '';
-
-        let message = `
-            <div class="notification-item farm-notification">
-                <div class="noti-icon">🌾</div>
-                <div class="noti-content">
-                    <div class="noti-title">✅ تم اضافة مزرعة</div>
-                    <div class="noti-text"><strong>${farmName}</strong></div>
-                    ${location ? `<div class="noti-location">📍 ${location}</div>` : ''}
-                    <div class="noti-time">🕐 ${new Date().toLocaleString('ar-EG')}</div>
-                </div>
-            </div>
-        `;
-
-        //message += `
-        //    <div class="noti-action">
-        //        <a href='/MazraeatiBackOffice/Farmers/Index' target='_blank' 
-        //           style='color: #2196F3; text-decoration: none; font-size: 12px;'>
-        //            🔗 عرض جميع المزارع
-        //        </a>
-        //    </div>
-        //`;
-        if (farmerId) {
-            // لو فيه farmerId → رابط التعديل
-            message += `<br/><small>🔗 <a href='/MazraeatiBackOffice/Farmers/Edit/${farmerId}' target='_blank' style='color: #4CAF50; text-decoration: underline;'>تعديل المزرعة</a></small>`;
-        } else {
-            // لو مفيش farmerId → رابط عرض جميع المزارع
-            message += `<br/><small>🔗 <a href='/MazraeatiBackOffice/Farmers/Index' target='_blank' style='color: #2196F3; text-decoration: underline;'>عرض جميع المزارع</a></small>`;
+            console.error('❌ Error parsing price data:', e);
         }
 
-        return message;
-    }
+        console.log('📊 Old Data:', oldData);
+        console.log('📊 New Data:', newData);
 
-    // ==========================
-    // BUILD NOTIFICATION MESSAGE - PRICE (MODIFIED)
-    // ==========================
-    function buildPriceNotificationMessage(priceData) {
-        console.log('🏗️ Building price notification for:', priceData);
+        // ✅ جلب اسم المزارع
+        let farmerName = 'مزارع';
+        if (newData && newData.length > 0) {
+            farmerName = newData[0]?.FarmerName || newData[0]?.farmerName || 'مزارع';
+        }
 
-        const farmerName = priceData.farmerName || 'مزارع';
-        const farmName = priceData.farmName || 'مزرعة';
-        const totalCount = priceData.totalCount || 0;
+        const totalCount = newData?.length || 0;
 
         let changedCount = 0;
-        let increasedCount = 0;
-        let decreasedCount = 0;
-
-        if (priceData.priceDiffs && priceData.priceDiffs.length > 0) {
-            changedCount = priceData.priceDiffs.filter(d => d.hasChanges).length;
-            increasedCount = priceData.priceDiffs.filter(d => d.morningDiff > 0 || d.eveningDiff > 0 || d.fullDayDiff > 0).length;
-            decreasedCount = priceData.priceDiffs.filter(d => d.morningDiff < 0 || d.eveningDiff < 0 || d.fullDayDiff < 0).length;
+        if (newData && newData.length > 0) {
+            newData.forEach((newPrice) => {
+                const oldPrice = oldData?.find(x => x.Id === newPrice.Id || x.id === newPrice.id);
+                const diff = (newPrice.MorningPrice || newPrice.morningPrice || 0) - (oldPrice?.MorningPrice || oldPrice?.morningPrice || 0);
+                if (diff !== 0) changedCount++;
+            });
         }
 
-        let message = `
-            <div class="notification-item price-notification">
-                <div class="noti-icon">📊</div>
-                <div class="noti-content">
-                    <div class="noti-title">🔄 تحديث قائمة الأسعار</div>
-                    <div class="noti-text">
-                        <div class="farmer-name">👨‍🌾 ${farmerName}</div>
-                        <div class="farm-name">🏠 ${farmName}</div>
+        const encodedData = encodeURIComponent(JSON.stringify({
+            id: notification.id,
+            farmerName: farmerName,
+            oldData: oldData,
+            newData: newData,
+            createdDate: notification.createdDate,
+            message: notification.message
+        }));
+
+        return `
+        <div class="notification-item price-notification" data-id="${notification.id}">
+            <div class="noti-icon">📊</div>
+            <div class="noti-content">
+                <div class="noti-title">🔄 تحديث قائمة الأسعار</div>
+                <div class="noti-text">
+                    <div class="farmer-name">👨‍🌾 ${farmerName}</div>
+                    <div style="font-size: 12px; color: #6c757d; margin-top: 4px;">
+                        📝 ${notification.message || 'تم استلام تحديث جديد'}
                     </div>
-                    <div class="price-summary">
-                        <span class="total">📊 ${totalCount} سعر</span>
-                        ${changedCount > 0 ? `<span class="changed">🔄 ${changedCount} تغير</span>` : ''}
-                        ${increasedCount > 0 ? `<span class="increase">📈 ${increasedCount} زيادة</span>` : ''}
-                        ${decreasedCount > 0 ? `<span class="decrease">📉 ${decreasedCount} انخفاض</span>` : ''}
-                    </div>
-                    <div class="noti-time">🕐 ${new Date(priceData.updatedDate).toLocaleString('ar-EG')}</div>
+                </div>
+                <div class="price-summary">
+                    <span class="total">📊 ${totalCount} سعر</span>
+                    ${changedCount > 0 ? `<span class="changed">🔄 ${changedCount} تغير</span>` : ''}
+                </div>
+                <div class="noti-time">🕐 ${new Date(notification.createdDate).toLocaleString('ar-EG')}</div>
+                <div class="noti-actions">
+                    <button onclick="showPriceConfirmation('${encodedData}')" 
+                            style="color: #2196F3; background: none; border: 1px solid #2196F3; border-radius: 4px; cursor: pointer; font-size: 11px; padding: 2px 10px;">
+                        📋 مراجعة وتأكيد
+                    </button>
+                    <button onclick="markAsReadNotification(${notification.id})" 
+                            style="background: #28a745; color: white; border: none; padding: 2px 12px; border-radius: 4px; cursor: pointer; font-size: 11px;">
+                        👁️ تم المشاهدة
+                    </button>
                 </div>
             </div>
-        `;
-
-        // تخزين البيانات كـ JSON string في الـ onclick
-        const encodedData = encodeURIComponent(JSON.stringify(priceData));
-        message += `
-            <div class="noti-action">
-                <button onclick="showPriceConfirmation('${encodedData}')" 
-                        style="color: #2196F3; background: none; border: none; cursor: pointer; font-size: 12px; padding: 5px 10px;">
-                    📋 مراجعة وتأكيد التحديث
-                </button>
-            </div>
-        `;
-
-        return message;
+        </div>
+    `;
     }
 
     // ==========================
-    // SHOW PRICE CONFIRMATION WITH TWO BUTTONS (NEW LOGIC)
+    // SIGNALR - استقبال الإشعارات (مطور)
+    // ==========================
+    const farmConnection = new signalR.HubConnectionBuilder()
+        .withUrl(FARM_API_URL)
+        .withAutomaticReconnect()
+        .build();
+
+    farmConnection.on("FarmAdded", function (data) {
+        console.log('🌾 FarmAdded (Raw):', data);
+
+        // ✅ التحقق من وجود البيانات
+        if (!data) {
+            console.error('❌ No data received');
+            return;
+        }
+
+        // ✅ استخراج البيانات من الهيكل
+        let notificationData = data;
+
+        // لو البيانات جاية في Data
+        if (data.Data) {
+            notificationData = data.Data;
+        }
+
+        // لو البيانات جاية في NewData
+        if (data.NewData) {
+            notificationData = data.NewData;
+        }
+
+        // ✅ التأكد من وجود Id
+        const id = data.Id || data.id || Date.now();
+
+        const notification = {
+            id: id,
+            type: 'Farm',
+            title: '🌾 إضافة مزرعة جديدة',
+            message: 'تم إضافة مزرعة جديدة',
+            newData: notificationData,
+            createdDate: data.CreatedDate || data.createdDate || new Date()
+        };
+
+        console.log('📋 Processed Farm Notification:', notification);
+
+        addNotificationDirectly(notification);
+    });
+
+    farmConnection.start().catch(err => console.error('Farm Hub error:', err));
+
+    const priceConnection = new signalR.HubConnectionBuilder()
+        .withUrl(PRICE_API_URL)
+        .withAutomaticReconnect()
+        .build();
+
+    priceConnection.on("PricesBatchUpdated", function (data) {
+        console.log('📊 PricesBatchUpdated (Raw):', data);
+
+        if (!data) {
+            console.error('❌ No data received');
+            return;
+        }
+
+        // ✅ استخراج البيانات
+        let oldData = data.OldData || data.oldData || [];
+        let newData = data.NewData || data.newData || [];
+        let id = data.Id || data.id || Date.now();
+
+        const notification = {
+            id: id,
+            type: 'Price',
+            title: '📊 تحديث قائمة الأسعار',
+            message: 'تم استلام تحديث جديد لقائمة الأسعار',
+            oldData: oldData,
+            newData: newData,
+            createdDate: data.CreatedDate || data.createdDate || new Date()
+        };
+
+        console.log('📋 Processed Price Notification:', notification);
+
+        addNotificationDirectly(notification);
+    });
+
+    priceConnection.start().catch(err => console.error('Price Hub error:', err));
+
+
+
+    // ==========================
+    // MARK AS READ
+    // ==========================
+    window.markAsReadNotification = async function (id) {
+        try {
+            // ✅ حذف من القائمة فوراً (UI أولاً)
+            const item = $(`.notification-item[data-id="${id}"]`);
+            if (item.length) {
+                item.fadeOut(200, function () {
+                    $(this).remove();
+
+                    // ✅ تحديث العدد محلياً
+                    notificationCount--;
+                    if (notificationCount < 0) notificationCount = 0;
+
+                    const index = notificationIds.indexOf(id);
+                    if (index !== -1) {
+                        notificationIds.splice(index, 1);
+                        notificationList.splice(index, 1);
+                    }
+
+                    updateUI();
+                });
+            }
+
+            // ✅ ثم التحديث في الخلفية (Database + Cache)
+            const result = await markAsRead(id);
+
+            if (!result.success) {
+                console.error('❌ Failed to mark as read in DB:', id);
+                // لو فشل، نرجع الإشعار (Rollback UI)
+                loadNotifications();
+            }
+        } catch (error) {
+            console.error('❌ Error:', error);
+        }
+    };
+
+    // ==========================
+    // SHOW PRICE CONFIRMATION
     // ==========================
     window.showPriceConfirmation = function (priceDataJson) {
         try {
             const priceData = JSON.parse(decodeURIComponent(priceDataJson));
-            console.log('📋 Showing price confirmation:', priceData);
-            console.log("Old Prices ...")
-            console.log(priceData.oldData)
-            console.log("New Prices ...")
-            console.log(priceData.newData)
-            // بناء جدول المقارنة
+
             let tableHtml = '';
             if (priceData.newData && priceData.newData.length > 0) {
                 tableHtml = `
@@ -1176,28 +510,25 @@ $(document).ready(function () {
                         </thead>
                         <tbody>
                             ${priceData.newData.map((newPrice) => {
-                                const oldPrice = priceData.oldData ? priceData.oldData.find(x => x.id === newPrice.id) : {};
-                            const diff = priceData.priceDiffs ? priceData.priceDiffs.find(x => x.id === newPrice.id) : null;
-                            const hasChange = diff && diff.hasChanges;
+                    const oldPrice = priceData.oldData ? priceData.oldData.find(x => x.Id === newPrice.Id) : {};
+                    const morningDiff = (newPrice.MorningPrice || 0) - (oldPrice?.MorningPrice || 0);
+                    const hasChange = morningDiff !== 0;
 
-                            return `
+                    return `
                                     <tr style="border-bottom: 1px solid #f0f0f0; ${hasChange ? 'background: #fff8e1;' : ''}">
-                                        <td style="padding: 6px; text-align: center; font-weight: bold;">${newPrice.dayDescAr || newPrice.day || 'غير محدد'}</td>
+                                        <td style="padding: 6px; text-align: center; font-weight: bold;">${newPrice.DayDescAr || 'غير محدد'}</td>
                                         <td style="padding: 6px; text-align: center; color: #dc3545; text-decoration: line-through;">
-                                            صباح: ${oldPrice && oldPrice.morningPrice ? oldPrice.morningPrice : '-'}<br/>
-                                            مساء: ${oldPrice && oldPrice.eveningPrice ? oldPrice.eveningPrice : '-'}<br/>
-                                            يوم كامل: ${oldPrice && oldPrice.fullDayPrice ? oldPrice.fullDayPrice : '-'}
+                                            صباح: ${oldPrice?.MorningPrice ?? '-'}<br/>
+                                            مساء: ${oldPrice?.EveningPrice ?? '-'}<br/>
+                                            كامل: ${oldPrice?.FullDayPrice ?? '-'}
                                         </td>
                                         <td style="padding: 6px; text-align: center; color: #28a745; font-weight: bold;">
-                                            صباح: ${newPrice.morningPrice || '-'}<br/>
-                                            مساء: ${newPrice.eveningPrice || '-'}<br/>
-                                            يوم كامل: ${newPrice.fullDayPrice || '-'}
+                                            صباح: ${newPrice.MorningPrice ?? '-'}<br/>
+                                            مساء: ${newPrice.EveningPrice ?? '-'}<br/>
+                                            كامل: ${newPrice.FullDayPrice ?? '-'}
                                         </td>
-                                        <td style="padding: 6px; text-align: center;">
-                                            ${hasChange ?
-                            `<span style="color: #ff9800;">🔄 تغير</span>` :
-                            `<span style="color: #28a745;">✅ ثابت</span>`
-                        }
+                                        <td style="padding: 6px; text-align: center; color: ${hasChange ? '#ff9800' : '#28a745'};">
+                                            ${hasChange ? '🔄 تغير' : '✅ ثابت'}
                                         </td>
                                     </tr>
                                 `;
@@ -1207,21 +538,19 @@ $(document).ready(function () {
                 `;
             }
 
-            // عرض النافذة مع زرين
             Swal.fire({
-                title: `📊 تأكيد تحديث الأسعار`,
+                title: '📊 تأكيد تحديث الأسعار',
                 html: `
                     <div style="text-align: right;">
                         <div style="margin-bottom: 10px; padding: 10px; background: #f8f9fa; border-radius: 8px;">
                             <strong>👨‍🌾 المزارع: ${priceData.farmerName || 'مزارع'}</strong><br/>
-                            <strong>🏠 المزرعة: ${priceData.farmName || 'مزرعة'}</strong><br/>
-                            <small>🕐 ${new Date(priceData.updatedDate).toLocaleString('ar-EG')}</small>
+                            <small>🕐 ${new Date(priceData.createdDate).toLocaleString('ar-EG')}</small>
                         </div>
                         <div style="max-height: 400px; overflow-y: auto;">
                             ${tableHtml}
                         </div>
                         <div style="margin-top: 10px; font-size: 12px; color: #6c757d; padding: 5px; background: #f8f9fa; border-radius: 4px;">
-                            📋 القديم (مشطوب أحمر) | 📋 الجديد (أخضر) | 🔄 تغير | ✅ ثابت
+                            📋 القديم (مشطوب أحمر) | 📋 الجديد (أخضر)
                         </div>
                         <div style="margin-top: 15px; padding: 10px; background: #fff3cd; border-radius: 8px; border: 1px solid #ffc107;">
                             ⚠️ هل أنت متأكد من تحديث هذه الأسعار؟
@@ -1238,83 +567,93 @@ $(document).ready(function () {
                 width: 850,
                 showLoaderOnConfirm: true,
                 preConfirm: async () => {
-                    debugger
                     try {
-                        // تحويل الـ newPrices إلى List<FarmerPriceList>
                         const priceListToUpdate = priceData.newData.map(price => ({
-                            id: price.id,
-                            farmerId: price.farmerId || priceData.farmerId,
-                            day: price.day,
-                            person: price.person || null,
-                            morningPrice: price.morningPrice || null,
-                            eveningPrice: price.eveningPrice || null,
-                            fullDayPrice: price.fullDayPrice || null,
-                            offerPrice: price.offerPrice || null,
-                            offerEveningPrice: price.offerEveningPrice || null,
-                            offerFullDayPrice: price.offerFullDayPrice || null,
-                            morningPeriodText: price.morningPeriodText || null,
-                            eveningPeriodText: price.eveningPeriodText || null,
-                            fullDayPeriodText: price.fullDayPeriodText || null
+                            id: price.Id,
+                            farmerId: price.FarmerId || 0,
+                            day: price.Day,
+                            person: price.Person || null,
+                            morningPrice: price.MorningPrice || 0,
+                            eveningPrice: price.EveningPrice || 0,
+                            fullDayPrice: price.FullDayPrice || 0,
+                            offerPrice: price.OfferPrice || 0,
+                            offerEveningPrice: price.OfferEveningPrice || 0,
+                            offerFullDayPrice: price.OfferFullDayPrice || 0,
+                            morningPeriodText: price.MorningPeriodText || null,
+                            eveningPeriodText: price.EveningPeriodText || null,
+                            fullDayPeriodText: price.FullDayPeriodText || null
                         }));
-
-                        console.log('📤 Sending to MVC:', priceListToUpdate);
-
-                        // استدعاء الـ MVC Action
+                        debugger
                         const response = await $.ajax({
                             url: MVC_UPDATE_URL,
                             type: 'POST',
                             contentType: 'application/json',
                             data: JSON.stringify(priceListToUpdate),
-                            //headers: {
-                            //    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() || ''
-                            //}
+                            timeout: 15000
                         });
 
+                        debugger
                         if (response.success) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: '✅ تم التحديث بنجاح',
-                                text: `تم تحديث ${priceListToUpdate.length} سعر`,
-                                timer: 3000,
-                                timerProgressBar: true
+                            debugger
+                            // ✅ حذف من القائمة فوراً
+                            $(`.notification-item[data-id="${priceData.id}"]`).fadeOut(200, function () {
+                                $(this).remove();
+                                notificationCount--;
+                                if (notificationCount < 0) notificationCount = 0;
+
+                                const index = notificationIds.indexOf(priceData.id);
+                                if (index !== -1) {
+                                    notificationIds.splice(index, 1);
+                                    notificationList.splice(index, 1);
+                                }
+
+                                updateUI();
                             });
 
-                            // إضافة إشعار نجاح في القائمة
-                            const successMessage = `
-                                <div class="notification-item price-notification success">
-                                    <div class="noti-icon">✅</div>
-                                    <div class="noti-content">
-                                        <div class="noti-title">تم تحديث الأسعار بنجاح</div>
-                                        <div class="noti-text">
-                                            <strong>${priceData.farmerName}</strong> - ${priceListToUpdate.length} سعر
-                                        </div>
-                                        <div class="noti-time">🕐 ${new Date().toLocaleString('ar-EG')}</div>
-                                    </div>
-                                </div>
-                            `;
+                            // ✅ تأكيد في الخلفية
+                            await confirmNotification(priceData.id, true);
 
-                            // إضافة للإشعارات
-                            notificationList.unshift(successMessage);
-                            notificationCount++;
-                            updateNotificationUI();
-
-                            return true;
+                            return { success: true, message: response.message };
                         } else {
                             throw new Error(response.message || 'فشل التحديث');
                         }
                     } catch (error) {
-                        console.error('❌ Update error:', error);
                         Swal.showValidationMessage(`❌ خطأ: ${error.message}`);
                         return false;
                     }
                 }
             }).then((result) => {
-                if (result.isDismissed && result.dismiss === Swal.DismissReason.cancel) {
-                    // المستخدم ألغى العملية
+                debugger
+                if (result.isConfirmed && result.value?.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '✅ تم التحديث بنجاح',
+                        timer: 3000,
+                        timerProgressBar: true
+                    });
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    debugger
+                    // ✅ حذف من القائمة فوراً
+                    $(`.notification-item[data-id="${priceData.id}"]`).fadeOut(200, function () {
+                        $(this).remove();
+                        notificationCount--;
+                        if (notificationCount < 0) notificationCount = 0;
+
+                        const index = notificationIds.indexOf(priceData.id);
+                        if (index !== -1) {
+                            notificationIds.splice(index, 1);
+                            notificationList.splice(index, 1);
+                        }
+
+                        updateUI();
+                    });
+
+                    // ✅ إلغاء في الخلفية
+                    confirmNotification(priceData.id, false);
+
                     Swal.fire({
                         icon: 'info',
-                        title: 'تم الإلغاء',
-                        text: 'لم يتم تحديث الأسعار',
+                        title: '❌ تم الإلغاء',
                         timer: 2000,
                         timerProgressBar: true
                     });
@@ -1322,294 +661,179 @@ $(document).ready(function () {
             });
 
         } catch (e) {
-            console.error('❌ Error showing price confirmation:', e);
+            console.error('❌ Error:', e);
             showToast('حدث خطأ في عرض التفاصيل', 'error');
         }
     };
 
     // ==========================
-    // LOAD FROM LOCALSTORAGE
+    // LOAD NOTIFICATIONS (سريعة)
     // ==========================
-    function loadFromStorage() {
-        debugger
-        const stored = getStoredNotifications();
-        console.log('📦 Loading from storage:', stored.length);
+    async function loadNotifications() {
+        if (isLoading) return;
+        isLoading = true;
 
-        if (stored.length > 0) {
-            notificationList = [];
+        try {
+            const response = await fetchNotifications();
 
-            stored.forEach(item => {
-                let message = '';
-                if (item.type === 'farm' && item.data) {
-                    message = buildFarmNotificationMessage(item.data);
-                } else if (item.type === 'price' && item.data) {
-                    message = buildPriceNotificationMessage(item.data);
-                } else if (item.message) {
-                    message = item.message;
-                }
+            if (response.success && response.notifications && response.notifications.length > 0) {
+                notificationList = [];
+                notificationIds = [];
 
-                if (message) {
-                    notificationList.push(message);
-                }
-            });
+                response.notifications.forEach(notification => {
+                    let html = '';
+                    if (notification.type === 'Farm') {
+                        html = buildFarmNotification(notification);
+                    } else if (notification.type === 'Price') {
+                        html = buildPriceNotification(notification);
+                    }
 
-            notificationCount = notificationList.length;
-            updateNotificationUI();
-            console.log(`📦 Loaded ${notificationCount} notifications from localStorage`);
+                    if (html) {
+                        notificationList.push(html);
+                        notificationIds.push(notification.id);
+                    }
+                });
+
+                notificationCount = response.count || response.notifications.length;
+                updateUI();
+
+                console.log(`📦 Loaded ${notificationList.length} notifications`);
+            } else {
+                notificationList = [];
+                notificationIds = [];
+                notificationCount = 0;
+                updateUI();
+            }
+        } catch (error) {
+            console.error('❌ Error loading notifications:', error);
+        } finally {
+            isLoading = false;
+            isFirstLoad = false;
         }
     }
 
     // ==========================
-    // SIGNALR - FARM CONNECTION
+    // UPDATE UI (سريعة)
     // ==========================
-    console.log('📡 Connecting to Farm Hub...');
-    const farmConnection = new signalR.HubConnectionBuilder()
-        .withUrl(FARM_API_URL)
-        .withAutomaticReconnect()
-        .build();
-
-    farmConnection.on("FarmAdded", function (farm) {
-        console.log('🌾✅ FarmAdded event received!', farm);
-        console.log("farm data only ..... ")
-        console.log(farm.data)
-        console.log("Farm name is :: ")
-        console.log(farm.data.name)
-        console.log(farm.name)
-        try {
-            const message = buildFarmNotificationMessage(farm);
-            notificationList.unshift(message);
-            notificationCount++;
-            //|| farm.data.Name
-            const farmData = {
-                name: farm.data.name  || 'غير معروف',
-                locationDesc: farm.data.locationDesc || farm.data.LocationDesc || '',
-                extraFeatures: farm.data.extraFeatures || []
-            };
-            addToStorage(message, farmData, 'farm');
-            updateNotificationUI();
-
-            const farmName = farm.data.name || 'مزرعة';
-            showToast(`🌾 تم إضافة مزرعة: ${farmName}`, 'success');
-            console.log('✅ Farm notification added successfully');
-        } catch (error) {
-            console.error('❌ Error processing farm notification:', error);
-        }
-    });
-
-    farmConnection.start()
-        .then(() => {
-            console.log('✅ Farm Hub connected successfully to:', FARM_API_URL);
-        })
-        .catch(err => {
-            console.error('❌ Farm Hub connection error:', err);
-        });
-
-    // ==========================
-    // SIGNALR - PRICE CONNECTION
-    // ==========================
-    console.log('📡 Connecting to Price Hub...');
-    const priceConnection = new signalR.HubConnectionBuilder()
-        .withUrl(PRICE_API_URL)
-        .withAutomaticReconnect()
-        .build();
-
-    // مستمع تحديث الأسعار - المعدل
-    priceConnection.on("PricesBatchUpdated", function (batchData) {
-        console.log('📊✅ PricesBatchUpdated event received!', batchData);
-
-        try {
-            // بناء الرسالة مع زر التأكيد
-            const message = buildPriceNotificationMessage(batchData);
-
-            // إضافة للإشعارات
-            notificationList.unshift(message);
-            notificationCount++;
-
-            // حفظ في localStorage
-            addToStorage(message, batchData, 'price');
-
-            // تحديث الواجهة
-            updateNotificationUI();
-
-            // عرض Toast مع ملخص
-            const changedCount = batchData.priceDiffs ? batchData.priceDiffs.filter(d => d.hasChanges).length : 0;
-            const totalCount = batchData.totalCount || 0;
-            const farmerName = batchData.farmerName || 'مزارع';
-
-            // عرض نافذة التأكيد تلقائياً (اختياري)
-            // لو عايز تظهر تلقائياً من غير ما يدوس على الزر في الإشعار
-            // فك الكومنت على السطر التالي:
-            // const encodedData = encodeURIComponent(JSON.stringify(batchData));
-            // setTimeout(() => showPriceConfirmation(encodedData), 1000);
-
-            showToast(
-                `📊 تم استلام تحديث أسعار ${farmerName}<br/>${totalCount} سعر ${changedCount > 0 ? `(${changedCount} تغيير)` : ''}<br/>اضغط على الإشعار للمراجعة`,
-                changedCount > 0 ? 'info' : 'success'
-            );
-
-            console.log('✅ Price notification added successfully');
-        } catch (error) {
-            console.error('❌ Error processing price notification:', error);
-        }
-    });
-
-    // مستمع إضافة سعر فردي
-    priceConnection.on("PriceAdded", function (priceData) {
-        console.log('💰 PriceAdded event received:', priceData);
-    });
-
-    // مستمع تحديث سعر فردي
-    priceConnection.on("PriceUpdated", function (priceData) {
-        console.log('💰 PriceUpdated event received:', priceData);
-    });
-
-    // بدء اتصال Price
-    priceConnection.start()
-        .then(() => {
-            console.log('✅ Price Hub connected successfully to:', PRICE_API_URL);
-        })
-        .catch(err => {
-            console.error('❌ Price Hub connection error:', err);
-        });
-
-    // ==========================
-    // UI UPDATE
-    // ==========================
-    function updateNotificationUI() {
-        console.log('🔄 Updating UI, count:', notificationCount);
-
-        if (!countElement || !listElement) {
-            console.error('❌ DOM elements not found!');
-            return;
-        }
+    function updateUI() {
+        if (!countElement || !listElement) return;
 
         countElement.textContent = notificationCount;
         countElement.style.display = notificationCount > 0 ? "inline-block" : "none";
 
-        listElement.innerHTML = "";
+        // ✅ لو القائمة مفتوحة، نحدث المحتوى
+        if (isDropdownOpen) {
+            listElement.innerHTML = "";
 
-        if (notificationList.length === 0) {
-            listElement.innerHTML = '<li class="noti-empty">لا توجد إشعارات</li>';
-            return;
+            if (notificationList.length === 0) {
+                listElement.innerHTML = '<li class="noti-empty">لا توجد إشعارات</li>';
+                return;
+            }
+
+            notificationList.forEach((html, index) => {
+                const li = document.createElement("li");
+                li.className = "noti-item";
+                li.setAttribute('data-index', index);
+                li.innerHTML = html;
+                listElement.appendChild(li);
+            });
+
+            const clearLi = document.createElement("li");
+            clearLi.className = "noti-clear";
+            clearLi.innerHTML = `
+                <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                    <button onclick="markAllAsReadNotifications()" 
+                            style="background: #28a745; color: white; border: none; padding: 5px 15px; border-radius: 4px; cursor: pointer; font-size: 12px;">
+                        ✅ تعيين الكل كمقروء
+                    </button>
+                    <a href="/MazraeatiBackOffice/Notification/Index" target="_blank"
+                       style="background: #17a2b8; color: white; border: none; padding: 5px 15px; border-radius: 4px; cursor: pointer; font-size: 12px; text-decoration: none;">
+                        📋 عرض الكل
+                    </a>
+                </div>
+            `;
+            listElement.appendChild(clearLi);
         }
-
-        notificationList.forEach((n, index) => {
-            const li = document.createElement("li");
-            li.className = "noti-item";
-            li.setAttribute('data-index', index);
-            li.innerHTML = n;
-            listElement.appendChild(li);
-        });
-
-        const clearLi = document.createElement("li");
-        clearLi.className = "noti-clear";
-        clearLi.innerHTML = `<button onclick="clearAllNotifications()" class="clear-btn">🗑️ مسح الكل</button>`;
-        listElement.appendChild(clearLi);
-
-        console.log('✅ UI updated successfully');
     }
+
+    // ==========================
+    // MARK ALL AS READ
+    // ==========================
+    window.markAllAsReadNotifications = async function () {
+        try {
+            // ✅ حذف الكل من القائمة فوراً
+            notificationList = [];
+            notificationIds = [];
+            notificationCount = 0;
+            updateUI();
+
+            // ✅ تحديث في الخلفية
+            const result = await markAllAsRead();
+            if (!result.success) {
+                console.error('❌ Failed to mark all as read in DB');
+                loadNotifications();
+            } else {
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    title: '✅ تم تعيين الكل كمقروء',
+                    timer: 2000,
+                    timerProgressBar: true
+                });
+            }
+        } catch (error) {
+            console.error('❌ Error:', error);
+        }
+    };
 
     // ==========================
     // TOGGLE NOTIFICATIONS
     // ==========================
     window.toggleNotifications = function () {
-        console.log('🔄 Toggling notifications');
+        if (!dropdown) return;
 
-        if (!dropdown) {
-            console.error('❌ Dropdown element not found!');
-            return;
-        }
-
+        isDropdownOpen = !isDropdownOpen;
         dropdown.classList.toggle("active");
 
-        if (dropdown.classList.contains("active")) {
+        if (isDropdownOpen) {
             notificationCount = 0;
             if (countElement) {
                 countElement.style.display = "none";
             }
-            console.log('📬 Notifications opened, count reset');
+            // ✅ تحميل سريع (ياخد 1-2 ثانية)
+            loadNotifications();
         }
     };
 
     // ==========================
-    // CLEAR ALL NOTIFICATIONS
-    // ==========================
-    window.clearAllNotifications = function () {
-        console.log('🗑️ Clearing all notifications');
-
-        if (notificationList.length === 0) {
-            showToast('لا توجد إشعارات لمسحها', 'info');
-            return;
-        }
-
-        Swal.fire({
-            title: '🧹 مسح الإشعارات',
-            text: 'هل أنت متأكد من مسح جميع الإشعارات؟',
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'نعم، امسح الكل',
-            cancelButtonText: 'إلغاء',
-            reverseButtons: true
-        }).then((result) => {
-            if (result.isConfirmed) {
-                notificationList = [];
-                notificationCount = 0;
-                clearStorage();
-                updateNotificationUI();
-                if (dropdown) {
-                    dropdown.classList.remove('active');
-                }
-
-                Swal.fire({
-                    toast: true,
-                    position: 'top-end',
-                    icon: 'success',
-                    title: '✅ تم مسح جميع الإشعارات',
-                    showConfirmButton: false,
-                    timer: 2000,
-                    timerProgressBar: true
-                });
-                console.log('✅ All notifications cleared');
-            }
-        });
-    };
-
-    // ==========================
-    // CLOSE ON OUTSIDE CLICK
-    // ==========================
-    document.addEventListener("click", function (e) {
-        if (!wrapper) return;
-
-        if (!wrapper.contains(e.target)) {
-            if (dropdown) {
-                dropdown.classList.remove("active");
-            }
-        }
-    });
-
-    // ==========================
-    // SWEET TOAST
+    // HELPERS
     // ==========================
     function showToast(message, type = 'success') {
-        console.log('🔔 Toast:', message);
-
-        if (typeof Swal === 'undefined') {
-            console.log('⚠️ Swal not defined, showing console notification:', message);
-            return;
-        }
-
+        if (typeof Swal === 'undefined') return;
         Swal.fire({
             toast: true,
             position: 'top-end',
             icon: type,
             html: message,
             showConfirmButton: false,
-            timer: 4000,
+            timer: 3000,
             timerProgressBar: true
         });
     }
+
+    // ==========================
+    // CLOSE ON OUTSIDE CLICK
+    // ==========================
+    document.addEventListener("click", function (e) {
+        if (!wrapper) return;
+        if (!wrapper.contains(e.target)) {
+            if (dropdown) {
+                dropdown.classList.remove("active");
+                isDropdownOpen = false;
+            }
+        }
+    });
 
     // ==========================
     // KEYBOARD SHORTCUTS
@@ -1617,25 +841,29 @@ $(document).ready(function () {
     document.addEventListener("keydown", function (e) {
         if (e.key === 'Escape' && dropdown) {
             dropdown.classList.remove('active');
-            console.log('🔑 Esc pressed, closing notifications');
+            isDropdownOpen = false;
         }
     });
 
     // ==========================
-    // INIT - LOAD FROM STORAGE
+    // INIT
     // ==========================
-    loadFromStorage();
+    // ✅ أول تحميل (مرة واحدة)
+    loadNotifications();
 
-    setInterval(() => {
-        const stored = getStoredNotifications();
-        if (stored.length !== notificationList.length) {
-            console.log('🔄 Refreshing notifications from storage');
-            loadFromStorage();
+    // ✅ تحديث العدد كل 30 ثانية (خفيف)
+    setInterval(async function () {
+        try {
+            const response = await fetchNotificationsCount();
+            if (response.success && response.count !== notificationCount) {
+                notificationCount = response.count;
+                updateUI();
+            }
+        } catch (error) {
+            console.error('❌ Error updating count:', error);
         }
-    }, 60 * 60 * 1000);
+    }, 30000);
 
-    console.log('✅ Notifications system loaded successfully');
-    console.log(`📦 ${notificationList.length} notifications loaded from storage`);
-    console.log('🎯 Listening for FarmAdded and PricesBatchUpdated events');
+    console.log('✅ Notifications system loaded successfully (Fast)');
 
-}); // end document ready
+});

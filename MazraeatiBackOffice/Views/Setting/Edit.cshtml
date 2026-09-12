@@ -1,4 +1,9 @@
-﻿@model SettingModel
+﻿@using MazraeatiBackOffice.Models.SystemModel
+@model SettingModel
+@{
+    ViewBag.Title = "تعديل الإعدادات";
+    ViewBag.activePage = "تعديل الإعدادات";
+}
 @using (Html.BeginForm("Edit", "Setting", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.Partial("_CreateOrUpdate", Model)

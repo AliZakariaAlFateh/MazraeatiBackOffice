@@ -1,5 +1,8 @@
 ﻿using MazraeatiBackOffice.Core;
-using MazraeatiBackOffice.Models;
+using MazraeatiBackOffice.Core.SystemCore;
+using MazraeatiBackOffice.Core.UserManagementCore;
+using MazraeatiBackOffice.Models.SystemModel;
+using MazraeatiBackOffice.Models.UserManagementModel;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;

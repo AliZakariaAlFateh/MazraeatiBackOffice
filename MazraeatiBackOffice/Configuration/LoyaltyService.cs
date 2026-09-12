@@ -1,4 +1,5 @@
-﻿using MazraeatiBackOffice.Core.LoyaltyPoints;
+﻿using MazraeatiBackOffice.Configuration.Enums;
+using MazraeatiBackOffice.Core.LoyaltyPoints;
 using MazraeatiBackOffice.Dto.LoyaltyPoints;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -110,7 +111,7 @@ namespace MazraeatiBackOffice.Configuration
 
             string propertyName = "";
             if (referenceType == "Farmer" && referenceId.HasValue)
-            {
+            {   
                 var farm = _unitOfWork.FarmerRepository.GetById(referenceId.Value);
                 propertyName = farm?.Name ?? "";
             }
@@ -119,7 +120,11 @@ namespace MazraeatiBackOffice.Configuration
                 var sport = _unitOfWork.SportRepository.GetById(referenceId.Value);
                 propertyName = sport?.NameAr ?? "";
             }
-
+            else if (referenceType == "Cottage" && referenceId.HasValue)
+            {
+                var cottage = _unitOfWork.CottageRepository.GetById(referenceId.Value);
+                propertyName = cottage?.NameAr ?? "";
+            }
             var account = _unitOfWork.CustomerLoyaltyAccountRepository.Table
                 .FirstOrDefault(a => a.CustomerId == customerId);
             //انشاء حساب للعميل خاص بالنقاط لمعرفت مستواه و ما الى ذلك و مجموع النقاط و النقاط الخالية
@@ -311,7 +316,7 @@ namespace MazraeatiBackOffice.Configuration
         }
 
 
-        public async Task<bool> RedeemPointsAsync(int customerId, int points, int reservationId, string reservationType)
+        public async Task<bool> RedeemPointsAsync(int customerId, int points, int reservationId, string reservationType,string reservedName=null)
         {
             var account = _unitOfWork.CustomerLoyaltyAccountRepository.Table
                 .FirstOrDefault(a => a.CustomerId == customerId);
@@ -346,7 +351,7 @@ namespace MazraeatiBackOffice.Configuration
                 Points = -points,
                 ReferenceId = reservationId,
                 ReferenceType = reservationType,
-                Description = $"خصم نقاط من الحجز {reservationId} (-{points} نقطة) - خصم {discountAmount} دينار",
+                Description = $"خصم {points} نقطة من حجز {reservedName} (نوع الحجز: {reservationType}) - المرجع: {reservationId} - قيمة الخصم: {discountAmount} دينار",
                 ExpireDate = DateTime.Now.AddMonths(12),
                 CreatedBy = GetCurrentAdminId()
             };

@@ -1,4 +1,9 @@
-﻿@model CommonQuestionsModel
+﻿@using MazraeatiBackOffice.Models.SystemModel
+@model CommonQuestionsModel
+@{
+    ViewBag.Title = "تعديل الأسئلة الشائعة للملاك";
+    ViewBag.activePage = "تعديل الأسئلة الشائعة للملاك";
+}
 @using (Html.BeginForm("Edit", "CommonQuestions", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.Partial("_CreateOrUpdate", Model)

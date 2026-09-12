@@ -1,6 +1,4 @@
-﻿@using MazraeatiBackOffice.Configuration
-@using MazraeatiBackOffice.Core
-@model SportPropertyTemplate
+﻿@model SportPropertyTemplate
 
 @{
     ViewBag.Title = Model.Id > 0 ? "تعديل قالب" : "إضافة قالب جديد";
@@ -49,7 +47,19 @@
                 <div class="header">
                     <h2><strong>@(isEdit ? "تعديل" : "إضافة")</strong> قالب</h2>
                     <ul class="header-dropdown">
-                        <li><a href="@Url.Action("Index")" class="btn btn-default"><i class="fa fa-arrow-right"></i> رجوع</a></li>
+                        @if (Model.Id > 0)
+                        {
+                            <li>
+                                <a href="@Url.Action("Create")" class="btn btn-primary btn-round">
+                                    <i class="fa fa-plus"></i> إضافة / جديد
+                                </a>
+                            </li>
+                        }
+                        <li>
+                            <a href="@Url.Action("Index")" class="btn btn-default btn-round">
+                                <i class="fa fa-arrow-right"></i> العودة للقائمة
+                            </a>
+                        </li>
                     </ul>
                 </div>
                 <div class="body">

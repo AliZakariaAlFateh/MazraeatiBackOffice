@@ -742,11 +742,12 @@
 
 
 @using MazraeatiBackOffice.Configuration
+@using MazraeatiBackOffice.Models.UserManagementModel
 @model IEnumerable<UserModel>
 
 @{
-    ViewBag.Title = "المستخدمين";
-    ViewBag.activePage = "المستخدمين";
+    ViewBag.Title = "الملاك";
+    ViewBag.activePage = "الملاك";
 }
 
 <style>
@@ -881,6 +882,10 @@
             color: #fff;
         }
 
+        .user-type-badge.cottage {
+            background: #99a745;
+            color: #000;
+        }
         .user-type-badge.football {
             background: #007bff;
             color: #fff;
@@ -1204,6 +1209,7 @@
                                                             case "10": userTypeClass = "tabletennis"; userTypeName = "تنس طاولة"; break;
                                                             case "11": userTypeClass = "squash"; userTypeName = "اسكواش"; break;
                                                             case "12": userTypeClass = "badminton"; userTypeName = "ريشة طائرة"; break;
+                                                            case "13": userTypeClass = "cottage"; userTypeName = "كوخ"; break;
                                                             default: userTypeClass = ""; userTypeName = type; break;
                                                         }
                                                         <span class="user-type-badge @userTypeClass">@userTypeName</span>

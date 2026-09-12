@@ -1,4 +1,4 @@
-﻿using MazraeatiBackOffice.Configuration;
+﻿using MazraeatiBackOffice.Configuration.Enums;
 using System;
 using System.ComponentModel.DataAnnotations;
 

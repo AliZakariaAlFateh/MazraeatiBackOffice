@@ -1,5 +1,5 @@
 ﻿using Google;
-using MazraeatiBackOffice.Core;
+using MazraeatiBackOffice.Core.UserManagementCore;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -60,5 +60,12 @@ namespace MazraeatiBackOffice.Configuration
             var user = await _context.AdminUsers.FindAsync(userId);
             return user?.IsSuperAdmin == true;
         }
+
+        // ===== Return User ... =====
+        public ClaimsPrincipal GetCurrentPrincipal()
+        {
+            return _httpContextAccessor.HttpContext?.User;
+        }
+
     }
 }

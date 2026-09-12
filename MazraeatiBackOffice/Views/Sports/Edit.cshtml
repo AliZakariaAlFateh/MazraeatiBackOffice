@@ -1,4 +1,8 @@
 ﻿@model SportModel
+@{
+    ViewBag.Title = "تعديل نشاط رياضى";
+    ViewBag.activePage = "تعديل نشاط رياضي";
+}
 @using (Html.BeginForm("Edit", "Sports", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.Partial("_CreateOrUpdate", Model)

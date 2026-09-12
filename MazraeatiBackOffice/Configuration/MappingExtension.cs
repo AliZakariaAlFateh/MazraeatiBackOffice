@@ -2,12 +2,26 @@
 using DocumentFormat.OpenXml.Office2010.Excel;
 using DocumentFormat.OpenXml.Spreadsheet;
 using DocumentFormat.OpenXml.Vml.Office;
-using MazraeatiBackOffice.Configuration;
-using MazraeatiBackOffice.Core;
+using FirebaseAdmin.Messaging;
+using MazraeatiBackOffice.Configuration.Enums;
+using MazraeatiBackOffice.Core.CottageCore;
+using MazraeatiBackOffice.Core.FarmCore;
 using MazraeatiBackOffice.Core.LoyaltyPoints;
-using MazraeatiBackOffice.Dto;
-using MazraeatiBackOffice.Models;
+using MazraeatiBackOffice.Core.SportCore;
+using MazraeatiBackOffice.Core.SystemCore;
+using MazraeatiBackOffice.Core.UserManagementCore;
+using MazraeatiBackOffice.Dto.CottageDtos;
+using MazraeatiBackOffice.Dto.FarmDtos;
+using MazraeatiBackOffice.Dto.NotificationDtos;
+using MazraeatiBackOffice.Dto.SportDtos;
+using MazraeatiBackOffice.Models.CottageModel;
+using MazraeatiBackOffice.Models.FarmModel;
 using MazraeatiBackOffice.Models.LoyaltyPoints;
+using MazraeatiBackOffice.Models.SportModels;
+using MazraeatiBackOffice.Models.SystemModel;
+using MazraeatiBackOffice.Models.UserManagementModel;
+using MazraeatiBackOffice.SportCore;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -480,34 +494,10 @@ namespace MazraeatiBackOffice.Extenstion
             model.IsReciveCommission = entity.IsReciveCommission;
             model.AutomaticallyNote = entity.AutomaticallyNote;
             model.CreatedDate = entity.CreatedDate;
+            model.ResponseDate = entity.ResponseDate;
 
 
-            //model.FarmerId = entity.FarmerId;
-            //model.CustomerId = (int)entity.CustomerId;
-            //model.ReservationTypeId = entity.ReservationTypeId;
-            ////  التعامل مع NULL بأمان
-            //model.ReservationTypeDesc = lookupValues?
-            //    .FirstOrDefault(c => c.Id == entity.ReservationTypeId)?
-            //    .ValueAr ?? string.Empty;
-            ////  التأكد من وجود ReservationDate
-            //model.ReservationDate = entity.ReservationDate;
-            //model.CustMobNum = entity.CustMobNum ?? string.Empty;
-            //model.CustomerName = entity.CustomerName ?? string.Empty;
-            //model.NumberOfPerson = entity.NumberOfPerson;
-            //model.CostReservationAmtOnMahjouz = entity.CostReservationAmtOnMahjouz;
-            //model.ReservationAmt = entity.ReservationAmt;
-            //model.NetProfit = entity.NetProfit;
-            //model.ReservationDepositAmt = entity.ReservationDepositAmt;
-            //model.ReservationRemainAmt = entity.ReservationRemainAmt;
-            //model.Note = entity.Note ?? string.Empty;
-            //model.MobileOwnerAppUser = entity.MobileOwnerAppUser ?? string.Empty;
-            //model.IsMahjouzReservation = entity.IsMahjouzReservation;
-            //model.IsReciveCommission = entity.IsReciveCommission;
-            //model.AutomaticallyNote = entity.AutomaticallyNote ?? string.Empty;
-            ////  التأكد من وجود CreatedDate
-            //model.CreatedDate = entity.CreatedDate;
-            //model.Reason = entity.Reason;
-            //model.ReservStatus = entity.ReservStatus;
+
             return model;
         }
         public static FarmerReservation ToEntity(this FarmerReservationModel model)
@@ -533,6 +523,7 @@ namespace MazraeatiBackOffice.Extenstion
             entity.IsReciveCommission = model.IsReciveCommission;
             entity.AutomaticallyNote = model.AutomaticallyNote;
             entity.CreatedDate = model.CreatedDate;
+            entity.ResponseDate= model.ResponseDate;
             return entity;
         }
         #endregion
@@ -570,6 +561,9 @@ namespace MazraeatiBackOffice.Extenstion
             model.Id = entity.Id;
             model.FullName = entity.FullName;
             model.MobileNumber = entity.MobileNumber;
+            model.DeviceId = entity.DeviceId;
+            model.DeviceToken = entity.DeviceToken;
+
             return model;
         }
         public static Customer ToEntity(this CustomerModel model)
@@ -578,6 +572,8 @@ namespace MazraeatiBackOffice.Extenstion
             entity.Id = model.Id;
             entity.FullName = model.FullName;
             entity.MobileNumber = model.MobileNumber;
+            entity.DeviceId = model.DeviceId;
+            entity.DeviceToken = model.DeviceToken;
             return entity;
         }
         #endregion
@@ -615,7 +611,7 @@ namespace MazraeatiBackOffice.Extenstion
         }
         #endregion
         #region  
-        public static FarmerExtraFeatureTypeDto ToModel(this FarmerExtraFeatureType entity,LookupValue lookup)
+        public static FarmerExtraFeatureTypeDto ToModel(this FarmerExtraFeatureType entity, LookupValue lookup)
         {
             FarmerExtraFeatureTypeDto model = new FarmerExtraFeatureTypeDto();
             model.Id = entity.Id;
@@ -1043,161 +1039,15 @@ namespace MazraeatiBackOffice.Extenstion
 
             // تفاصيل الحجز (مثل Farmer)
             model.GeographicLocation = entity.GeographicLocation;
+            model.Longitude = entity.Longitude;
+            model.Latitude = entity.Latitude;
             model.MaxPerson = entity.MaxPerson;
             model.ConfidentialMessageAr = entity.ConfidentialMessageAr;
             model.ConfidentialMessageEn = entity.ConfidentialMessageEn;
             model.Image3DLink = entity.Image3DLink;
             model.ReservationDetails = entity.ReservationDetails;
             model.ExtraDetails = entity.ExtraDetails;
-            // ===== تفاصيل العقار (حسب نوع الرياضة) =====
-            // كرة القدم
-            //model.FootballFloorType = entity.FootballFloorType;
-            //model.FootballCourtDimensions = entity.FootballCourtDimensions;
-            //model.FootballPlayerCount = entity.FootballPlayerCount;
-            //model.FootballPitchType = entity.FootballPitchType;
-            //model.FootballIsIndoor = entity.FootballIsIndoor;
-            //model.FootballIsOutdoor = entity.FootballIsOutdoor;
-            //model.FootballLightingSystem = entity.FootballLightingSystem;
-            //model.FootballSuitableForOfficial = entity.FootballSuitableForOfficial;
-            //model.FootballSuitableForTraining = entity.FootballSuitableForTraining;
-
-            //// البادل
-            //model.PadelPitchType = entity.PadelPitchType;
-            //model.PadelNumberOfCourts = entity.PadelNumberOfCourts;
-            //model.PadelHasCeiling = entity.PadelHasCeiling;
-            //model.PadelNightLighting = entity.PadelNightLighting;
-            //model.PadelGlassType = entity.PadelGlassType;
-            //model.PadelCourtLevel = entity.PadelCourtLevel;
-
-            //// التنس
-            //model.TennisPitchType = entity.TennisPitchType;
-            //model.TennisNumberOfCourts = entity.TennisNumberOfCourts;
-            //model.TennisNightLighting = entity.TennisNightLighting;
-            //model.TennisIsSingles = entity.TennisIsSingles;
-            //model.TennisIsDoubles = entity.TennisIsDoubles;
-            //model.TennisSuitableForTournaments = entity.TennisSuitableForTournaments;
-
-            //// كرة السلة
-            //model.BasketBallNumberOfBaskets = entity.BasketBallNumberOfBaskets;
-            //model.BasketBallCourtSize = entity.BasketBallCourtSize;
-
-            //// كرة الطائرة
-            //model.VollyBallNetHeightAdjustable = entity.VollyBallNetHeightAdjustable;
-            //model.VollyBallIsIndoor = entity.VollyBallIsIndoor;
-            //model.VollyBallIsOutdoor = entity.VollyBallIsOutdoor;
-            //model.VollyBallNightLighting = entity.VollyBallNightLighting;
-            //model.VollyBallPitchType = entity.VollyBallPitchType;
-            //model.VollyBallNumberOfCourts = entity.VollyBallNumberOfCourts;
-
-            //// المسابح
-            //model.SwimmingPoolType = entity.SwimmingPoolType;
-            //model.SwimmingPoolLength = entity.SwimmingPoolLength;
-            //model.SwimmingPoolWidth = entity.SwimmingPoolWidth;
-            //model.SwimmingPoolDepth = entity.SwimmingPoolDepth;
-            //model.SwimmingPoolNumberOfPools = entity.SwimmingPoolNumberOfPools;
-            //model.SwimmingPoolHasChildrenPool = entity.SwimmingPoolHasChildrenPool;
-            //model.SwimmingPoolHasAdultsPool = entity.SwimmingPoolHasAdultsPool;
-            //model.SwimmingPoolWaterTemperature = entity.SwimmingPoolWaterTemperature;
-            //model.SwimmingPoolSterilizationSystem = entity.SwimmingPoolSterilizationSystem;
-            //model.SwimmingPoolHasWaterSlides = entity.SwimmingPoolHasWaterSlides;
-            //model.SwimmingPoolHasJacuzzi = entity.SwimmingPoolHasJacuzzi;
-            //model.SwimmingPoolSuitableForTraining = entity.SwimmingPoolSuitableForTraining;
-            //model.SwimmingPoolSuitableForEvents = entity.SwimmingPoolSuitableForEvents;
-
-            //// الفروسية
-            //model.EquestrianismActivityType = entity.EquestrianismActivityType;
-            //model.EquestrianismNumberOfHorses = entity.EquestrianismNumberOfHorses;
-            //model.EquestrianismTrainingLevel = entity.EquestrianismTrainingLevel;
-            //model.EquestrianismTourDuration = entity.EquestrianismTourDuration;
-            //model.EquestrianismAllowedAge = entity.EquestrianismAllowedAge;
-            //model.EquestrianismAllowedWeight = entity.EquestrianismAllowedWeight;
-            //model.EquestrianismHasAccompanyingTrainer = entity.EquestrianismHasAccompanyingTrainer;
-            //model.EquestrianismTrackIndoor = entity.EquestrianismTrackIndoor;
-            //model.EquestrianismTrackOutdoor = entity.EquestrianismTrackOutdoor;
-
-            //// الرماية
-            //model.ShootingIndoor = entity.ShootingIndoor;
-            //model.ShootingOutdoor = entity.ShootingOutdoor;
-            //model.ShootingAirShooting = entity.ShootingAirShooting;
-            //model.ShootingFireShooting = entity.ShootingFireShooting;
-            //model.ShootingBowAndArrow = entity.ShootingBowAndArrow;
-            //model.ShootingShootingTrainer = entity.ShootingShootingTrainer;
-            //model.ShootingEquipmentAvailable = entity.ShootingEquipmentAvailable;
-            //model.ShootingEquipmentRental = entity.ShootingEquipmentRental;
-
-            //// Pickleball
-            //model.PickleballIndoor = entity.PickleballIndoor;
-            //model.PickleballOutdoor = entity.PickleballOutdoor;
-            //model.PickleballPaddles = entity.PickleballPaddles;
-            //model.PickleballBalls = entity.PickleballBalls;
-            //model.PickleballLighting = entity.PickleballLighting;
-
-            //// تنس الطاولة
-            //model.TableTennisProfessional = entity.TableTennisProfessional;
-            //model.TableTennisPaddles = entity.TableTennisPaddles;
-            //model.TableTennisBalls = entity.TableTennisBalls;
-            //model.TableTennisTraining = entity.TableTennisTraining;
-
-            //// الاسكواش
-            //model.SquashGlassCourt = entity.SquashGlassCourt;
-            //model.SquashNormalCourt = entity.SquashNormalCourt;
-            //model.SquashPaddles = entity.SquashPaddles;
-            //model.SquashBalls = entity.SquashBalls;
-            //model.SquashTraining = entity.SquashTraining;
-
-            //// الريشة الطائرة
-            //model.BadmintonIndoor = entity.BadmintonIndoor;
-            //model.BadmintonProfessionalFloor = entity.BadmintonProfessionalFloor;
-            //model.BadmintonPaddles = entity.BadmintonPaddles;
-            //model.BadmintonShuttlecocks = entity.BadmintonShuttlecocks;
-            //model.BadmintonTraining = entity.BadmintonTraining;
-
-            //// الكرة الطائرة (شاطئية)
-            //model.BeachVolleyballIndoor = entity.BeachVolleyballIndoor;
-            //model.BeachVolleyballOutdoor = entity.BeachVolleyballOutdoor;
-            //model.BeachVolleyballSandFloor = entity.BeachVolleyballSandFloor;
-            //model.BeachVolleyballIndoorFloor = entity.BeachVolleyballIndoorFloor;
-            //model.BeachVolleyballLighting = entity.BeachVolleyballLighting;
-            //model.BeachVolleyballProfessionalNet = entity.BeachVolleyballProfessionalNet;
-            //model.BeachVolleyballBalls = entity.BeachVolleyballBalls;
-
-            //// كرة السلة (إضافات)
-            //model.BasketballIndoor = entity.BasketballIndoor;
-            //model.BasketballOutdoor = entity.BasketballOutdoor;
-            //model.BasketballWoodFloor = entity.BasketballWoodFloor;
-            //model.BasketballRubberFloor = entity.BasketballRubberFloor;
-            //model.BasketballLighting = entity.BasketballLighting;
-            //model.BasketballStands = entity.BasketballStands;
-            //model.BasketballScoreboard = entity.BasketballScoreboard;
-            //model.BasketballBalls = entity.BasketballBalls;
-            //model.BasketballTraining = entity.BasketballTraining;
-
-            //// التنس (إضافات)
-            //model.TennisIndoor = entity.TennisIndoor;
-            //model.TennisOutdoor = entity.TennisOutdoor;
-            //model.TennisAcrylicFloor = entity.TennisAcrylicFloor;
-            //model.TennisClayFloor = entity.TennisClayFloor;
-            //model.TennisGrassFloor = entity.TennisGrassFloor;
-            //model.TennisLighting = entity.TennisLighting;
-            //model.TennisPaddles = entity.TennisPaddles;
-            //model.TennisBalls = entity.TennisBalls;
-            //model.TennisTrainer = entity.TennisTrainer;
-            //model.TennisAcademy = entity.TennisAcademy;
-            //model.TennisTournaments = entity.TennisTournaments;
-
-            //// البادل (إضافات)
-            //model.PadelIndoor = entity.PadelIndoor;
-            //model.PadelOutdoor = entity.PadelOutdoor;
-            //model.PadelPanoramic = entity.PadelPanoramic;
-            //model.PadelNormal = entity.PadelNormal;
-            //model.PadelLighting = entity.PadelLighting;
-            //model.PadelPaddlesRental = entity.PadelPaddlesRental;
-            //model.PadelBallsAvailable = entity.PadelBallsAvailable;
-            //model.PadelTrainer = entity.PadelTrainer;
-            //model.PadelAcademy = entity.PadelAcademy;
-            //model.PadelTournaments = entity.PadelTournaments;
-            //model.PadelHourlyBooking = entity.PadelHourlyBooking;
-
+            
             // ===== الأسماء من الـ Lists (مثل Farmer) =====
             model.CountryDesc = countries?
                 .FirstOrDefault(c => c.Id == entity.CountryId)
@@ -1278,6 +1128,8 @@ namespace MazraeatiBackOffice.Extenstion
 
             // تفاصيل الحجز
             entity.GeographicLocation = model.GeographicLocation;
+            entity.Longitude = model.Longitude;
+            entity.Latitude = model.Latitude;
             entity.MaxPerson = model.MaxPerson;
             entity.ConfidentialMessageAr = model.ConfidentialMessageAr;
             entity.ConfidentialMessageEn = model.ConfidentialMessageEn;
@@ -1286,154 +1138,6 @@ namespace MazraeatiBackOffice.Extenstion
             entity.ExtraDetails = model.ExtraDetails;
 
             // ===== تفاصيل العقار =====
-            // كرة القدم
-            //entity.FootballFloorType = model.FootballFloorType;
-            //entity.FootballCourtDimensions = model.FootballCourtDimensions;
-            //entity.FootballPlayerCount = model.FootballPlayerCount;
-            //entity.FootballPitchType = model.FootballPitchType;
-            //entity.FootballIsIndoor = model.FootballIsIndoor;
-            //entity.FootballIsOutdoor = model.FootballIsOutdoor;
-            //entity.FootballLightingSystem = model.FootballLightingSystem;
-            //entity.FootballSuitableForOfficial = model.FootballSuitableForOfficial;
-            //entity.FootballSuitableForTraining = model.FootballSuitableForTraining;
-
-            //// البادل
-            //entity.PadelPitchType = model.PadelPitchType;
-            //entity.PadelNumberOfCourts = model.PadelNumberOfCourts;
-            //entity.PadelHasCeiling = model.PadelHasCeiling;
-            //entity.PadelNightLighting = model.PadelNightLighting;
-            //entity.PadelGlassType = model.PadelGlassType;
-            //entity.PadelCourtLevel = model.PadelCourtLevel;
-
-            //// التنس
-            //entity.TennisPitchType = model.TennisPitchType;
-            //entity.TennisNumberOfCourts = model.TennisNumberOfCourts;
-            //entity.TennisNightLighting = model.TennisNightLighting;
-            //entity.TennisIsSingles = model.TennisIsSingles;
-            //entity.TennisIsDoubles = model.TennisIsDoubles;
-            //entity.TennisSuitableForTournaments = model.TennisSuitableForTournaments;
-
-            //// كرة السلة
-            //entity.BasketBallNumberOfBaskets = model.BasketBallNumberOfBaskets;
-            //entity.BasketBallCourtSize = model.BasketBallCourtSize;
-
-            //// كرة الطائرة
-            //entity.VollyBallNetHeightAdjustable = model.VollyBallNetHeightAdjustable;
-            //entity.VollyBallIsIndoor = model.VollyBallIsIndoor;
-            //entity.VollyBallIsOutdoor = model.VollyBallIsOutdoor;
-            //entity.VollyBallNightLighting = model.VollyBallNightLighting;
-            //entity.VollyBallPitchType = model.VollyBallPitchType;
-            //entity.VollyBallNumberOfCourts = model.VollyBallNumberOfCourts;
-
-            //// المسابح
-            //entity.SwimmingPoolType = model.SwimmingPoolType;
-            //entity.SwimmingPoolLength = model.SwimmingPoolLength;
-            //entity.SwimmingPoolWidth = model.SwimmingPoolWidth;
-            //entity.SwimmingPoolDepth = model.SwimmingPoolDepth;
-            //entity.SwimmingPoolNumberOfPools = model.SwimmingPoolNumberOfPools;
-            //entity.SwimmingPoolHasChildrenPool = model.SwimmingPoolHasChildrenPool;
-            //entity.SwimmingPoolHasAdultsPool = model.SwimmingPoolHasAdultsPool;
-            //entity.SwimmingPoolWaterTemperature = model.SwimmingPoolWaterTemperature;
-            //entity.SwimmingPoolSterilizationSystem = model.SwimmingPoolSterilizationSystem;
-            //entity.SwimmingPoolHasWaterSlides = model.SwimmingPoolHasWaterSlides;
-            //entity.SwimmingPoolHasJacuzzi = model.SwimmingPoolHasJacuzzi;
-            //entity.SwimmingPoolSuitableForTraining = model.SwimmingPoolSuitableForTraining;
-            //entity.SwimmingPoolSuitableForEvents = model.SwimmingPoolSuitableForEvents;
-
-            //// الفروسية
-            //entity.EquestrianismActivityType = model.EquestrianismActivityType;
-            //entity.EquestrianismNumberOfHorses = model.EquestrianismNumberOfHorses;
-            //entity.EquestrianismTrainingLevel = model.EquestrianismTrainingLevel;
-            //entity.EquestrianismTourDuration = model.EquestrianismTourDuration;
-            //entity.EquestrianismAllowedAge = model.EquestrianismAllowedAge;
-            //entity.EquestrianismAllowedWeight = model.EquestrianismAllowedWeight;
-            //entity.EquestrianismHasAccompanyingTrainer = model.EquestrianismHasAccompanyingTrainer;
-            //entity.EquestrianismTrackIndoor = model.EquestrianismTrackIndoor;
-            //entity.EquestrianismTrackOutdoor = model.EquestrianismTrackOutdoor;
-
-            //// الرماية
-            //entity.ShootingIndoor = model.ShootingIndoor;
-            //entity.ShootingOutdoor = model.ShootingOutdoor;
-            //entity.ShootingAirShooting = model.ShootingAirShooting;
-            //entity.ShootingFireShooting = model.ShootingFireShooting;
-            //entity.ShootingBowAndArrow = model.ShootingBowAndArrow;
-            //entity.ShootingShootingTrainer = model.ShootingShootingTrainer;
-            //entity.ShootingEquipmentAvailable = model.ShootingEquipmentAvailable;
-            //entity.ShootingEquipmentRental = model.ShootingEquipmentRental;
-
-            //// Pickleball
-            //entity.PickleballIndoor = model.PickleballIndoor;
-            //entity.PickleballOutdoor = model.PickleballOutdoor;
-            //entity.PickleballPaddles = model.PickleballPaddles;
-            //entity.PickleballBalls = model.PickleballBalls;
-            //entity.PickleballLighting = model.PickleballLighting;
-
-            //// تنس الطاولة
-            //entity.TableTennisProfessional = model.TableTennisProfessional;
-            //entity.TableTennisPaddles = model.TableTennisPaddles;
-            //entity.TableTennisBalls = model.TableTennisBalls;
-            //entity.TableTennisTraining = model.TableTennisTraining;
-
-            //// الاسكواش
-            //entity.SquashGlassCourt = model.SquashGlassCourt;
-            //entity.SquashNormalCourt = model.SquashNormalCourt;
-            //entity.SquashPaddles = model.SquashPaddles;
-            //entity.SquashBalls = model.SquashBalls;
-            //entity.SquashTraining = model.SquashTraining;
-
-            //// الريشة الطائرة
-            //entity.BadmintonIndoor = model.BadmintonIndoor;
-            //entity.BadmintonProfessionalFloor = model.BadmintonProfessionalFloor;
-            //entity.BadmintonPaddles = model.BadmintonPaddles;
-            //entity.BadmintonShuttlecocks = model.BadmintonShuttlecocks;
-            //entity.BadmintonTraining = model.BadmintonTraining;
-
-            //// الكرة الطائرة (شاطئية)
-            //entity.BeachVolleyballIndoor = model.BeachVolleyballIndoor;
-            //entity.BeachVolleyballOutdoor = model.BeachVolleyballOutdoor;
-            //entity.BeachVolleyballSandFloor = model.BeachVolleyballSandFloor;
-            //entity.BeachVolleyballIndoorFloor = model.BeachVolleyballIndoorFloor;
-            //entity.BeachVolleyballLighting = model.BeachVolleyballLighting;
-            //entity.BeachVolleyballProfessionalNet = model.BeachVolleyballProfessionalNet;
-            //entity.BeachVolleyballBalls = model.BeachVolleyballBalls;
-
-            //// كرة السلة (إضافات)
-            //entity.BasketballIndoor = model.BasketballIndoor;
-            //entity.BasketballOutdoor = model.BasketballOutdoor;
-            //entity.BasketballWoodFloor = model.BasketballWoodFloor;
-            //entity.BasketballRubberFloor = model.BasketballRubberFloor;
-            //entity.BasketballLighting = model.BasketballLighting;
-            //entity.BasketballStands = model.BasketballStands;
-            //entity.BasketballScoreboard = model.BasketballScoreboard;
-            //entity.BasketballBalls = model.BasketballBalls;
-            //entity.BasketballTraining = model.BasketballTraining;
-
-            //// التنس (إضافات)
-            //entity.TennisIndoor = model.TennisIndoor;
-            //entity.TennisOutdoor = model.TennisOutdoor;
-            //entity.TennisAcrylicFloor = model.TennisAcrylicFloor;
-            //entity.TennisClayFloor = model.TennisClayFloor;
-            //entity.TennisGrassFloor = model.TennisGrassFloor;
-            //entity.TennisLighting = model.TennisLighting;
-            //entity.TennisPaddles = model.TennisPaddles;
-            //entity.TennisBalls = model.TennisBalls;
-            //entity.TennisTrainer = model.TennisTrainer;
-            //entity.TennisAcademy = model.TennisAcademy;
-            //entity.TennisTournaments = model.TennisTournaments;
-
-            //// البادل (إضافات)
-            //entity.PadelIndoor = model.PadelIndoor;
-            //entity.PadelOutdoor = model.PadelOutdoor;
-            //entity.PadelPanoramic = model.PadelPanoramic;
-            //entity.PadelNormal = model.PadelNormal;
-            //entity.PadelLighting = model.PadelLighting;
-            //entity.PadelPaddlesRental = model.PadelPaddlesRental;
-            //entity.PadelBallsAvailable = model.PadelBallsAvailable;
-            //entity.PadelTrainer = model.PadelTrainer;
-            //entity.PadelAcademy = model.PadelAcademy;
-            //entity.PadelTournaments = model.PadelTournaments;
-            //entity.PadelHourlyBooking = model.PadelHourlyBooking;
-
             return entity;
         }
 
@@ -1971,7 +1675,8 @@ namespace MazraeatiBackOffice.Extenstion
                 DeviceId = entity.DeviceId,
                 TokenCustomer = entity.TokenCustomer,
                 CreatedDate = entity.CreatedDate,
-                ModifiedDate = entity.ModifiedDate
+                ModifiedDate = entity.ModifiedDate,
+                ResponseDate = entity.ResponseDate
             };
         }
 
@@ -2004,17 +1709,12 @@ namespace MazraeatiBackOffice.Extenstion
                 DeviceId = model.DeviceId,
                 TokenCustomer = model.TokenCustomer,
                 CreatedDate = model.CreatedDate,
-                ModifiedDate = model.ModifiedDate
+                ModifiedDate = model.ModifiedDate,
+                ResponseDate = model.ResponseDate
             };
         }
 
         #endregion
-
-
-
-
-
-
 
 
         #region SportPropertyTemplate ToModel / ToEntity
@@ -2128,7 +1828,7 @@ namespace MazraeatiBackOffice.Extenstion
                 NameAr = entity.NameAr,
                 NameEn = entity.NameEn,
                 Code = entity.Code,
-                SportTypeId = entity.SportTypeId,
+                CategoryId = entity.CategoryId,
                 IconClass = entity.IconClass,
                 IsActive = entity.IsActive,
                 CreatedDate = entity.CreatedDate,
@@ -2144,7 +1844,7 @@ namespace MazraeatiBackOffice.Extenstion
                 NameAr = model.NameAr,
                 NameEn = model.NameEn,
                 Code = model.Code,
-                SportTypeId = model.SportTypeId,
+                CategoryId = model.CategoryId,
                 IconClass = model.IconClass,
                 IsActive = model.IsActive,
                 CreatedDate = model.CreatedDate,
@@ -2704,9 +2404,574 @@ namespace MazraeatiBackOffice.Extenstion
         //#endregion
 
 
+        #region  Cottage ...
+
+        #region Cottage ToModel / ToEntity
+
+        public static CottageModel ToModel(this Cottage entity,
+            List<Country> countries = null,
+            List<City> cities = null,
+            List<Regions> regions = null,
+            List<AppUser> users = null,
+            List<CottageImage> cottageImages = null,
+            List<CottageVideo> cottageVideos = null,
+            List<CottagePriceList> priceList = null)
+        {
+            CottageModel model = new CottageModel();
+
+            // معلومات أساسية
+            model.Id = entity.Id;
+            model.CountryId = entity.CountryId;
+            model.CityId = entity.CityId;
+            model.RegionId = entity.RegionId ?? 0;
+            model.UserId = entity.UserId ?? 0;
+            // الأسماء والوصف (مثل Farmer)
+            model.NameAr = entity.NameAr;
+            model.NameEn = entity.NameEn;
+            model.DescriptionAr = entity.DescriptionAr;
+            model.DescriptionEn = entity.DescriptionEn;
+            model.Owner = entity.Owner;
+            model.LocationDesc = entity.LocationDescAr;
+            model.LocationDescEn = entity.LocationDescEn;
+            model.MobileNumber = entity.MobileNumber;
+
+            // الأرقام والتواريخ
+            model.Number = entity.Number;
+            model.SerialCottageKey = entity.SerialCottageKey;
+            model.IssueDate = entity.IssueDate;
+            model.ExpiryDate = entity.ExpiryDate;
+            model.CreatedDate = entity.CreatedDate;
+            model.ModifiedDate = entity.ModifiedDate;
+
+            // الخصائص العامة (مثل Farmer)
+            model.IsTrust = entity.IsTrust;
+            model.IsVIP = entity.IsVIP;
+            model.IsOffer = entity.IsOffer;
+            model.IsWinter = entity.IsWinter;
+            model.IsApprove = entity.IsApprove;
+            model.IsActive = entity.IsActive;
+            model.IsBlocked = entity.IsBlocked;
+            model.statusCottageAppUser = entity.statusCottageAppUser;
+
+            // تفاصيل الحجز (مثل Farmer)
+            model.GeographicLocation = entity.GeographicLocation;
+            model.Longitude = entity.Longitude;
+            model.Latitude = entity.Latitude;
+            model.InsuranceAmt = entity.InsuranceAmt;
+            model.DepositAmt = entity.DepositAmt;
+            model.MaxPerson = entity.MaxPerson;
+            model.ConfidentialMessageAr = entity.ConfidentialMessageAr;
+            model.ConfidentialMessageEn = entity.ConfidentialMessageEn;
+            model.Image3DLink = entity.Image3DLink;
+            model.ReservationDetails = entity.ReservationDetails;
+            model.ExtraDetails = entity.ExtraDetails;
+
+            // ===== الأسماء من الـ Lists (مثل Farmer) =====
+            model.CountryDesc = countries?
+                .FirstOrDefault(c => c.Id == entity.CountryId)
+                ?.DescAr ?? "";
+
+            model.CityDesc = cities?
+                .FirstOrDefault(c => c.Id == entity.CityId)
+                ?.DescAr ?? "";
+
+            model.RegionDesc = regions?
+                .FirstOrDefault(r => r.Id == entity.RegionId)
+                ?.DescAr ?? "";
+
+            model.UserDesc = users?
+                .FirstOrDefault(u => u.Id == entity.UserId)
+                ?.UserName ?? "";
+
+            model.UserName = users?
+                .FirstOrDefault(u => u.Id == entity.UserId)
+                ?.UserName ?? "";
+
+            // الصور والفيديوهات والأسعار
+            model.CottageImages = cottageImages ?? new List<CottageImage>();
+            model.CottageVideos = cottageVideos ?? new List<CottageVideo>();
+            model.PriceList = priceList ?? new List<CottagePriceList>();
+
+            return model;
+        }
+
+
+        public static Cottage ToEntity(this CottageModel model)
+        {
+            Cottage entity = new Cottage();
+
+            // معلومات أساسية
+            entity.Id = model.Id;
+            entity.CountryId = model.CountryId;
+            entity.CityId = model.CityId;
+            entity.RegionId = model.RegionId;
+            entity.UserId = model.UserId;
+
+            // الأسماء والوصف
+            entity.NameAr = model.NameAr;
+            entity.NameEn = model.NameEn;
+            entity.DescriptionAr = model.DescriptionAr;
+            entity.DescriptionEn = model.DescriptionEn;
+            entity.Owner = model.Owner;
+            entity.LocationDescAr = model.LocationDesc;
+            entity.LocationDescEn = model.LocationDescEn;
+            entity.MobileNumber = model.MobileNumber;
+
+            // الأرقام والتواريخ
+            entity.Number = model.Number;
+            entity.SerialCottageKey = model.SerialCottageKey;
+            entity.IssueDate = model.IssueDate;
+            entity.ExpiryDate = model.ExpiryDate;
+            //model.IssueDate = entity.IssueDate ?? DateTime.Now;
+            //model.ExpiryDate = entity.ExpiryDate ?? DateTime.Now.AddMonths(3);
+            entity.CreatedDate = model.CreatedDate;
+            entity.ModifiedDate = model.ModifiedDate;
+
+            // الخصائص العامة
+            entity.IsTrust = model.IsTrust;
+            entity.IsVIP = model.IsVIP;
+            entity.IsOffer = model.IsOffer;
+            entity.IsWinter = model.IsWinter;
+            entity.IsApprove = model.IsApprove;
+            entity.IsActive = model.IsActive;
+            entity.IsBlocked = model.IsBlocked;
+            entity.statusCottageAppUser = model.statusCottageAppUser;
+
+            // تفاصيل الحجز
+            entity.GeographicLocation = model.GeographicLocation;
+            entity.Longitude = model.Longitude;
+            entity.Latitude = model.Latitude;
+            entity.InsuranceAmt = model.InsuranceAmt;
+            entity.DepositAmt = model.DepositAmt;
+            entity.MaxPerson = model.MaxPerson;
+            entity.ConfidentialMessageAr = model.ConfidentialMessageAr;
+            entity.ConfidentialMessageEn = model.ConfidentialMessageEn;
+            entity.Image3DLink = model.Image3DLink;
+            entity.ReservationDetails = model.ReservationDetails;
+            entity.ExtraDetails = model.ExtraDetails;
+
+            // ===== تفاصيل العقار =====
+            return entity;
+        }
+
+        #endregion
+
+
+        #region  for تفاصيل العقار
+        #region CottagePropertyTemplate ToModel / ToEntity
+
+        public static CottagePropertyTemplateDto ToModel(this CottagePropertyTemplate entity)
+        {
+            return new CottagePropertyTemplateDto
+            {
+                Id = entity.Id,
+                PropertyKey = entity.PropertyKey,
+                PropertyLabelAr = entity.PropertyLabelAr,
+                PropertyLabelEn = entity.PropertyLabelEn,
+                PropertyType = (int)entity.PropertyType,
+                IsRequired = entity.IsRequired,
+                SortOrder = entity.SortOrder,
+                IsActive = entity.IsActive
+            };
+        }
+
+        public static CottagePropertyTemplate ToEntity(this CottagePropertyTemplateDto model)
+        {
+            return new CottagePropertyTemplate
+            {
+                Id = model.Id,
+                PropertyKey = model.PropertyKey,
+                PropertyLabelAr = model.PropertyLabelAr,
+                PropertyLabelEn = model.PropertyLabelEn,
+                PropertyType = (PropertyTypeEnum)model.PropertyType,
+                IsRequired = model.IsRequired,
+                SortOrder = model.SortOrder,
+                IsActive = model.IsActive
+            };
+        }
+
+        #endregion
+
+        #region CottagePropertyOption ToModel / ToEntity
+
+        public static CottagePropertyOptionDto ToModel(this CottagePropertyOption entity)
+        {
+            return new CottagePropertyOptionDto
+            {
+                Id = entity.Id,
+                PropertyTemplateId = entity.PropertyTemplateId,
+                OptionValue = entity.OptionValue,
+                OptionTextAr = entity.OptionTextAr,
+                OptionTextEn = entity.OptionTextEn,
+                SortOrder = entity.SortOrder,
+                IsActive = entity.IsActive
+            };
+        }
+
+        public static CottagePropertyOption ToEntity(this CottagePropertyOptionDto model)
+        {
+            return new CottagePropertyOption
+            {
+                Id = model.Id,
+                PropertyTemplateId = model.PropertyTemplateId,
+                OptionValue = model.OptionValue,
+                OptionTextAr = model.OptionTextAr,
+                OptionTextEn = model.OptionTextEn,
+                SortOrder = model.SortOrder,
+                IsActive = model.IsActive
+            };
+        }
+
+        #endregion
+
+        #region CottagePropertyValue ToModel / ToEntity
+
+        public static CottagePropertyValueDto ToModel(this CottagePropertyValue entity)
+        {
+            return new CottagePropertyValueDto
+            {
+                Id = entity.Id,
+                CottageId = entity.CottageId,
+                PropertyTemplateId = entity.PropertyTemplateId,
+                ValueText = entity.ValueText,
+                ValueBool = entity.ValueBool,
+                ValueOptionId = entity.ValueOptionId
+            };
+        }
+
+        public static CottagePropertyValue ToEntity(this CottagePropertyValueDto model)
+        {
+            return new CottagePropertyValue
+            {
+                Id = model.Id,
+                CottageId = model.CottageId,
+                PropertyTemplateId = model.PropertyTemplateId,
+                ValueText = model.ValueText,
+                ValueBool = model.ValueBool,
+                ValueOptionId = model.ValueOptionId
+            };
+        }
+
+        #endregion
+        #endregion
+
+
+        #region  المرافق العامة
+        #region CottageGeneralFacility ToModel / ToEntity
+
+        public static CottageGeneralFacilityModel ToModel(this CottageGeneralFacility entity)
+        {
+            return new CottageGeneralFacilityModel
+            {
+                Id = entity.Id,
+                FacilityTextAr = entity.FacilityTextAr,
+                FacilityTextEn = entity.FacilityTextEn,
+                IconClass = entity.IconClass,
+                IsActive = entity.IsActive
+            };
+        }
+
+        public static CottageGeneralFacility ToEntity(this CottageGeneralFacilityModel model)
+        {
+            return new CottageGeneralFacility
+            {
+                Id = model.Id,
+                FacilityTextAr = model.FacilityTextAr,
+                FacilityTextEn = model.FacilityTextEn,
+                IconClass = model.IconClass,
+                IsActive = model.IsActive
+            };
+        }
+
+        #endregion
+
+        #region CottageCottageGeneralFacility ToModel / ToEntity
+
+        public static CottageGeneralFacilityDto ToModel(this CottageCottageGeneralFacility entity, GeneralFacility facility = null)
+        {
+            return new CottageGeneralFacilityDto
+            {
+                Id = entity.Id,
+                CottageId = entity.CottageId,
+                FacilityId = entity.GeneralFacilityId,
+                FacilityText = facility?.FacilityTextAr ?? "",
+                FacilityTextEn = facility?.FacilityTextEn ?? "",
+                IsCheck = entity.IsActive
+            };
+        }
+
+        public static CottageCottageGeneralFacility ToEntity(this CottageCottageGeneralFacilityDto model)
+        {
+            return new CottageCottageGeneralFacility
+            {
+                Id = model.Id,
+                CottageId = model.CottageId,
+                GeneralFacilityId = model.GeneralFacilityId,
+                IsActive = model.IsActive
+            };
+        }
+
+        #endregion
+        #endregion
+
+
+        #region CottageReservation ToModel / ToEntity
+
+        public static CottageReservationModel ToModel(this CottageReservation entity)
+        {
+            return new CottageReservationModel
+            {
+                Id = entity.Id,
+                CottageId = (int)entity.CottageId,
+                CustomerId = (int)entity.CustomerId,
+                CustomerName = entity.CustomerName,
+                ReservationTypeId=entity.ReservationTypeId,
+                CustMobNum = entity.CustMobNum,
+                MobileOwnerAppUser = entity.MobileOwnerAppUser,
+                ReservationDate = entity.ReservationDate,
+                StartTime = entity.StartTime,
+                EndTime = entity.EndTime,
+                TotalHours = entity.TotalHours,
+                PersonCount = entity.PersonCount,
+                CostReservationAmtOnMahjouz = entity.CostReservationAmtOnMahjouz,
+                ReservationAmt = entity.ReservationAmt,
+                ReservationDepositAmt = entity.ReservationDepositAmt,
+                NetProfit = entity.NetProfit,
+                ReservationRemainAmt = entity.ReservationRemainAmt,
+                ReservStatus = entity.ReservStatus,
+                Reason = entity.Reason,
+                Note = entity.Note,
+                IsMahjouzReservation = entity.IsMahjouzReservation,
+                IsReceiveCommession = entity.IsReceiveCommession,
+                DeviceId = entity.DeviceId,
+                TokenCustomer = entity.TokenCustomer,
+                CreatedDate = entity.CreatedDate,
+                ModifiedDate = entity.ModifiedDate,
+                ResponseDate = entity.ResponseDate
+            };
+        }
+
+        public static CottageReservation ToEntity(this CottageReservationModel model)
+        {
+            return new CottageReservation
+            {
+                Id = model.Id,
+                CottageId = model.CottageId,
+                CustomerId = model.CustomerId,
+                CustomerName = model.CustomerName,
+                ReservationTypeId=model.ReservationTypeId,
+                CustMobNum = model.CustMobNum,
+                MobileOwnerAppUser = model.MobileOwnerAppUser,
+                ReservationDate = model.ReservationDate,
+                StartTime = model.StartTime,
+                EndTime = model.EndTime,
+                TotalHours = model.TotalHours,
+                PersonCount = model.PersonCount,
+                CostReservationAmtOnMahjouz = model.CostReservationAmtOnMahjouz,
+                ReservationAmt = model.ReservationAmt,
+                ReservationDepositAmt = model.ReservationDepositAmt,
+                NetProfit = model.NetProfit,
+                ReservationRemainAmt = model.ReservationRemainAmt,
+                ReservStatus = model.ReservStatus,
+                Reason = model.Reason,
+                Note = model.Note,
+                IsMahjouzReservation = model.IsMahjouzReservation,
+                IsReceiveCommession = model.IsReceiveCommession,
+                DeviceId = model.DeviceId,
+                TokenCustomer = model.TokenCustomer,
+                CreatedDate = model.CreatedDate,
+                ModifiedDate = model.ModifiedDate,
+                ResponseDate = model.ResponseDate
+            };
+        }
+
+        #endregion
+
+
+        #endregion
 
 
 
+        #region Notifications
+        public static NotificationDto ToDto(this Notifications entity)
+        {
+            if (entity == null)
+                return null;
+
+            return new NotificationDto
+            {
+                Id = entity.Id,
+                Type = entity.Type,
+                Title = entity.Title,
+                Message = entity.Message,
+                OldData = entity.OldData,
+                NewData = entity.NewData,
+                IsRead = entity.IsRead,
+                IsDeleted = entity.IsDeleted,
+                IsConfirmed = entity.IsConfirmed,
+                IsCancelled = entity.IsCancelled,
+                CreatedDate = entity.CreatedDate,
+                ReadDate = entity.ReadDate,
+                ConfirmedDate = entity.ConfirmedDate,
+                CancelledDate = entity.CancelledDate,
+                CreatedBy = entity.CreatedBy
+            };
+        }
+
+        // ============================================
+        // من DTO إلى Entity (للإضافة)
+        // ============================================
+        public static Notifications ToEntity(this CreateNotificationDto dto)
+        {
+            if (dto == null)
+                return null;
+
+            return new Notifications
+            {
+                Type = dto.Type,
+                Title = dto.Title,
+                Message = dto.Message,
+                OldData = dto.OldData != null ? JsonConvert.SerializeObject(dto.OldData) : null,
+                NewData = dto.NewData != null ? JsonConvert.SerializeObject(dto.NewData) : null,
+                CreatedDate = DateTime.Now,
+                IsRead = false,
+                IsDeleted = false,
+                IsConfirmed = false,
+                IsCancelled = false,
+                CreatedBy = dto.CreatedBy
+            };
+        }
+        #endregion
+
+        #region For Notifications progress
+        // ============================================
+        // تحديث Entity للتأكيد
+        // ============================================
+        public static void UpdateForConfirm(this Notifications entity, bool isConfirmed)
+        {
+            if (entity == null)
+                return;
+
+            entity.IsConfirmed = isConfirmed;
+            entity.IsCancelled = !isConfirmed;
+            entity.IsRead = true;
+            entity.ReadDate = DateTime.Now;
+            entity.ConfirmedDate = DateTime.Now; //? DateTime.Now : null
+            entity.CancelledDate = DateTime.Now ;
+        }
+
+        // ============================================
+        // تحديث Entity للقراءة
+        // ============================================
+        public static void UpdateForRead(this Notifications entity)
+        {
+            if (entity == null)
+                return;
+
+            entity.IsRead = true;
+            entity.ReadDate = DateTime.Now;
+        }
+
+        // ============================================
+        // تحديث Entity للحذف
+        // ============================================
+        public static void UpdateForDelete(this Notifications entity)
+        {
+            if (entity == null)
+                return;
+
+            entity.IsDeleted = true;
+        }
+
+        // ============================================
+        // من DTO إلى Entity (للتحديث)
+        // ============================================
+        public static void UpdateFromDto(this Notifications entity, NotificationDto dto)
+        {
+            if (entity == null || dto == null)
+                return;
+
+            entity.Type = dto.Type;
+            entity.Title = dto.Title;
+            entity.Message = dto.Message;
+            entity.OldData = dto.OldData;
+            entity.NewData = dto.NewData;
+            entity.IsRead = dto.IsRead;
+            entity.IsDeleted = dto.IsDeleted;
+            entity.IsConfirmed = dto.IsConfirmed;
+            entity.IsCancelled = dto.IsCancelled;
+            entity.ReadDate = dto.ReadDate;
+            entity.ConfirmedDate = dto.ConfirmedDate;
+            entity.CancelledDate = dto.CancelledDate;
+            entity.CreatedBy = dto.CreatedBy;
+        }
+
+        // ============================================
+        // من Entity إلى CreateNotificationDto (عكس)
+        // ============================================
+        public static CreateNotificationDto ToCreateDto(this Notifications entity)
+        {
+            if (entity == null)
+                return null;
+
+            return new CreateNotificationDto
+            {
+                Type = entity.Type,
+                Title = entity.Title,
+                Message = entity.Message,
+                OldData = !string.IsNullOrEmpty(entity.OldData) ? JsonConvert.DeserializeObject(entity.OldData) : null,
+                NewData = !string.IsNullOrEmpty(entity.NewData) ? JsonConvert.DeserializeObject(entity.NewData) : null,
+                CreatedBy = entity.CreatedBy
+            };
+        }
+
+        // ============================================
+        // قائمة Entity إلى قائمة DTO
+        // ============================================
+        public static IEnumerable<NotificationDto> ToDtoList(this IEnumerable<Notifications> entities)
+        {
+            if (entities == null)
+                return new List<NotificationDto>();
+
+            return entities.Select(e => e.ToDto()).ToList();
+        }
+
+        // ============================================
+        // قائمة DTO إلى قائمة Entity
+        // ============================================
+        public static IEnumerable<Notifications> ToEntityList(this IEnumerable<CreateNotificationDto> dtos)
+        {
+            if (dtos == null)
+                return new List<Notifications>();
+
+            return dtos.Select(d => d.ToEntity()).ToList();
+        }
+
+
+        // تعيين كمقروء
+        public static void MarkAsRead(this Notifications entity)
+        {
+            entity.IsRead = true;
+            entity.ReadDate = DateTime.Now;
+        }
+
+        // تأكيد أو إلغاء
+        public static void Confirm(this Notifications entity, bool isConfirmed)
+        {
+            entity.IsConfirmed = isConfirmed;
+            entity.IsCancelled = !isConfirmed;
+            entity.IsRead = true;
+            entity.ReadDate = DateTime.Now;
+            entity.ConfirmedDate = DateTime.Now;
+            entity.CancelledDate = DateTime.Now;
+        }
+
+        // حذف (soft delete)
+        public static void Delete(this Notifications entity)
+        {
+            entity.IsDeleted = true;
+        }
+        #endregion
 
 
 

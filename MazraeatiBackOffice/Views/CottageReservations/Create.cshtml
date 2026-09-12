@@ -1,0 +1,9 @@
+﻿@model CottageReservationModel
+@{
+    ViewBag.Title = "إضافة حجوزات الأكواخ";
+    ViewBag.activePage = "إضافة حجز";
+}
+@using (Html.BeginForm("Create", "CottageReservations", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.Partial("_CreateOrUpdate",Model)
+}

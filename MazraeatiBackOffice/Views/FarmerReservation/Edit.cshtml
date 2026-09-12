@@ -1,4 +1,8 @@
 ﻿@model FarmerReservationModel
+@{
+    ViewBag.Title = "تعديل الحجوزات";
+    ViewBag.activePage = "تعديل حجز";
+}
 @using (Html.BeginForm("Edit", "FarmerReservation", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.Partial("_CreateOrUpdate", Model)

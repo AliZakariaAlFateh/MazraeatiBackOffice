@@ -4,6 +4,28 @@ using System.Linq;
 
 namespace MazraeatiBackOffice.ViewComponents
 {
+    //public class SportTypesMenuViewComponent : ViewComponent
+    //{
+    //    private readonly IUnitOfWork _unitOfWork;
+
+    //    public SportTypesMenuViewComponent(IUnitOfWork unitOfWork)
+    //    {
+    //        _unitOfWork = unitOfWork;
+    //    }
+
+    //    public IViewComponentResult Invoke()
+    //    {
+    //        // All Sport Types ....
+    //        var sportTypes = _unitOfWork.SportTypeRepository
+    //            .Table
+    //            .Where(s => s.IsActive == true)
+    //            .OrderBy(s => s.NameAr)
+    //            .ToList();
+
+    //        return View(sportTypes);
+    //    }
+    //}
+    // ===== SportTypesMenuViewComponent.cs =====
     public class SportTypesMenuViewComponent : ViewComponent
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -13,14 +35,15 @@ namespace MazraeatiBackOffice.ViewComponents
             _unitOfWork = unitOfWork;
         }
 
-        public IViewComponentResult Invoke()
+        public IViewComponentResult Invoke(int? currentSportTypeId = null)
         {
-            // All Sport Types ....
             var sportTypes = _unitOfWork.SportTypeRepository
                 .Table
                 .Where(s => s.IsActive == true)
                 .OrderBy(s => s.NameAr)
                 .ToList();
+
+            ViewBag.CurrentSportTypeId = currentSportTypeId;
 
             return View(sportTypes);
         }

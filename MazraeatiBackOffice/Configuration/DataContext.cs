@@ -1,5 +1,11 @@
-﻿using MazraeatiBackOffice.Core;
+﻿using FirebaseAdmin.Messaging;
+using MazraeatiBackOffice.Core.CottageCore;
+using MazraeatiBackOffice.Core.FarmCore;
 using MazraeatiBackOffice.Core.LoyaltyPoints;
+using MazraeatiBackOffice.Core.SportCore;
+using MazraeatiBackOffice.Core.SystemCore;
+using MazraeatiBackOffice.Core.UserManagementCore;
+using MazraeatiBackOffice.SportCore;
 using Microsoft.EntityFrameworkCore;
 using System.Drawing;
 
@@ -78,7 +84,20 @@ namespace MazraeatiBackOffice.Configuration
         public DbSet<SportPropertyValue> SportPropertyValues { get; set; }
         public DbSet<SportPropertyOption> SportPropertyOptions { get; set; }
         public DbSet<SportPropertyTemplate> SportPropertyTemplates { get; set; }
+        #endregion
 
+        #region Cottage ...
+        public DbSet<Cottage> Cottages { get; set; }
+        public DbSet<CottageGeneralFacility> CottageGeneralFacilities { get; set; }
+        public DbSet<CottageCottageGeneralFacility> CottageCottageGeneralFacilities { get; set; }
+        public DbSet<CottagePriceList> CottagePriceLists { get; set; }
+        public DbSet<CottageReservation> CottageReservations { get; set; }
+        public DbSet<CottageVideo> CottageVideos { get; set; }
+        public DbSet<CottageImage> CottageImages { get; set; }
+        //Properties
+        public DbSet<CottagePropertyValue> CottagePropertyValues { get; set; }
+        public DbSet<CottagePropertyOption> CottagePropertyOptions { get; set; }
+        public DbSet<CottagePropertyTemplate> CottagePropertyTemplates { get; set; }
         #endregion
 
         #region Loyalty Points
@@ -99,6 +118,9 @@ namespace MazraeatiBackOffice.Configuration
 
         #endregion
 
+        #region notifications
+        public DbSet<Notifications> Notifications { get; set; }
+        #endregion
 
 
 

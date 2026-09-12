@@ -1,10 +1,26 @@
-﻿@model UserModel
+﻿@using MazraeatiBackOffice.Models.UserManagementModel
+@model UserModel
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.min.css" />
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
 
 <style>
+
+    .select2-container--default .select2-selection--multiple .select2-selection__choice {
+        background-color: #2d8027 !important;
+    }
+
+    .select2-container--default .select2-selection--multiple .select2-selection__choice__remove 
+    {
+        font-size:1.3rem !important;
+    }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__choice__remove:hover, .select2-container--default .select2-selection--multiple .select2-selection__choice__remove:focus {
+            background-color: #f00 !important;
+            color: #333;
+            outline: none
+        }
     .form-group {
         font-size: 13px;
     }
@@ -56,7 +72,21 @@
             <div class="card">
                 <div class="header">
                     <h2><strong>معالجة </strong> السجل</h2>
-                    <ul class="header-dropdown"></ul>
+                    <ul class="header-dropdown">
+                        @if (Model.Id > 0)
+                        {
+                            <li>
+                                <a href="@Url.Action("Create")" class="btn btn-primary btn-round">
+                                    <i class="fa fa-plus"></i> إضافة / جديد
+                                </a>
+                            </li>
+                        }
+                        <li>
+                            <a href="@Url.Action("Index")" class="btn btn-default btn-round">
+                                <i class="fa fa-arrow-right"></i> العودة للقائمة
+                            </a>
+                        </li>
+                    </ul>
                 </div>
                 <div class="body">
                     <div class="row clearfix">
@@ -155,7 +185,20 @@
                                 @Html.ValidationMessageFor(a => a.SportIds, "", new { @style = "color:red;font-size:10px" })
                             </div>
                         </div>
-
+                        <div class="col-sm-6" id="cottagesContainer">
+                            <div class="form-group">
+                                <label>الأكواخ</label>
+                                @Html.ListBoxFor(model => model.CottageIds,
+                                                                Model.Cottages,
+                                                                new
+                                                                {
+                                                                    @class = "form-control select2",
+                                                                    multiple = "multiple",
+                                                                    style = "width:100%"
+                                                                })
+                                @Html.ValidationMessageFor(a => a.CottageIds, "", new { @style = "color:red;font-size:10px" })
+                            </div>
+                        </div>
                         <!-- نشط -->
                         <div class="col-sm-3">
                             <div class="form-group">
@@ -178,102 +221,12 @@
 </div>
 
 <script>
-    // $(document).ready(function () {
-    //     // ===== تهيئة الـ Select2 =====
-    //     $('.select2').select2({
-    //         placeholder: "اختر من القائمة",
-    //         width: '100%',
-    //         dir: "rtl",
-    //         closeOnSelect: false
-    //     });
+    $(document).ready(function () {
+        // ===== تخزين القيم المختارة الأولية =====
+        var initialFarmIds = [];
+        var initialSportIds = [];
+        var initialCottageIds = [];
 
-    //     // ===== دالة إظهار/إخفاء المزارع والعقار الرياضي =====
-    //     function toggleFarmsAndSports() {
-    //         var selectedTypes = $('#UserTypeListSelected').val() || [];
-
-    //         // المزارع (0)
-    //         if (selectedTypes.includes('0')) {
-    //             $('#farmsContainer').show();
-    //         } else {
-    //             $('#farmsContainer').hide();
-    //             $('#FarmIds').val(null).trigger('change');
-    //         }
-
-    //         // العقار الرياضي (أي قيمة غير 0)
-    //         var hasSports = selectedTypes.some(function (val) { return val !== '0'; });
-    //         if (hasSports) {
-    //             $('#sportsContainer').show();
-    //         } else {
-    //             $('#sportsContainer').hide();
-    //             $('#SportIds').val(null).trigger('change');
-    //         }
-    //     }
-
-    //     // ===== عند تغيير نوع العقار =====
-    //     $('#UserTypeListSelected').on('change', function () {
-    //         toggleFarmsAndSports();
-    //     });
-
-    //     // ===== عند تحميل الصفحة =====
-    //     toggleFarmsAndSports();
-
-    //     // ===== دالة تهيئة رقم الهاتف =====
-    //     function initPhone(inputId) {
-    //         var input = document.querySelector(inputId);
-    //         var iti = window.intlTelInput(input, {
-    //             initialCountry: "auto",
-    //             geoIpLookup: function (callback) {
-    //                 $.get("https://ipapi.co/json/", function (data) {
-    //                     callback(data.country_code.toLowerCase());
-    //                 }).fail(function () {
-    //                     callback("eg");
-    //                 });
-    //             },
-    //             separateDialCode: true,
-    //             preferredCountries: ["eg", "sa", "ae", "jo"],
-    //             utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"
-    //         });
-
-    //         var existingValue = $(inputId).val();
-    //         if (existingValue) {
-    //             iti.setNumber(existingValue);
-    //         }
-    //         return iti;
-    //     }
-
-    //     var iti1 = initPhone("#phone1");
-    //     var iti2 = initPhone("#phone2");
-
-    //     // ===== عند إرسال النموذج =====
-    //     $("form").on("submit", function () {
-    //         if (!iti1.isValidNumber()) {
-    //             Swal.fire({
-    //                 icon: 'error',
-    //                 title: 'خطأ',
-    //                 text: 'رقم الموبايل الأول غير صحيح'
-    //             });
-    //             return false;
-    //         }
-
-    //         if (!iti2.isValidNumber()) {
-    //             Swal.fire({
-    //                 icon: 'error',
-    //                 title: 'خطأ',
-    //                 text: 'رقم الموبايل الثاني غير صحيح'
-    //             });
-    //             return false;
-    //         }
-
-    //         $("#phone1").val(iti1.getNumber());
-    //         $("#phone2").val(iti2.getNumber());
-
-    //         // ===== دمج القيم المختارة في string =====
-    //         var selectedTypes = $('#UserTypeListSelected').val() || [];
-    //         $('#UserType').val(selectedTypes.join(','));
-    //     });
-    // });
-
-            $(document).ready(function () {
         // ===== تهيئة الـ Select2 =====
         $('.select2').select2({
             placeholder: "اختر من القائمة",
@@ -281,26 +234,6 @@
             dir: "rtl",
             closeOnSelect: false
         });
-
-        // ===== دالة جلب العقارات الرياضية حسب النوع =====
-        function loadSportsByType(sportTypeId, callback) {
-            if (!sportTypeId) {
-                if (callback) callback([]);
-                return;
-            }
-
-            $.ajax({
-                url: '@Url.Action("GetSportsByUserType", "AppUser")',
-                type: 'GET',
-                data: { userType: sportTypeId },
-                success: function (data) {
-                    if (callback) callback(data);
-                },
-                error: function () {
-                    if (callback) callback([]);
-                }
-            });
-        }
 
         // ===== دالة جلب المزارع =====
         function loadFarms(callback) {
@@ -317,115 +250,131 @@
             });
         }
 
-        // ===== دالة إضافة العقارات إلى الليست (من غير selected) =====
-        function addSportsToList(newItems) {
-            var select = $('#SportIds');
-
-            // إضافة العناصر الجديدة (اللي مش موجودة)
-            $.each(newItems, function (index, item) {
-                var exists = select.find('option[value="' + item.id + '"]').length > 0;
-                if (!exists) {
-                    select.append('<option value="' + item.id + '">' + (item.nameAr || item.name) + '</option>');
-                }
-            });
-
-            // ===== مهم جداً: من غير ما نختارهم =====
-            // خلينا القيم المختارة زي ما هي من غير تغيير
-            // select.val(select.val()).trigger('change');
-        }
-
-        // ===== دالة إزالة العقارات حسب النوع =====
-        function removeSportsByType(sportTypeId) {
-            var select = $('#SportIds');
-            var currentValues = select.val() || [];
-
+        // ===== دالة جلب الأكواخ =====
+        function loadCottages(callback) {
             $.ajax({
-                url: '@Url.Action("GetSportsByUserType", "AppUser")',
+                url: '@Url.Action("GetCottagesByUserType", "AppUser")',
                 type: 'GET',
-                data: { userType: sportTypeId },
+                data: { userType: "13" },
                 success: function (data) {
-                    var idsToRemove = data.map(function (item) { return item.id.toString(); });
-
-                    // حذف الخيارات
-                    $.each(idsToRemove, function (index, id) {
-                        select.find('option[value="' + id + '"]').remove();
-                    });
-
-                    // حذف القيم المختارة (لو كانت موجودة)
-                    var newValues = currentValues.filter(function (val) {
-                        return !idsToRemove.includes(val);
-                    });
-
-                    select.val(newValues).trigger('change');
+                    if (callback) callback(data);
+                },
+                error: function () {
+                    if (callback) callback([]);
                 }
             });
         }
 
-        // ===== دالة تحديث قائمة المزارع =====
-        function updateFarmsList(newItems) {
+        // ===== دالة تحديث قائمة المزارع مع الاحتفاظ بالقيم المختارة =====
+        function updateFarmsList(newItems, selectedIds) {
             var select = $('#FarmIds');
             select.find('option').remove();
-            select.val(null).trigger('change');
 
             $.each(newItems, function (index, item) {
                 select.append('<option value="' + item.id + '">' + (item.name || item.nameAr) + '</option>');
             });
+
+            // ===== إعادة تعيين القيم المختارة =====
+            if (selectedIds && selectedIds.length > 0) {
+                select.val(selectedIds).trigger('change');
+            } else {
+                select.val(null).trigger('change');
+            }
+        }
+
+        // ===== دالة تحديث قائمة الأكواخ مع الاحتفاظ بالقيم المختارة =====
+        function updateCottagesList(newItems, selectedIds) {
+            var select = $('#CottageIds');
+            select.find('option').remove();
+
+            $.each(newItems, function (index, item) {
+                select.append('<option value="' + item.id + '">' + (item.nameAr || item.name) + '</option>');
+            });
+
+            if (selectedIds && selectedIds.length > 0) {
+                select.val(selectedIds).trigger('change');
+            } else {
+                select.val(null).trigger('change');
+            }
+        }
+
+        // ===== دالة تحديث قائمة العقارات الرياضية مع الاحتفاظ بالقيم المختارة =====
+        function updateSportsList(newItems, selectedIds) {
+            var select = $('#SportIds');
+            select.find('option').remove();
+
+            $.each(newItems, function (index, item) {
+                select.append('<option value="' + item.id + '">' + (item.nameAr || item.name) + '</option>');
+            });
+
+            if (selectedIds && selectedIds.length > 0) {
+                select.val(selectedIds).trigger('change');
+            } else {
+                select.val(null).trigger('change');
+            }
         }
 
         // ===== دالة التعامل مع تغيير نوع العقار =====
         function handleUserTypeChange() {
             var selectedTypes = $('#UserTypeListSelected').val() || [];
 
+            // ===== الحفاظ على القيم المختارة الحالية =====
+            var currentFarmIds = $('#FarmIds').val() || [];
+            var currentSportIds = $('#SportIds').val() || [];
+            var currentCottageIds = $('#CottageIds').val() || [];
+
             // ===== 1. المزارع =====
             if (selectedTypes.includes('0')) {
                 $('#farmsContainer').show();
                 loadFarms(function (data) {
-                    updateFarmsList(data);
+                    updateFarmsList(data, currentFarmIds);
                 });
             } else {
                 $('#farmsContainer').hide();
                 $('#FarmIds').val(null).trigger('change');
             }
 
-            // ===== 2. العقارات الرياضية (تراكمي) =====
-            var sportTypes = selectedTypes.filter(function (val) { return val !== '0'; });
+            // ===== 2. الأكواخ =====
+            if (selectedTypes.includes('13')) {
+                $('#cottagesContainer').show();
+                loadCottages(function (data) {
+                    updateCottagesList(data, currentCottageIds);
+                });
+            } else {
+                $('#cottagesContainer').hide();
+                $('#CottageIds').val(null).trigger('change');
+            }
+
+            // ===== 3. العقارات الرياضية =====
+            var sportTypes = selectedTypes.filter(function (val) {
+                return val !== '0' && val !== '13';
+            });
 
             if (sportTypes.length > 0) {
                 $('#sportsContainer').show();
 
-                // جلب الأنواع الموجودة حالياً في الليست
-                var select = $('#SportIds');
-                var existingOptions = [];
-                select.find('option').each(function () {
-                    existingOptions.push($(this).val());
-                });
-
-                // حذف الخيارات اللي مش موجودة في الأنواع المختارة
-                // جلب كل العقارات من كل الأنواع المختارة
                 $.ajax({
                     url: '@Url.Action("GetAllSportsByTypes", "AppUser")',
                     type: 'GET',
                     data: { sportTypeIds: sportTypes.join(',') },
                     success: function (data) {
-                        // إعادة بناء الليست
-                        select.find('option').remove();
-                        select.val(null).trigger('change');
-
-                        // إضافة كل العقارات من الأنواع المختارة
-                        $.each(data, function (index, item) {
-                            select.append('<option value="' + item.id + '">' + (item.nameAr || item.name) + '</option>');
-                        });
-
-                        // ===== من غير ما نختار أي حاجة =====
-                        // خلينا الـ selected فاضي
-                        select.val([]).trigger('change');
+                        updateSportsList(data, currentSportIds);
+                    },
+                    error: function () {
+                        updateSportsList([], currentSportIds);
                     }
                 });
-
             } else {
                 $('#sportsContainer').hide();
                 $('#SportIds').val(null).trigger('change');
             }
+        }
+
+        // ===== دالة حفظ القيم المختارة الأولية =====
+        function saveInitialSelectedValues() {
+            initialFarmIds = $('#FarmIds').val() || [];
+            initialSportIds = $('#SportIds').val() || [];
+            initialCottageIds = $('#CottageIds').val() || [];
         }
 
         // ===== ربط الأحداث =====
@@ -434,11 +383,17 @@
         });
 
         // ===== عند تحميل الصفحة =====
+        // 1. حفظ القيم المختارة الأولية
+        saveInitialSelectedValues();
+
+        // 2. تنفيذ الـ handle مع الاحتفاظ بالقيم
         handleUserTypeChange();
 
         // ===== دالة رقم الهاتف =====
         function initPhone(inputId) {
             var input = document.querySelector(inputId);
+            if (!input) return null;
+
             var iti = window.intlTelInput(input, {
                 initialCountry: "auto",
                 geoIpLookup: function (callback) {
@@ -465,18 +420,18 @@
 
         // ===== عند إرسال النموذج =====
         $("form").on("submit", function () {
-            if (!iti1.isValidNumber()) {
+            if (iti1 && !iti1.isValidNumber()) {
                 Swal.fire({ icon: 'error', title: 'خطأ', text: 'رقم الموبايل الأول غير صحيح' });
                 return false;
             }
 
-            if (!iti2.isValidNumber()) {
+            if (iti2 && !iti2.isValidNumber()) {
                 Swal.fire({ icon: 'error', title: 'خطأ', text: 'رقم الموبايل الثاني غير صحيح' });
                 return false;
             }
 
-            $("#phone1").val(iti1.getNumber());
-            $("#phone2").val(iti2.getNumber());
+            if (iti1) $("#phone1").val(iti1.getNumber());
+            if (iti2) $("#phone2").val(iti2.getNumber());
 
             var selectedTypes = $('#UserTypeListSelected').val() || [];
             $('#UserType').val(selectedTypes.join(','));

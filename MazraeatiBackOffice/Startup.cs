@@ -1,6 +1,7 @@
 ﻿using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using MazraeatiBackOffice.Configuration;
-using MazraeatiBackOffice.Core;
+using MazraeatiBackOffice.Configuration.Permissions;
+using MazraeatiBackOffice.Core.SystemCore;
 using MazraeatiBackOffice.Filters;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
@@ -167,6 +168,9 @@ namespace MazraeatiBackOffice
             services.AddDbContext<DataContext>(options => options.UseSqlServer(connectionString));
             services.AddScoped<IAdminService, AdminService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<INotificationRepository, NotificationRepository>();
+            services.AddScoped<INotificationService, NotificationService>();
+            services.AddHostedService<NotificationBackgroundService>();
             services.AddScoped<IPermissionService, PermissionService>();
             services.AddScoped<PermissionFilter>();
             //services.AddScoped<LoyaltyService>();
@@ -204,6 +208,8 @@ namespace MazraeatiBackOffice
             //    options.Filters.Add<PermissionFilter>();
             //});
 
+            //for prcedures hidden or display for add edit delete ...
+            services.AddScoped<IPermissionUIService, PermissionUIService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

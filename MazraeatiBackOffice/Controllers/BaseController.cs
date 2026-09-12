@@ -36,7 +36,7 @@ namespace MazraeatiBackOffice.Controllers
         }
         public string HashPassword(string password)
         {
-            return string.Join("", SHA1CryptoServiceProvider.Create().ComputeHash(Encoding.UTF8.GetBytes(password)).Select(x => x.ToString("X2"))).ToUpper();
+            return string.Join("", SHA1.Create().ComputeHash(Encoding.UTF8.GetBytes(password)).Select(x => x.ToString("X2"))).ToUpper();
         }
         protected virtual void ErrorNotification(string message, bool persistForTheNextRequest = true)
         {

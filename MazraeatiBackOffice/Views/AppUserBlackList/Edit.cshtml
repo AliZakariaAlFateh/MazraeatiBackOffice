@@ -1,4 +1,9 @@
-﻿@model AppUserBlackListModel
+﻿@using MazraeatiBackOffice.Models.UserManagementModel
+@model AppUserBlackListModel
+@{
+    ViewBag.Title = " تعديل حظر الملاك";
+    ViewBag.activePage = "تعديل حظر الملاك";
+}
 @using (Html.BeginForm("Edit", "AppUserBlackList", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.Partial("_CreateOrUpdate", Model)

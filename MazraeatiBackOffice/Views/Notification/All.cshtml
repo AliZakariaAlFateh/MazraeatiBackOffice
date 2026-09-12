@@ -1,0 +1,82 @@
+﻿@using MazraeatiBackOffice.Dto.NotificationDtos
+@model IEnumerable<NotificationDto>
+
+@{
+    ViewData["Title"] = "كل الإشعارات";
+    ViewBag.activePage = "كل الإشعارات";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>📋 كل الإشعارات</h2>
+        <a href="/Notification/Index" class="btn btn-primary btn-sm">
+            🔙 العودة للإشعارات الجديدة
+        </a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5">
+            <i class="fas fa-inbox" style="font-size: 64px; color: #dee2e6;"></i>
+            <h4 class="mt-3 text-muted">لا توجد إشعارات</h4>
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>النوع</th>
+                        <th>العنوان</th>
+                        <th>التاريخ</th>
+                        <th>الحالة</th>
+                        <th>الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr class="@(item.IsRead ? "" : "table-warning")">
+                            <td>
+                                @if (item.Type == "Farm")
+                                {
+                                    <span class="badge bg-success">🌾 مزرعة</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-primary">📊 سعر</span>
+                                }
+                            </td>
+                            <td>@item.Title</td>
+                            <td>@item.CreatedDate.ToString("yyyy-MM-dd HH:mm")</td>
+                            <td>
+                                @if (item.IsConfirmed)
+                                {
+                                    <span class="badge bg-success">✅ مؤكد</span>
+                                }
+                                else if (item.IsCancelled)
+                                {
+                                    <span class="badge bg-danger">❌ ملغي</span>
+                                }
+                                else if (item.IsRead)
+                                {
+                                    <span class="badge bg-secondary">📖 مقروء</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning text-dark">🆕 جديد</span>
+                                }
+                            </td>
+                            <td>
+                                <a href="/Notification/Details/@item.Id" class="btn btn-sm btn-info">
+                                    📋 تفاصيل
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

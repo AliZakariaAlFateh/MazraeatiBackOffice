@@ -1,5 +1,18 @@
 ﻿@using MazraeatiBackOffice.Configuration;
+@using MazraeatiBackOffice.Configuration.Enums
+@using MazraeatiBackOffice.Models.FarmModel
+
 @model IEnumerable<FarmerModel>
+@{
+    var userId = UserService.GetCurrentUserId(User);
+    var canEdit = await PermissionUIService.CanEditAsync(userId.Value, "/Farmer/Farmer_IsApprove");
+    var canDelete = await PermissionUIService.CanDeleteAsync(userId.Value, "/Farmer/Farmer_IsApprove");
+    var canCreate = await PermissionUIService.CanCreateAsync(userId.Value, "/Farmer/Farmer_IsApprove");
+}
+@{
+    ViewBag.Title = " المزارع التي تم الموافقة عليها";
+    ViewBag.activePage = "المزارع التي تم الموافقة عليها";
+}
 <style>
 
 
@@ -22,12 +35,29 @@
                         </div>
                     </div>
 
-                    <div class="col-sm-3" style="margin-top:1px">
+                    @* <div class="col-sm-3" style="margin-top:1px">
                         <select class="form-control" name="CityBy" id="citySelect">
                             <option selected="selected" value="0">--الرجاء اختيار  المدينة--</option>
                             @foreach (var item in ViewBag.cities)
                             {
                                 <option selected="@(item.Id == ViewBag.CityBy)" value="@item.Id">@item.DescAr</option>
+                            }
+                        </select>
+                    </div> *@
+
+                    <div class="col-sm-3" style="margin-top:1px">
+                        <select class="form-control" name="CityBy">
+                            <option selected="selected" value="0">--الرجاء اختيار المدينة--</option>
+                            @foreach (var item in ViewBag.cities)
+                            {
+                                if (ViewBag.CityBy != null && item.Id == ViewBag.CityBy)
+                                {
+                                    <option selected="selected" value="@item.Id">@item.DescAr</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.Id">@item.DescAr</option>
+                                }
                             }
                         </select>
                     </div>
@@ -111,6 +141,7 @@
                                     <th>@Html.DisplayNameFor(a => a.IsVIP)</th>
                                     <th>@Html.DisplayNameFor(a => a.IsApprove)</th>
                                     <th>تفاصيل</th>
+                                    <th>عرض الإعلان</th>
                                     <th>حجوزات المزارع</th>
                                     <th>ملاحظات المزارع</th>
                                     <th>تعديل الصور</th>
@@ -138,7 +169,15 @@
                                         <td>@(item.IsTrust == true ? "نعم" : "لا")</td>
                                         <td>@(item.IsVIP == true ? "نعم" : "لا")</td>
                                         <td>@(item.IsApprove == true ? "نعم" : "لا")</td>
-                                        <td><a href="@Url.Content("~/Farmers/edit/")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
+                                        @* @if (canEdit)
+                                        { *@
+                                            <td><a href="@Url.Content("~/Farmers/edit/")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
+                                        @* } *@
+                                        <td>
+                                            <a href="https://mahjoz.app/farm/@item.Id" target="_blank" class="btn btn-primary btn-round" style="height: 25px;">
+                                                <i class="zmdi zmdi-eye" style="color: white;margin-top: -10px;"></i>
+                                            </a>
+                                        </td>
                                         <td><a href="@Url.Content("~/FarmerReservation/index?farmerId=")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
                                         <td><a href="@Url.Content("~/FarmerFeedBack/index?farmerId=")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
                                         <td><a href="@Url.Content("~/Farmers/farmerImages/")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>

@@ -1,5 +1,4 @@
-﻿@using MazraeatiBackOffice.Models.LoyaltyPoints
-@model LoyaltyTierModel
+﻿@model LoyaltyTierModel
 
 @{
     ViewBag.Title = Model.Id > 0 ? "تعديل مستوى" : "إضافة مستوى جديد";
@@ -12,6 +11,21 @@
             <div class="card">
                 <div class="header">
                     <h2><strong>@(Model.Id > 0 ? "تعديل" : "إضافة")</strong> مستوى</h2>
+                    <ul class="header-dropdown">
+                        @if (Model.Id > 0)
+                        {
+                            <li>
+                                <a href="@Url.Action("Create")" class="btn btn-primary btn-round">
+                                    <i class="fa fa-plus"></i> إضافة / جديد
+                                </a>
+                            </li>
+                        }
+                        <li>
+                            <a href="@Url.Action("Index")" class="btn btn-default btn-round">
+                                <i class="fa fa-arrow-right"></i> العودة للقائمة
+                            </a>
+                        </li>
+                    </ul>
                 </div>
                 <div class="body">
                     <form method="post">

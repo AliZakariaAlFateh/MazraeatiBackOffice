@@ -1,4 +1,5 @@
-﻿@model FarmerModel
+﻿@using MazraeatiBackOffice.Models.FarmModel
+@model FarmerModel
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.min.css" />
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -110,6 +111,19 @@
                 <div class="header">
                     <h2><strong>معالجة </strong> السجل</h2>
                     <ul class="header-dropdown">
+                        @if (Model.Id > 0)
+                        {
+                            <li>
+                                <a href="@Url.Action("Create")" class="btn btn-primary btn-round">
+                                    <i class="fa fa-plus"></i> إضافة / جديد
+                                </a>
+                            </li>
+                        }
+                        <li>
+                            <a href="@Url.Action("Index")" class="btn btn-default btn-round">
+                                <i class="fa fa-arrow-right"></i> العودة للقائمة
+                            </a>
+                        </li>
                     </ul>
                 </div>
                 <div class="body">
@@ -753,7 +767,7 @@
                         </div>
 
                         <div class="col-sm-12">
-                            <div id="imagePreviews" class="farmer-image-container" width="200px">
+                            <div id="imagePreviews" class="farmer-image-container" >
                             </div>
                         </div>
 
@@ -767,7 +781,7 @@
                                     @foreach (var image in Model.FarmerImages)
                                     {
                                         <div class="farmer-image-item">
-                                            <img src="~/Images/@image.Url" alt="Farmer Image"  />
+                                            <img src="~/Images/@image.Url" alt="Farmer Image" style="width:200px;height:200px;" />
                                             <button type="button" class="delete-image-btn" onclick="DeleteFarmerImage(@image.Id)" data-imageid="@image.Id">X</button>
                                         </div>
                                     }
@@ -794,7 +808,7 @@
                             &nbsp;
                         </div>
                         <div class="col-sm-12">
-                            <div id="videoPreviews" class="farmer-video-container" style="">
+                            <div id="videoPreviews" class="farmer-video-container">
                             </div>
                         </div>
 
@@ -808,10 +822,10 @@
                                     @foreach (var video in Model.FarmerVideos)
                                     {
                                         <div class="farmer-video-item">
-                                            <video controls style="width:250px">
-                                                <source src="~/Videos/@video.Url">
+                                            <video controls style="width:200px;height:200px;">
+                                                    <source src="~/Videos/@video.Url">
                                                
-                                        </video>
+                                            </video>
                                             <button type="button" class="delete-image-btn" onclick="DeleteFarmerVideo(@video.Id)" data-videoid="@video.Id">X</button>
                                         </div>
                                     }

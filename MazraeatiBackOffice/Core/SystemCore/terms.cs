@@ -1,0 +1,14 @@
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace MazraeatiBackOffice.Core.SystemCore
+{
+    [Table("terms")]
+    public class terms :BaseEntity
+    {
+        public string DescAr { get; set; }
+        public string DescEn { get; set; }
+
+    }
+
+   
+}

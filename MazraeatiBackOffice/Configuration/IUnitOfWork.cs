@@ -1,5 +1,10 @@
-﻿using MazraeatiBackOffice.Core;
+﻿using MazraeatiBackOffice.Core.CottageCore;
+using MazraeatiBackOffice.Core.FarmCore;
 using MazraeatiBackOffice.Core.LoyaltyPoints;
+using MazraeatiBackOffice.Core.SportCore;
+using MazraeatiBackOffice.Core.SystemCore;
+using MazraeatiBackOffice.Core.UserManagementCore;
+using MazraeatiBackOffice.SportCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
@@ -43,6 +48,18 @@ namespace MazraeatiBackOffice.Configuration
         IRepository<CommonQuestions> CommonQuestionsRepository { get; }
         IRepository<CommonQuestionsVisitors> CommonQuestionsVisitorsRepository { get; }
         public IRepository<Customer> CustomerRepository { get; }
+        public IRepository<FarmerViewes> FarmerViewesRepository { get; }
+        public IRepository<DeviceToken> DeviceTokenRepository { get; }
+
+        #region For Rules and Permessions ...
+        public IRepository<AdminUser> AdminUserRepository { get; }
+        public IRepository<Role> RoleRepository { get; }
+        public IRepository<UserRole> UserRoleRepository { get; }
+        public IRepository<Screen> ScreenRepository { get; }
+        public IRepository<UserPermission> UserPermissionRepository { get; }
+        public IRepository<UserLog> UserLogRepository { get; }
+        public IRepository<SystemSetting> SystemSettingRepository { get; }
+        #endregion
 
         #region Sport Departments ...
         public IRepository<SportType> SportTypeRepository { get; }
@@ -65,6 +82,21 @@ namespace MazraeatiBackOffice.Configuration
         public IRepository<SportPropertyTemplate> SportPropertyTemplateRepository { get; }
         #endregion
 
+        #region Cottage Departments ...
+        public IRepository<Cottage> CottageRepository { get; }
+        public IRepository<CottageCottageGeneralFacility> CottageCottageGeneralFacilityRepository { get; }
+        public IRepository<CottageGeneralFacility> CottageGeneralFacilityRepository { get; }
+        public IRepository<CottageImage> CottageImageRepository { get; }
+        public IRepository<CottagePriceList> CottagePriceListRepository { get; }
+        public IRepository<CottageReservation> CottageReservationRepository { get; }
+        public IRepository<CottageVideo> CottageVideoRepository { get; }
+
+        //properties تفاصيل العقار تفاصيل إضافية
+        public IRepository<CottagePropertyValue> CottagePropertyValueRepository { get; }
+        public IRepository<CottagePropertyOption> CottagePropertyOptionRepository { get; }
+        public IRepository<CottagePropertyTemplate> CottagePropertyTemplateRepository { get; }
+
+        #endregion
 
 
         #region LoyaltyPoints

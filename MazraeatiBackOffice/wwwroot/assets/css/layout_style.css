@@ -1,6 +1,161 @@
 ﻿body {
 }
 
+
+/*For menu SideBar*/
+
+/* ===== العنصر النشط في الـ Sidebar ===== */
+
+
+/* --------------------*/
+
+/* ===== العنصر النشط ===== */
+/*.menu-list > li.active > a:not(.menu-toggle) {
+    background: #f0f7ff;
+    border-right: 4px solid #0066ff;
+    color: #0066ff;
+}*/
+
+/*    .menu-list > li.active > a:not(.menu-toggle) i {
+        color: #0066ff;
+    }*/
+
+/* ===== العنصر النشط في القوائم الفرعية ===== */
+/*.menu-list li ul.ml-menu li.active > a {
+    background: #f0f7ff;
+    border-right: 4px solid #0066ff;
+    color: #0066ff;
+}
+
+    .menu-list li ul.ml-menu li.active > a i {
+        color: #0066ff;
+    }*/
+
+/* ===== القائمة المفتوحة ===== */
+/*.menu-list > li.open > a.menu-toggle {
+    background: #f0f7ff;
+    border-right: 4px solid #0066ff;
+    color: #0066ff;
+}
+
+    .menu-list > li.open > a.menu-toggle i {
+        color: #0066ff;
+    }*/
+
+/* ===== الـ Toggle عند الفتح ===== */
+/*.menu-toggle.toggled .zmdi-chevron-down,
+.menu-toggle.toggled .zmdi-chevron-left {
+    transform: rotate(180deg);
+    transition: transform 0.3s ease;
+}
+
+.menu-toggle .zmdi-chevron-down,
+.menu-toggle .zmdi-chevron-left {
+    transition: transform 0.3s ease;
+    margin-right: auto;
+}*/
+
+/*---------------------*/
+
+/* تلوين الرابط النشط (الابن) */
+/*.menu-list ul.ml-menu a.active-link {
+    color: #007500 !important;
+    font-weight: bold;
+}*/
+
+/* تلوين وتمييز الأب (الـ li) عندما يكون نشط */
+/*.menu-list li.active > a.menu-toggle {
+    color: #fff !important;
+    background-color: #007500 !important;*/ /* خلفية داكنة للعنوان */
+    /*box-shadow: 0 4px 6px rgba(0,0,0,0.1);*/ /* ظل خفيف */
+/*}*/
+
+/* لضمان ظهور الخلفية الخضراء الفاتحة اللي حطيناها بالجافاسكربت على الـ li الأب */
+/*.menu-list > li.active {
+    background-color: #e8f5e9 !important;
+    border-right: 4px solid #007500 !important;
+}*/
+/* ===== العنصر النشط ===== */
+/* ===== العنصر النشط في القوائم الفرعية ===== */
+/* ===== العنصر النشط (بدون أب) ===== */
+.menu-list > li.active > a:not(.menu-toggle) {
+    background: #f0f7ff !important;
+    border-right: 4px solid #0066ff !important;
+    color: #0066ff !important;
+}
+
+    .menu-list > li.active > a:not(.menu-toggle) i {
+        color: #0066ff !important;
+    }
+
+    .menu-list > li.active > a:not(.menu-toggle) span {
+        color: #0066ff !important;
+        font-weight: 600 !important;
+    }
+
+/* ===== العنصر النشط في القوائم الفرعية ===== */
+.menu-list li ul.ml-menu li.active > a {
+    background: #f0f7ff !important;
+    border-right: 4px solid #0066ff !important;
+    color: #0066ff !important;
+}
+
+    .menu-list li ul.ml-menu li.active > a i {
+        color: #0066ff !important;
+    }
+
+    .menu-list li ul.ml-menu li.active > a span {
+        color: #0066ff !important;
+        font-weight: 600 !important;
+    }
+
+/* ===== القائمة المفتوحة (الأب) ===== */
+.menu-list > li.open > a.menu-toggle {
+    background: #f0f7ff !important;
+    border-right: 4px solid #0066ff !important;
+    color: #0066ff !important;
+}
+
+    .menu-list > li.open > a.menu-toggle i {
+        color: #0066ff !important;
+    }
+
+    .menu-list > li.open > a.menu-toggle span {
+        color: #0066ff !important;
+        font-weight: 600 !important;
+    }
+
+/* ===== الـ Toggle عند الفتح ===== */
+.menu-toggle.toggled .zmdi-chevron-down,
+.menu-toggle.toggled .zmdi-chevron-left {
+    transform: rotate(180deg);
+    transition: transform 0.3s ease;
+}
+
+.menu-toggle .zmdi-chevron-down,
+.menu-toggle .zmdi-chevron-left {
+    transition: transform 0.3s ease;
+    margin-right: auto;
+}
+
+/* ===== ضمان ظهور القوائم المفتوحة ===== */
+.menu-list li.open > ul.ml-menu {
+    display: block !important;
+}
+
+/* ===== Hover للعناصر ===== */
+.menu-list li a:not(.menu-toggle):hover {
+    background: #f5f7fa !important;
+    border-right: 4px solid #0066ff !important;
+    color: #0066ff !important;
+}
+
+.menu-list li ul.ml-menu li a:hover {
+    background: #f5f7fa !important;
+    border-right: 4px solid #0066ff !important;
+    color: #0066ff !important;
+}
+/*For menu SideBar*/
 /* ==========================================
       For Fields and Icons and Notifications 
     ========================================== */
@@ -162,7 +317,7 @@ input[type="checkbox"] {
 
     .table tbody td {
         max-width: 300px;
-        text-wrap: auto;
+        text-wrap: auto !important;
         padding: 1rem !important;
         vertical-align: middle !important;
         border-bottom: 1px solid #e3e6f0 !important;
@@ -190,6 +345,10 @@ input[type="checkbox"] {
 table > thead {
     background-color: #007500 !important;
     color: white !important;
+}
+
+.card .body .table td {
+    text-wrap: auto;
 }
 
 .notification-wrapper {

@@ -1,4 +1,8 @@
 ﻿@model GeneralFacilityModel
+@{
+    ViewBag.Title = " إضافة المرافق العامة";
+    ViewBag.activePage = "إضافة مرفق عام";
+}
 @using (Html.BeginForm("Create", "GeneralFacilities", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.Partial("_CreateOrUpdate",Model)

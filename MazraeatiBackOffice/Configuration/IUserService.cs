@@ -1,4 +1,4 @@
-﻿using MazraeatiBackOffice.Core;
+﻿using MazraeatiBackOffice.Core.UserManagementCore;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -12,5 +12,6 @@ namespace MazraeatiBackOffice.Configuration
         bool IsAuthenticated(ClaimsPrincipal principal);
         int? GetCurrentUserId(ClaimsPrincipal principal);
         Task<bool> IsSuperAdminAsync(int userId);
+        ClaimsPrincipal GetCurrentPrincipal();
     }
 }

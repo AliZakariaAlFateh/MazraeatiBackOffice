@@ -1,5 +1,4 @@
-﻿@using MazraeatiBackOffice.Models.LoyaltyPoints
-@model List<LoyaltyActivityTypeModel>
+﻿@model List<LoyaltyActivityTypeModel>
 
 @{
     ViewBag.Title = "أنواع الأنشطة";
@@ -85,7 +84,7 @@
                                                     <a href="@Url.Action("Edit", new { id = item.Id })" class="btn btn-warning">
                                                         <i class="fa fa-edit"></i>
                                                     </a>
-                                                    <a href="@Url.Action("SportRules", "LoyaltyPointRules", new { activityTypeId = item.Id })" class="btn btn-info" title="قواعد النقاط">
+                                                    <a href="@Url.Action("LoyaltyRules", "LoyaltyPointRules", new { activityTypeId = item.Id })" class="btn btn-info" title="قواعد النقاط">
                                                         <i class="fa fa-cog"></i>
                                                     </a>
                                                     <a href="javascript:deleteItem(@item.Id)" class="btn btn-danger">

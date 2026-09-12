@@ -1,4 +1,9 @@
-﻿@model IEnumerable<FarmerModel>
+﻿@using MazraeatiBackOffice.Models.FarmModel
+@model IEnumerable<FarmerModel>
+@{
+    ViewBag.Title = "المزارع قيد الموافقة";
+    ViewBag.activePage = "المزارع قيد الموافقة";
+}
 <div class="col-md-12">
     <div class="card patients-list">
         <div class="header">
@@ -17,12 +22,29 @@
                         </div>
                     </div>
 
-                    <div class="col-sm-3" style="margin-top:1px">
+                    @* <div class="col-sm-3" style="margin-top:1px">
                         <select class="form-control" name="CityBy">
                             <option selected="selected" value="0">--الرجاء اختيار  المدينة--</option>
                             @foreach (var item in ViewBag.cities)
                             {
                                 <option selected="@(item.Id == ViewBag.CityBy)" value="@item.Id">@item.DescAr</option>
+                            }
+                        </select>
+                    </div> *@
+
+                    <div class="col-sm-3" style="margin-top:1px">
+                        <select class="form-control" name="CityBy">
+                            <option selected="selected" value="0">--الرجاء اختيار المدينة--</option>
+                            @foreach (var item in ViewBag.cities)
+                            {
+                                if (ViewBag.CityBy != null && item.Id == ViewBag.CityBy)
+                                {
+                                    <option selected="selected" value="@item.Id">@item.DescAr</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.Id">@item.DescAr</option>
+                                }
                             }
                         </select>
                     </div>
@@ -85,6 +107,7 @@
                                     <th>@Html.DisplayNameFor(a => a.IsVIP)</th>
                                     <th>@Html.DisplayNameFor(a => a.IsApprove)</th>
                                     <th>تفاصيل</th>
+                                    <th>عرض الإعلان</th>
                                     <th>حجوزات المزارع</th>
                                     <th>ملاحظات المزارع</th>
                                     <th>تعديل الصور</th>
@@ -111,6 +134,11 @@
                                         <td>@(item.IsVIP == true ? "نعم" : "لا")</td>
                                         <td>@(item.IsApprove == true ? "نعم" : "لا")</td>
                                         <td><a href="@Url.Content("~/Farmers/edit/")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
+                                        <td>
+                                            <a href="https://mahjoz.app/farm/@item.Id" target="_blank" class="btn btn-primary btn-round" style="height: 25px;">
+                                                <i class="zmdi zmdi-eye" style="color: white;margin-top: -10px;"></i>
+                                            </a>
+                                        </td>
                                         <td><a href="@Url.Content("~/FarmerReservation/index?farmerId=")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
                                         <td><a href="@Url.Content("~/FarmerFeedBack/index?farmerId=")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
                                         <td><a href="@Url.Content("~/Farmers/farmerImages/")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>

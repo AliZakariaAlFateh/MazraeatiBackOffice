@@ -1,4 +1,5 @@
 ﻿using MazraeatiBackOffice.Configuration;
+using MazraeatiBackOffice.Controllers;
 using MazraeatiBackOffice.Extenstion;
 using MazraeatiBackOffice.Models.LoyaltyPoints;
 using Microsoft.AspNetCore.Mvc;
@@ -33,9 +34,9 @@ namespace MazraeatiBackOffice.Controllers.LoyaltyPoints
         }
 
         // ============================================================
-        // SPORT RULES - عرض قواعد النقاط لنشاط معين
+        // Loyalty RULES - عرض قواعد النقاط لنشاط معين
         // ============================================================
-        public IActionResult SportRules(int activityTypeId)
+        public IActionResult LoyaltyRules(int activityTypeId)
         {
             if (activityTypeId <= 0)
             {
@@ -75,9 +76,9 @@ namespace MazraeatiBackOffice.Controllers.LoyaltyPoints
             }
             else if (referenceType == "Sports")
             {
-                var sportTypeId = activity.SportTypeId;
+                var CategoryId = activity.CategoryId;
                 ViewBag.Properties = _UnitOfWork.SportRepository.Table
-                    .Where(s => s.SportTypeId == sportTypeId && s.IsActive == true)
+                    .Where(s => s.SportTypeId == CategoryId && s.IsActive == true)
                     .OrderBy(s => s.NameAr)
                     .Select(s => new SelectListItem
                     {
@@ -86,10 +87,18 @@ namespace MazraeatiBackOffice.Controllers.LoyaltyPoints
                     })
                     .ToList();
             }
-            else if (referenceType == "Restaurants")
+            else if (referenceType == "Cottages")
             {
-                // ✅ مستقبلي: جلب المطاعم من جدول Restaurants
+                // ✅ مستقبلي: جلب الأكواخ من جدول Cottages
                 // ViewBag.Properties = _UnitOfWork.RestaurantRepository.Table ...
+                ViewBag.Properties = _UnitOfWork.CottageRepository.Table
+                    .OrderBy(f => f.NameAr)
+                    .Select(f => new SelectListItem
+                    {
+                        Value = f.Id.ToString(),
+                        Text = f.NameAr
+                    })
+                    .ToList();
             }
             else if (referenceType == "Hotels")
             {
@@ -115,10 +124,15 @@ namespace MazraeatiBackOffice.Controllers.LoyaltyPoints
                         var farm = _UnitOfWork.FarmerRepository.GetById(rule.ReferenceId.Value);
                         rule.ReferenceName = farm?.Name ?? "";
                     }
-                    else
+                    else if(referenceType == "Sports")
                     {
                         var sport = _UnitOfWork.SportRepository.GetById(rule.ReferenceId.Value);
                         rule.ReferenceName = sport?.NameAr ?? "";
+                    }
+                    else if(referenceType == "Cottages")
+                    {
+                        var cottage = _UnitOfWork.CottageRepository.GetById(rule.ReferenceId.Value);
+                        rule.ReferenceName = cottage?.NameAr ?? "";
                     }
                 }
             }
@@ -126,62 +140,15 @@ namespace MazraeatiBackOffice.Controllers.LoyaltyPoints
             return View(model);
         }
 
-        // ============================================================
-        // SPORT RULES - POST (إضافة قاعدة جديدة)
-        // ============================================================
-        //[HttpPost]
-        //public IActionResult SportRules(LoyaltyPointRuleModel model)
-        //{
-        //    try
-        //    {
-        //        if (model.ActivityTypeId <= 0)
-        //        {
-        //            ErrorNotification("نوع النشاط مطلوب");
-        //            return RedirectToAction("SportRules", new { activityTypeId = model.ActivityTypeId });
-        //        }
-
-        //        if (ModelState.IsValid)
-        //        {
-        //            var exist = _UnitOfWork.LoyaltyPointRuleRepository.Table
-        //                .Any(r => r.ActivityTypeId == model.ActivityTypeId &&
-        //                          r.ReferenceType == model.ReferenceType &&
-        //                          r.ReferenceId == model.ReferenceId &&
-        //                          r.IsActive == true);
-
-        //            if (exist)
-        //            {
-        //                ErrorNotification("توجد قاعدة بالفعل لهذا العقار");
-        //                return RedirectToAction("SportRules", new { activityTypeId = model.ActivityTypeId });
-        //            }
-
-        //            var entity = model.ToEntity();
-        //            entity.CreatedDate = DateTime.Now;
-
-        //            _UnitOfWork.LoyaltyPointRuleRepository.Insert(entity);
-        //            _UnitOfWork.Save();
-
-        //            SuccessNotification("تم إضافة القاعدة بنجاح");
-        //            return RedirectToAction("SportRules", new { activityTypeId = model.ActivityTypeId });
-        //        }
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        ErrorNotification(e.Message);
-        //    }
-
-        //    return RedirectToAction("SportRules", new { activityTypeId = model.ActivityTypeId });
-        //}
-
-
         [HttpPost]
-        public IActionResult SportRules(LoyaltyPointRuleModel model)
+        public IActionResult LoyaltyRules(LoyaltyPointRuleModel model)
         {
             try
             {
                 if (model.ActivityTypeId <= 0)
                 {
                     ErrorNotification("نوع النشاط مطلوب");
-                    return RedirectToAction("SportRules", new { activityTypeId = model.ActivityTypeId });
+                    return RedirectToAction("LoyaltyRules", new { activityTypeId = model.ActivityTypeId });
                 }
 
                 if (ModelState.IsValid)
@@ -195,7 +162,7 @@ namespace MazraeatiBackOffice.Controllers.LoyaltyPoints
                     if (exist)
                     {
                         ErrorNotification("توجد قاعدة بالفعل لهذا العقار");
-                        return RedirectToAction("SportRules", new { activityTypeId = model.ActivityTypeId });
+                        return RedirectToAction("LoyaltyRules", new { activityTypeId = model.ActivityTypeId });
                     }
 
                     var entity = model.ToEntity();
@@ -212,7 +179,7 @@ namespace MazraeatiBackOffice.Controllers.LoyaltyPoints
                     _UnitOfWork.Save();
 
                     SuccessNotification("تم إضافة القاعدة بنجاح");
-                    return RedirectToAction("SportRules", new { activityTypeId = model.ActivityTypeId });
+                    return RedirectToAction("LoyaltyRules", new { activityTypeId = model.ActivityTypeId });
                 }
             }
             catch (Exception e)
@@ -220,7 +187,7 @@ namespace MazraeatiBackOffice.Controllers.LoyaltyPoints
                 ErrorNotification(e.Message);
             }
 
-            return RedirectToAction("SportRules", new { activityTypeId = model.ActivityTypeId });
+            return RedirectToAction("LoyaltyRules", new { activityTypeId = model.ActivityTypeId });
         }
 
 

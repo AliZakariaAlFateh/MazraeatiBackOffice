@@ -1,4 +1,5 @@
-﻿@model CommonQuestionsModel
+﻿@using MazraeatiBackOffice.Models.SystemModel
+@model CommonQuestionsModel
 <link href="~/assets/css/commonquestions.css" rel="stylesheet" />
 @Html.HiddenFor(a => a.Id)
 @Html.HiddenFor(a => a.ImageUrl) @* This hidden field will carry the original image URL if no new file is selected *@
@@ -10,6 +11,19 @@
                 <div class="header">
                     <h2><strong>معالجة </strong> السجل</h2>
                     <ul class="header-dropdown">
+                        @if (Model.Id > 0)
+                        {
+                            <li>
+                                <a href="@Url.Action("Create")" class="btn btn-primary btn-round">
+                                    <i class="fa fa-plus"></i> إضافة / جديد
+                                </a>
+                            </li>
+                        }
+                        <li>
+                            <a href="@Url.Action("Index")" class="btn btn-default btn-round">
+                                <i class="fa fa-arrow-right"></i> العودة للقائمة
+                            </a>
+                        </li>
                     </ul>
                 </div>
                 <div class="body">

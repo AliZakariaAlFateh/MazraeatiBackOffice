@@ -1,5 +1,8 @@
-﻿@using MazraeatiBackOffice.Models.LoyaltyPoints
-@model LoyaltyTierModel
+﻿@model LoyaltyTierModel
+@{
+    ViewBag.Title = "تعديل مستويات النقاط";
+    ViewBag.activePage = "تعديل مستوي";
+}
 @using (Html.BeginForm("Edit", "LoyaltyTiers", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.Partial("_CreateOrUpdate", Model)

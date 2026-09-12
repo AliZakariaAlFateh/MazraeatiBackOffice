@@ -5,12 +5,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MazraeatiBackOffice.Core;
 using MazraeatiBackOffice.Models;
 using MazraeatiBackOffice.Extenstion;
 using MazraeatiBackOffice.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using MazraeatiBackOffice.Core.FarmCore;
+using MazraeatiBackOffice.Core.SystemCore;
 
 namespace MazraeatiBackOffice.Controllers
 {

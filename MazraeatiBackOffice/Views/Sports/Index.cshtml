@@ -1,5 +1,14 @@
 ﻿@model IEnumerable<SportModel>
+@{
+    // var userId = UserService.GetCurrentUserId(User);
+    // var canEdit = await PermissionUIService.CanEditAsync(userId.Value, "/Sports/Index");
+    // var canDelete = await PermissionUIService.CanDeleteAsync(userId.Value, "/Sports/Index");
+    // var canCreate = await PermissionUIService.CanCreateAsync(userId.Value, "/Sports/Index");
 
+    var canEdit = await PermissionUIService.CanEditAsync("/Sports/Index");
+    var canDelete = await PermissionUIService.CanDeleteAsync("/Sports/Index");
+    var canCreate = await PermissionUIService.CanCreateAsync("/Sports/Index");
+}
 @{
     ViewBag.Title = ViewBag.SelectedSportTypeName != null && !string.IsNullOrEmpty(ViewBag.SelectedSportTypeName)
         ? ViewBag.SelectedSportTypeName
@@ -175,10 +184,13 @@
                                     <th>هل الإعلان موثوق</th>
                                     <th>VIP</th>
                                     <th>هل الإعلان موافق عليه</th>
-                                    <th>تعديل</th>
+                                    @if (canEdit)
+                                    {
+                                       <th>تعديل</th>
+                                    }
                                     <th>عرض الإعلان</th>
                                     <th>الحجوزات</th>
-                                    <th>مواعيد الحجوزات</th>
+                                    <!--<th>مواعيد الحجوزات</th>-->
                                     <th>حذف</th>
                                 </tr>
                             </thead>
@@ -229,14 +241,19 @@
                                                     <span class='badge badge-warning'>قيد المراجعة</span>
                                                 }
                                             </td>
-                                            <td><a href="@Url.Content("~/Sports/Edit/")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
+                                            @if (canEdit)
+                                            { 
+
+                                                <td><a href="@Url.Content("~/Sports/Edit/")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-edit" style="color: white;margin-top: -10px;"></i></a></td>
+
+                                            } 
                                             <td>
                                                 <a href="https://mahjoz.app/Sports/@item.Id" target="_blank" class="btn btn-primary btn-round" style="height: 25px;">
                                                     <i class="zmdi zmdi-eye" style="color: white;margin-top: -10px;"></i>
                                                 </a>
                                             </td>
                                             <td><a href="@Url.Content("~/SportReservations/index?SportId=")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-assignment" style="color: white;margin-top: -10px;"></i></a></td>
-                                            <td><a href="@Url.Content("~/SportReservation/CalendarReservation?SportId=")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-time" style="color: white;margin-top: -10px;"></i></a></td>
+                                            <!--<td><a href="@Url.Content("~/SportReservation/CalendarReservation?SportId=")@item.Id" style="height: 25px;" class="btn btn-primary btn-round"><i class="zmdi zmdi-time" style="color: white;margin-top: -10px;"></i></a></td>-->
                                             <td>
                                                 @* onclick="return confirm('هل أنت متأكد؟')" *@
                                                 <a href="javascript:Delete('Sports',@item.Id,'Delete','Index')" class="btn btn-danger"><i class="zmdi zmdi-delete" style="color: white;margin-top: -10px;"></i></a>
@@ -260,16 +277,6 @@
                             </tbody>
                         </table>
                     </div>
-
-
-
-
-
-
-
-
-
-
                 </div>
             </div>
         </div>

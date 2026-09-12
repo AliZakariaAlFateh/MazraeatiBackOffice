@@ -1,4 +1,9 @@
-﻿@model termsModel
+﻿@using MazraeatiBackOffice.Models.SystemModel
+@model termsModel
+@{
+    ViewBag.Title = " تعديل الشروط";
+    ViewBag.activePage = " تعديل شرط";
+}
 @using (Html.BeginForm("Edit", "terms", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.Partial("_CreateOrUpdate", Model)

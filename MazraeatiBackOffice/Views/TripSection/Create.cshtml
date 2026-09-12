@@ -1,4 +1,5 @@
-﻿@model TripSectionModel
+﻿@using MazraeatiBackOffice.Models.FarmModel
+@model TripSectionModel
 @using (Html.BeginForm("Create", "TripSection", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.Partial("_CreateOrUpdate",Model)

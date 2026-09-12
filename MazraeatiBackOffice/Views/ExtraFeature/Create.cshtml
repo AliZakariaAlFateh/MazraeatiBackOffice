@@ -1,4 +1,9 @@
-﻿@model LookupValueModel
+﻿@using MazraeatiBackOffice.Models.SystemModel
+@model LookupValueModel
+@{
+    ViewBag.Title = "إضافة المرفقات";
+    ViewBag.activePage = "أضافة مرفق";
+}
 @using (Html.BeginForm("Create", "ExtraFeature", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.Partial("_CreateOrUpdate",Model)

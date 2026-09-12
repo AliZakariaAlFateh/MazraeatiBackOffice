@@ -57,8 +57,8 @@ namespace MazraeatiBackOffice.Core.LoyaltyPoints
 
         [MaxLength(50)]
         public string ReferenceTable { get; set; }  // ✅ 'Farm', 'Sports', 'Restaurants'
-
-        public int? SportTypeId { get; set; }
+        public int? CategoryId { get; set; }
+        //public int? SportTypeId { get; set; }
 
         [MaxLength(50)]
         public string IconClass { get; set; }
@@ -69,8 +69,8 @@ namespace MazraeatiBackOffice.Core.LoyaltyPoints
 
         public DateTime? ModifiedDate { get; set; }
 
-        [ForeignKey("SportTypeId")]
-        public virtual SportType SportType { get; set; }
+        //[ForeignKey("SportTypeId")]
+        //public virtual SportType SportType { get; set; }
 
         public virtual ICollection<LoyaltyPointRule> PointRules { get; set; }
         public virtual ICollection<LoyaltyBookingActivity> BookingActivities { get; set; }

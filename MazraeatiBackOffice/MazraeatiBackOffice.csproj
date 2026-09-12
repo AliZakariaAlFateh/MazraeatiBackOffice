@@ -40,17 +40,6 @@
     <None Remove="Views\TripProfile\**" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Remove="Controllers\EntertainmentPlaceTripController.cs" />
-    <Compile Remove="Controllers\FootballTripController.cs" />
-    <Compile Remove="Controllers\InternalExternalTripProfileController.cs" />
-    <Compile Remove="Controllers\OrginizeTripProfileController.cs" />
-    <Compile Remove="Controllers\OrginizeTwoTripProfileController.cs" />
-    <Compile Remove="Controllers\RentCarTripProfileController.cs" />
-    <Compile Remove="Controllers\TripGeneralController.cs" />
-    <Compile Remove="Controllers\TripProfileController.cs" />
-  </ItemGroup>
-
 
   <ItemGroup>
     <PackageReference Include="ClosedXML" Version="0.102.0" />
@@ -69,11 +58,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\SportControllers\" />
-    <Folder Include="Dto\SportDtos\" />
-    <Folder Include="Models\SportModels\" />
     <Folder Include="Views\CommonQuestions\" />
-    <Folder Include="Views\Sports\Partials\" />
     <Folder Include="Views\SportViews\" />
     <Folder Include="wwwroot\Images\blacklist\" />
     <Folder Include="wwwroot\Images\trip\" />
@@ -81,7 +66,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Views\Sports\_SportPropertyDetails.cshtml" />
+    <None Include="Views\Sports\Partials\_SportPropertyDetails.cshtml" />
   </ItemGroup>
 
 </Project>

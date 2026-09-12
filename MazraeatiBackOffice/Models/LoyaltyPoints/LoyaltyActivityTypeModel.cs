@@ -18,9 +18,15 @@ namespace MazraeatiBackOffice.Models.LoyaltyPoints
         [Required(ErrorMessage = "الكود مطلوب")]
         public string Code { get; set; }
         [MaxLength(50)]
-        public string ReferenceTable { get; set; }  // 'Farm', 'Sports', 'Restaurants'
-        [Display(Name = "نوع الرياضة")]
-        public int? SportTypeId { get; set; }
+        public string ReferenceTable { get; set; }  // 'Farmer', 'Sports', 'Restaurants'
+        //ال id الخاص بجدول نوع العقار فى أي نشاط
+        //سواء كان نشاط رياضي أو أكواخ أو ترفيه 
+        //لكن الحاجات اللى ما لها أنواع فى الانشطه مثل المزارع 
+        //بيكون ال id=null or 0  تمام 
+
+        public int? CategoryId { get; set; }
+        //[Display(Name = "نوع الرياضة")]
+        //public int? SportTypeId { get; set; }
 
         [Display(Name = "الأيقونة")]
         public string IconClass { get; set; }

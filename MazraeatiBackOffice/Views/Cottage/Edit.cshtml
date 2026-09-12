@@ -1,0 +1,10 @@
+﻿@using MazraeatiBackOffice.Models.SportModels
+@model CottageModel
+@{
+    ViewBag.Title = "تعديل كوخ";
+    ViewBag.activePage = "تعديل كوخ";
+}
+@using (Html.BeginForm("Edit", "Cottage", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.Partial("_CreateOrUpdate", Model)
+}

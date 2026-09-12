@@ -1,10 +1,11 @@
-﻿@using MazraeatiBackOffice.Configuration
-@model SportModel
+﻿@model SportModel
 
 @{
     ViewBag.Title = Model.Id > 0 ? "تعديل نشاط رياضى" : "إضافة نشاط رياضى جديد";
     ViewBag.activePage = "الأنشطة الرياضية";
     int selectedSportTypeId = ViewBag.SelectedSportTypeId ?? 0;
+    //for Menu
+    var sportTypeId = Model.SportTypeId;
 }
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.min.css" />
@@ -65,7 +66,19 @@
                         @ViewBag.SportTypeTitle
                     </h2>
                     <ul class="header-dropdown">
-                        <li><a href="@Url.Action("Index" , new{sportTypeId=@Model.SportTypeId})" class="btn btn-default btn-round"><i class="fa fa-arrow-right"></i> العودة للقائمة</a></li>
+                        @if (Model.Id > 0)
+                        {
+                            <li>
+                                <a href="@Url.Action("Create")" class="btn btn-primary btn-round">
+                                    <i class="fa fa-plus"></i> إضافة / جديد
+                                </a>
+                            </li>
+                        }
+                        <li>
+                            <a href="@Url.Action("Index")" class="btn btn-default btn-round">
+                                <i class="fa fa-arrow-right"></i> العودة للقائمة
+                            </a>
+                        </li>
                     </ul>
                 </div>
                 <div class="body">
@@ -232,49 +245,63 @@
                                 @Html.ValidationMessageFor(a => a.Owner, "", new { @style = "color:red;font-size:10px" })
                             </div>
 
-                            <div class="col-sm-12">
+                            <div class="col-sm-6">
                                 <div class="form-group">
                                     @Html.DisplayNameFor(a => a.DescriptionAr)
                                     @Html.TextAreaFor(a => a.DescriptionAr, new { @class = "form-control", @autocomplete = "off", @maxlength = 500, rows = 2 })
                                     @Html.ValidationMessageFor(a => a.DescriptionAr, "", new { @style = "color:red;font-size:10px" })
                                 </div>
                             </div>
-                            <div class="col-sm-12">
+                            <div class="col-sm-6">
                                 <div class="form-group">
                                     @Html.DisplayNameFor(a => a.DescriptionEn)
                                     @Html.TextAreaFor(a => a.DescriptionEn, new { @class = "form-control", @autocomplete = "off", @maxlength = 500, rows = 2 })
                                     @Html.ValidationMessageFor(a => a.DescriptionEn, "", new { @style = "color:red;font-size:10px" })
                                 </div>
                             </div>
-                            <div class="col-sm-12">
+                            <div class="col-sm-6">
                                 <div class="form-group">
                                     @Html.DisplayNameFor(a => a.ConfidentialMessageAr)
                                     @Html.TextAreaFor(a => a.ConfidentialMessageAr, new { @class = "form-control", @autocomplete = "off", @maxlength = 500, rows = 2 })
                                     @Html.ValidationMessageFor(a => a.ConfidentialMessageAr, "", new { @style = "color:red;font-size:10px" })
                                 </div>
                             </div>
-                            <div class="col-sm-12">
+                            <div class="col-sm-6">
                                 <div class="form-group">
                                     @Html.DisplayNameFor(a => a.ConfidentialMessageEn)
                                     @Html.TextAreaFor(a => a.ConfidentialMessageEn, new { @class = "form-control", @autocomplete = "off", @maxlength = 500, rows = 2 })
                                     @Html.ValidationMessageFor(a => a.ConfidentialMessageEn, "", new { @style = "color:red;font-size:10px" })
                                 </div>
                             </div>
-                            <div class="col-sm-12">
+                            <div class="col-sm-6">
                                 <div class="form-group">
                                     @Html.DisplayNameFor(a => a.GeographicLocation)
                                     @Html.TextAreaFor(a => a.GeographicLocation, new { @class = "form-control", @autocomplete = "off", @maxlength = 500, rows = 2 })
                                     @Html.ValidationMessageFor(a => a.GeographicLocation, "", new { @style = "color:red;font-size:10px" })
                                 </div>
                             </div>
-                            <div class="col-sm-12">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    @Html.DisplayNameFor(a => a.Longitude)
+                                    @Html.TextAreaFor(a => a.Longitude, new { @class = "form-control", @autocomplete = "off", @maxlength = 500, rows = 2 })
+                                    @Html.ValidationMessageFor(a => a.Longitude, "", new { @style = "color:red;font-size:10px" })
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    @Html.DisplayNameFor(a => a.Latitude)
+                                    @Html.TextAreaFor(a => a.Latitude, new { @class = "form-control", @autocomplete = "off", @maxlength = 500, rows = 2 })
+                                    @Html.ValidationMessageFor(a => a.Latitude, "", new { @style = "color:red;font-size:10px" })
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
                                 <div class="form-group">
                                     @Html.DisplayNameFor(a => a.ReservationDetails)
                                     @Html.TextAreaFor(a => a.ReservationDetails, new { @class = "form-control", @autocomplete = "off", @maxlength = 500, rows = 2 })
                                     @Html.ValidationMessageFor(a => a.ReservationDetails, "", new { @style = "color:red;font-size:10px" })
                                 </div>
                             </div>
-                            <div class="col-sm-12">
+                            <div class="col-sm-6">
                                 <div class="form-group">
                                     @Html.DisplayNameFor(a => a.ExtraDetails)
                                     @Html.TextAreaFor(a => a.ExtraDetails, new { @class = "form-control", @autocomplete = "off", @maxlength = 500, rows = 2 })
@@ -344,7 +371,7 @@
                                 }
                             </div> *@
                             @await Html.PartialAsync(
-                            "_SportPropertyDetails",
+                            "Partials/_SportPropertyDetails",
                                                         Model,
                                                         ViewData
                                                         )
@@ -453,12 +480,13 @@
                             <div class="col-sm-12" style="margin-bottom:20px">&nbsp;</div>
                             <div class="col-sm-12"><h5 style="text-decoration:underline">المرفقات الخاصة</h5></div>
 
-                            <div class="row clearfix" id="sportFeaturesContainer">
-                                @if (Model.SportFeatures != null && Model.SportFeatures.Any())
-                                {
-                                    for (int i = 0; i < Model.SportFeatures.Count; i++)
-                                    {
-                                        <div class="col-sm-6">
+                            <div class="container">
+                                <div class="row clearfix" id="sportFeaturesContainer">
+                                    @if (Model.SportFeatures != null && Model.SportFeatures.Any())
+                                      {
+                                        for (int i = 0; i < Model.SportFeatures.Count; i++)
+                                          {
+                                        <div class="col-sm-4">
                                             <div class="form-group">
                                                 @Html.HiddenFor(a => a.SportFeatures[i].Id)
                                                 @Html.HiddenFor(a => a.SportFeatures[i].TypeId)
@@ -471,78 +499,87 @@
                                             </div>
                                         </div>
                                     }
-                                }
-                                else
-                                {
-                                    <div class="col-sm-12">
-                                        <div class="alert alert-info">
-                                            <i class="fa fa-info-circle"></i> من فضلك اختر نوع الرياضة أولاً لعرض المرفقات الخاصة
+                                                                        }
+                                                                        else
+                                    {
+                                        <div class="col-sm-12">
+                                            <div class="alert alert-info">
+                                                <i class="fa fa-info-circle"></i> من فضلك اختر نوع الرياضة أولاً لعرض المرفقات الخاصة
+                                            </div>
                                         </div>
-                                    </div>
-                                }
+                                    }
+                                </div>
+
                             </div>
+                            
 
 
                             <!-- ===== المرافق العامة (مثل Farmer ExtraFeature) ===== -->
                             <div class="col-sm-12" style="margin-bottom:20px">&nbsp;</div>
                             <div class="col-sm-12"><h5 style="text-decoration:underline">المرافق العامة</h5></div>
-
-                            <div class="row clearfix">
-                                @for (int i = 0; i < Model.GeneralFacilities.Count; i++)
-                                {
-                                    <div class="col-sm-6">
-                                        <div class="form-group">
-                                            @Html.HiddenFor(a => a.GeneralFacilities[i].FacilityId)
-                                            @Html.HiddenFor(a => a.GeneralFacilities[i].FacilityText)
-                                            @Html.DisplayFor(a => a.GeneralFacilities[i].FacilityText)
-                                            <br />
-                                            @Html.CheckBoxFor(a => a.GeneralFacilities[i].IsCheck, new { @class = "form-control", style = "width:20px;height:20px;margin-top:5px;" })
+                            <div class="container">
+                                <div class="row clearfix">
+                                    @for (int i = 0; i < Model.GeneralFacilities.Count; i++)
+                                    {
+                                        <div class="col-sm-4">
+                                            <div class="form-group">
+                                                @Html.HiddenFor(a => a.GeneralFacilities[i].FacilityId)
+                                                @Html.HiddenFor(a => a.GeneralFacilities[i].FacilityText)
+                                                @Html.DisplayFor(a => a.GeneralFacilities[i].FacilityText)
+                                                <br />
+                                                @Html.CheckBoxFor(a => a.GeneralFacilities[i].IsCheck, new { @class = "form-control", style = "width:20px;height:20px;margin-top:5px;" })
+                                            </div>
                                         </div>
-                                    </div>
-                                }
+                                    }
+                                </div>
                             </div>
+                            
 
                             <!-- ===== الخدمات الإضافية (مثل Farmer ExtraFeature) ===== -->
                             <div class="col-sm-12" style="margin-bottom:20px">&nbsp;</div>
                             <div class="col-sm-12"><h5 style="text-decoration:underline">الخدمات الإضافية</h5></div>
-
-                            <div class="row clearfix">
-                                @for (int i = 0; i < Model.AdditionalServices.Count; i++)
-                                {
-                                    <div class="col-sm-6">
-                                        <div class="form-group">
-                                            @Html.HiddenFor(a => a.AdditionalServices[i].ServiceId)
-                                            @Html.HiddenFor(a => a.AdditionalServices[i].ServiceText)
-                                            @Html.DisplayFor(a => a.AdditionalServices[i].ServiceText)
-                                            <br />
-                                            @Html.CheckBoxFor(a => a.AdditionalServices[i].IsCheck, new { @class = "form-control", style = "width:20px;height:20px;margin-top:5px;" })
+                            <div class="container">
+                                <div class="row clearfix">
+                                    @for (int i = 0; i < Model.AdditionalServices.Count; i++)
+                                    {
+                                        <div class="col-sm-4">
+                                            <div class="form-group">
+                                                @Html.HiddenFor(a => a.AdditionalServices[i].ServiceId)
+                                                @Html.HiddenFor(a => a.AdditionalServices[i].ServiceText)
+                                                @Html.DisplayFor(a => a.AdditionalServices[i].ServiceText)
+                                                <br />
+                                                @Html.CheckBoxFor(a => a.AdditionalServices[i].IsCheck, new { @class = "form-control", style = "width:20px;height:20px;margin-top:5px;" })
+                                            </div>
                                         </div>
-                                    </div>
-                                }
+                                    }
+                                </div>
                             </div>
+                            
 
 
                             <!-- ===== ميزات الأمان (مثل Farmer ExtraFeature) ===== -->
                             <div class="col-sm-12" style="margin-bottom:20px">&nbsp;</div>
                             <div class="col-sm-12"><h5 style="text-decoration:underline">ميزات الأمان</h5></div>
-
-                            <div class="row clearfix">
-                                @for (int i = 0; i < Model.SafetyFeatures.Count; i++)
-                                {
-                                    <div class="col-sm-6">
-                                        <div class="form-group">
-                                            @Html.HiddenFor(a => a.SafetyFeatures[i].Id)
-                                            @Html.HiddenFor(a => a.SafetyFeatures[i].TypeId)
-                                            @Html.HiddenFor(a => a.SafetyFeatures[i].FeatureText)
-                                            @Html.DisplayFor(a => a.SafetyFeatures[i].FeatureText)
-                                            <br />
-                                            @Html.CheckBoxFor(a => a.SafetyFeatures[i].IsCheck, new { @class = "form-control", style = "width:20px;height:20px;margin-top:5px;" })
-                                            @Html.TextBoxFor(a => a.SafetyFeatures[i].DescriptionAr, new { @class = "form-control", @maxlength = 100, @placeholder = "الوصف بالعربي" })
-                                            @Html.TextBoxFor(a => a.SafetyFeatures[i].DescriptionEn, new { @class = "form-control", @maxlength = 100, @placeholder = "الوصف بالإنجليزي" })
+                            <div class="container">
+                                <div class="row clearfix">
+                                    @for (int i = 0; i < Model.SafetyFeatures.Count; i++)
+                                    {
+                                        <div class="col-sm-4">
+                                            <div class="form-group">
+                                                @Html.HiddenFor(a => a.SafetyFeatures[i].Id)
+                                                @Html.HiddenFor(a => a.SafetyFeatures[i].TypeId)
+                                                @Html.HiddenFor(a => a.SafetyFeatures[i].FeatureText)
+                                                @Html.DisplayFor(a => a.SafetyFeatures[i].FeatureText)
+                                                <br />
+                                                @Html.CheckBoxFor(a => a.SafetyFeatures[i].IsCheck, new { @class = "form-control", style = "width:20px;height:20px;margin-top:5px;" })
+                                                @Html.TextBoxFor(a => a.SafetyFeatures[i].DescriptionAr, new { @class = "form-control", @maxlength = 100, @placeholder = "الوصف بالعربي" })
+                                                @Html.TextBoxFor(a => a.SafetyFeatures[i].DescriptionEn, new { @class = "form-control", @maxlength = 100, @placeholder = "الوصف بالإنجليزي" })
+                                            </div>
                                         </div>
-                                    </div>
-                                }
+                                    }
+                                </div>
                             </div>
+                            
 
 
 
@@ -799,7 +836,7 @@
                                         @foreach (var image in Model.SportImages)
                                         {
                                             <div class="sport-image-item" style="display:inline-block;margin:5px;position:relative;">
-                                                <img src="~/Images/@image.Url" alt="صورة" style="width:150px;height:100px;object-fit:cover;border-radius:5px;" />
+                                                <img src="~/Images/@image.Url" alt="صورة" style="width:200px;height:200px;object-fit:cover;border-radius:5px;" />
                                                 <button type="button" class="delete-image-btn" onclick="deleteSportImage(@image.Id)"><i class="fa fa-times"></i></button>
                                             </div>
                                         }
@@ -829,7 +866,7 @@
                                         @foreach (var video in Model.SportVideos)
                                         {
                                             <div class="sport-video-item" style="display:inline-block;margin:5px;position:relative;">
-                                                <video controls style="width:200px;border-radius:5px;"><source src="~/Videos/@video.Url"></video>
+                                                <video controls style="height:200px;width:200px;border-radius:5px;"><source src="~/Videos/@video.Url"></video>
                                                 <button type="button" class="delete-image-btn" onclick="deleteSportVideo(@video.Id)"><i class="fa fa-times"></i></button>
                                             </div>
                                         }

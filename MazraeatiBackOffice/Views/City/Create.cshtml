@@ -1,4 +1,9 @@
-﻿@model CityModel
+﻿@using MazraeatiBackOffice.Models.SystemModel
+@model CityModel
+@{
+    ViewBag.Title = "إضافة مدينة";
+    ViewBag.activePage = "إضافة مدينة";
+}
 @using (Html.BeginForm("Create", "City", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.Partial("_CreateOrUpdate",Model)

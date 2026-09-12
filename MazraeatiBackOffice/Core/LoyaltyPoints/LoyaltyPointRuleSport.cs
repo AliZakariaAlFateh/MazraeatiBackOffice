@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MazraeatiBackOffice.Core.FarmCore;
+using MazraeatiBackOffice.Core.SportCore;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 

@@ -1,4 +1,9 @@
-﻿@model RegionModel
+﻿@using MazraeatiBackOffice.Models.SystemModel
+@model RegionModel
+@{
+    ViewBag.Title = "تعديل مناطق";
+    ViewBag.activePage = "تعديل منطقة";
+}
 @using (Html.BeginForm("Edit", "Region", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.Partial("_CreateOrUpdate", Model)

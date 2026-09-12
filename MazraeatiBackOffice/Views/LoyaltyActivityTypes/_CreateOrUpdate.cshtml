@@ -1,5 +1,4 @@
-﻿@using MazraeatiBackOffice.Models.LoyaltyPoints
-@model LoyaltyActivityTypeModel
+﻿@model LoyaltyActivityTypeModel
 <style>
     .form-group { font-size: 13px; }
 </style>
@@ -17,6 +16,14 @@
                         نشاط
                     </h2>
                     <ul class="header-dropdown">
+                        @if (Model.Id > 0)
+                        {
+                            <li>
+                                <a href="@Url.Action("Create")" class="btn btn-primary btn-round">
+                                    <i class="fa fa-plus"></i> إضافة / جديد
+                                </a>
+                            </li>
+                        }
                         <li>
                             <a href="@Url.Action("Index")" class="btn btn-default btn-round">
                                 <i class="fa fa-arrow-right"></i> العودة للقائمة
@@ -52,12 +59,12 @@
 
                             <div class="col-sm-6">
                                 <div class-form-group">
-                                    @Html.DisplayNameFor(a => a.SportTypeId)
-                                    <select class="form-control" name="SportTypeId">
+                                    @Html.DisplayNameFor(a => a.CategoryId)
+                                    <select class="form-control" name="CategoryId">
                                         <option value="">-- غير مرتبط --</option>
                                         @foreach (var item in ViewBag.SportTypes)
                                         {
-                                            <option value="@item.Id" selected="@(item.Id == Model.SportTypeId)">@item.NameAr</option>
+                                            <option value="@item.Id" selected="@(item.Id == Model.CategoryId)">@item.NameAr</option>
                                         }
                                     </select>
                                 </div>

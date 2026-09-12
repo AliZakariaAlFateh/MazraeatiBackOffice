@@ -1,5 +1,8 @@
-﻿@using MazraeatiBackOffice.Models.LoyaltyPoints
-@model LoyaltyRedeemRuleModel
+﻿@model LoyaltyRedeemRuleModel
+@{
+    ViewBag.Title = "تعديل قواعد صرف النقاط";
+    ViewBag.activePage = "تعديل قواعد صرف النقاط";
+}
 @using (Html.BeginForm("Edit", "LoyaltyRedeemRules", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.Partial("_CreateOrUpdate", Model)

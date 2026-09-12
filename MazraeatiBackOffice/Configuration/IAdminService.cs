@@ -1,5 +1,7 @@
-﻿using MazraeatiBackOffice.Core;
-using MazraeatiBackOffice.Models;
+﻿using MazraeatiBackOffice.Core.SystemCore;
+using MazraeatiBackOffice.Core.UserManagementCore;
+using MazraeatiBackOffice.Models.SystemModel;
+using MazraeatiBackOffice.Models.UserManagementModel;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

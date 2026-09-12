@@ -1,4 +1,5 @@
-﻿using MazraeatiBackOffice.Core;
+﻿using MazraeatiBackOffice.Core.SystemCore;
+using MazraeatiBackOffice.Core.UserManagementCore;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;

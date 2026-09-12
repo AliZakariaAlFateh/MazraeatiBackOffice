@@ -1,7 +1,6 @@
-﻿@using MazraeatiBackOffice.Core
-@model List<SportType>
+﻿@model List<SportType>
 
-@if (Model != null && Model.Any())
+@* @if (Model != null && Model.Any())
 {
     <li>
         <a href="javascript:void(0);" class="menu-toggle">
@@ -18,6 +17,70 @@
             @foreach (var type in Model)
             {
                 <li>
+                    <a href="@Url.Action("Index", "Sports", new { sportTypeId = type.Id })">
+                        @if (!string.IsNullOrEmpty(type.IconClass))
+                        {
+                            <i class="@type.IconClass"></i>
+                        }
+                        else
+                        {
+                            <i class="zmdi zmdi-tag"></i>
+                        }
+                        <span>@type.NameAr</span>
+                    </a>
+                </li>
+            }
+        </ul>
+    </li>
+} *@
+
+@* component *@
+
+
+@{
+    var currentSportTypeId = ViewBag.CurrentSportTypeId as int?;
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+    
+    // التحقق من وجود sportTypeId في الـ Query String
+    var sportTypeIdParam = Context.Request.Query["sportTypeId"].ToString();
+    int? sportTypeIdFromQuery = null;
+    if (!string.IsNullOrEmpty(sportTypeIdParam) && int.TryParse(sportTypeIdParam, out int id))
+    {
+        sportTypeIdFromQuery = id;
+    }
+    
+    // استخدام الـ sportTypeId من ViewBag أو من Query String
+    var activeSportTypeId = currentSportTypeId ?? sportTypeIdFromQuery;
+    
+    // التحقق من أننا في Controller الـ Sports (أي Action)
+    var isSportsController = string.Equals(currentController, "Sports", StringComparison.OrdinalIgnoreCase);
+    
+    // التحقق من أننا في صفحة الـ Index (عشان "جميع الأنشطة")
+    var isIndexAction = string.Equals(currentAction, "Index", StringComparison.OrdinalIgnoreCase);
+}
+
+@if (Model != null && Model.Any())
+{
+    <li class="@(isSportsController ? "active open" : "")">
+        <a href="javascript:void(0);" class="menu-toggle @(isSportsController ? "toggled" : "")">
+            <i class="zmdi zmdi-landscape"></i>
+            <span>الأقسام الرياضية</span>
+        </a>
+        <ul class="ml-menu" style="@(isSportsController ? "display:block;" : "display:none;")">
+            <!-- ===== جميع الأنشطة ===== -->
+            <li class="@(isSportsController && isIndexAction && string.IsNullOrEmpty(sportTypeIdParam) ? "active" : "")">
+                <a href="@Url.Action("Index", "Sports")">
+                    <i class="zmdi zmdi-view-list"></i>
+                    <span>جميع الأنشطة</span>
+                </a>
+            </li>
+            
+            <!-- ===== كل نوع رياضي ===== -->
+            @foreach (var type in Model)
+            {
+                var isActive = isSportsController && activeSportTypeId == type.Id;
+                <li class="@(isActive ? "active" : "")">
                     <a href="@Url.Action("Index", "Sports", new { sportTypeId = type.Id })">
                         @if (!string.IsNullOrEmpty(type.IconClass))
                         {

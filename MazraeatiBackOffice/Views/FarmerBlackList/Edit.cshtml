@@ -1,4 +1,9 @@
-﻿@model FarmerBlackListModel
+﻿@using MazraeatiBackOffice.Models.FarmModel
+@model FarmerBlackListModel
+@{
+    ViewBag.Title = "التعديل حظر المزارع";
+    ViewBag.activePage = " تعديل حظر مزرعة";
+}
 @using (Html.BeginForm("Edit", "FarmerBlackList", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.Partial("_CreateOrUpdate", Model)

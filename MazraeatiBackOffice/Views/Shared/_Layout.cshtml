@@ -6,6 +6,29 @@
     var fullName = Context.Session.GetString("FullName") ?? "مدير النظام";
     var userName = Context.Session.GetString("UserName") ?? "";
 }
+
+@functions {
+    private bool IsActive(string controllerName, string actionName = null)
+    {
+        var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+        var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+
+        if (string.IsNullOrEmpty(actionName))
+        {
+            return string.Equals(currentController, controllerName, StringComparison.OrdinalIgnoreCase);
+        }
+
+        return string.Equals(currentController, controllerName, StringComparison.OrdinalIgnoreCase) &&
+               string.Equals(currentAction, actionName, StringComparison.OrdinalIgnoreCase);
+    }
+
+    // ===== دالة جديدة للتحقق من الـ Controller فقط مع تجاهل الـ Action =====
+    private bool IsActiveController(string controllerName)
+    {
+        var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+        return string.Equals(currentController, controllerName, StringComparison.OrdinalIgnoreCase);
+    }
+}
 <!doctype html>
 <html class="no-js " lang="en">
 <head>
@@ -13,7 +36,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-    <title>محجوز - لوحة التحكم</title>
+    <title>@ViewBag.Title</title>
     <link rel="shortcut icon" type="image/x-icon" href="@Url.Content("~/Mahjouz_VaIcon.jpeg")" asp-append-version="true">
     @* <link rel="icon" href="@Url.Content("~/assets/images/favicon.ico")" type="image/x-icon"> *@
     <!-- Favicon-->
@@ -62,23 +85,7 @@
         <div class="tab-content">
             <div class="tab-pane stretchRight active" id="dashboard">
                 <div class="menu">
-                    <ul class="list" style="height:100vh !important">
-
-
-                        @* <li>
-                            <div class="user-info">
-                                <br />
-                                <div class="image">لوحة التحكم</div>
-                                <div class="detail">
-                                    <small>اهلا وسهلا</small>
-                                    <h4>مدير النظام</h4>
-                                    <span style="font-size: 14px; font-weight: 500; color: #007500;">
-                                        @User.Identity.Name
-                                    </span>
-                                </div>
-                            </div>
-                        </li> *@
-
+                    @* <ul class="list menu-list" style="height:100vh !important">
                         <li>
                             <div class="user-info">
                                 <br />
@@ -93,15 +100,12 @@
                                         <div class="avatar" style="order: 2;">
                                             <i class="zmdi zmdi-account-circle" style="font-size: 32px; color: #007500;"></i>
                                         </div>
-
-                                        <!-- الاسم في المنتصف مع سهم -->
                                         <div style="order: 1; display: flex; align-items: center; gap: 8px; flex: 1; justify-content: center;">
                                             <i class="zmdi zmdi-chevron-down" id="arrowIcon" style="font-size: 18px; color: #007500; transition: transform 0.3s ease;"></i>
                                             @if (userId != null)
                                             {
                                             <h5 style="font-size: 14px; font-weight: 500; color: #007500; margin: 0;">
-                                                    @* @User.Identity.Name *@
-                                                  <!-- هنشرح ده بعد كده -->
+                                                    @User.Identity.Name
                                                     @fullName
                                             </h5>
                                             }
@@ -109,7 +113,7 @@
                                     </div>
                                 </div>
 
-                                <!-- زر اللوغاوت المخفي -->
+                                <!-- Logout hidden button -->
                                 <div class="logout-item" style="display: none; margin-top: 10px;">
                                     <a href="@Url.Content("~/account/SignOut")" style="display: block; padding: 8px; background: #f8f9fa; color: #d33; text-decoration: none; border-radius: 5px;">
                                         <i class="zmdi zmdi-power-off"></i> تسجيل خروج
@@ -137,8 +141,8 @@
                                         <span>الحجوزات الرياضية</span>
                                     </a>
                                 </li>
-                                @* index_Reservation *@
-
+                                index_Reservation
+                                <li><a href="@Url.Content("~/CottageReservations/Index")"><i class="zmdi zmdi-calendar-check"></i>حجوزات الأكواخ</a></li>
                             </ul>
                         </li>
                         <li>
@@ -155,7 +159,7 @@
                                     </a>
                                 </li>
 
-                                @* index_Reservation *@
+
 
                             </ul>
                         </li>
@@ -238,16 +242,24 @@
                                 
                             </ul>
                          </li>
-                        
-                        @* <li>
+                        <li>
+                            <a href="javascript:void(0);" class="menu-toggle"><i class="zmdi zmdi-landscape"></i><span>قسم الأكواخ</span> </a>
+                            <ul class="ml-menu">
+                                <li><a href="@Url.Content("~/Cottage/Index")"><i class="zmdi zmdi-view-list"></i>الأكواخ</a></li>
+                                <li><a href="@Url.Content("~/CottagePropertyTemplates/Index")"><i class="zmdi zmdi-time"></i>تفاصيل العقار</a></li>
+                                <li><a href="@Url.Content("~/CottageGeneralFacilities/Index")"><i class="zmdi zmdi-alert-circle"></i>المرافق العامة</a></li>
+                            </ul>
+                        </li>
+                        <!--
+                        <li>
                             <a href="javascript:void(0);" class="menu-toggle"><i class="zmdi zmdi-landscape"></i><span>مزارع - سوريا</span> </a>
                             <ul class="ml-menu">
                                 <li><a href="@Url.Content("~/FarmersSyria/Index")"><i class="zmdi zmdi-view-list"></i>جميع المزارع</a></li>
                                 <li><a href="@Url.Content("~/FarmersSyria/FarmerPending")"><i class="zmdi zmdi-time"></i>المزارع غير الموافق عليها</a></li>
                                 <li><a href="@Url.Content("~/FarmersSyria/FarmerNotCompletedInfo")"><i class="zmdi zmdi-alert-circle"></i>المزارع غير مكتمله المعلومات</a></li>
                             </ul>
-                        </li> *@
-
+                        </li> 
+                        -->
                         <li>
                             <a href="javascript:void(0);" class="menu-toggle"><i class="zmdi zmdi-block"></i><span>قائمة المحظوريين</span> </a>
                             <ul class="ml-menu">
@@ -262,19 +274,463 @@
                             <li><a href="@Url.Content("~/TripSection/Index")">انواع الخدمات الاخرى</a></li>
                             <li><a href="@Url.Content("~/CommonQuestions/Index")"><i class="zmdi zmdi-help-outline"></i><span>الأسئلة الشائعة لأصحاب المزارع</span></a></li>
                             <li><a href="@Url.Content("~/CommonQuestionsVisitors/Index")"><i class="zmdi zmdi-help-outline"></i><span>الأسئلة الشائعة للزوار</span></a></li>
-                            @*<li><a href="@Url.Content("~/OrginizeTripProfile/Index")">منظمي حفلات المزارع</a></li>
+                            <!--<li><a href="@Url.Content("~/OrginizeTripProfile/Index")">منظمي حفلات المزارع</a></li>
                             <li><a href="@Url.Content("~/InternalExternalTripProfile/Index")">الشركات السياحية</a></li>
                             <li><a href="@Url.Content("~/OrginizeTwoTripProfile/Index")">منظمي الرحلات</a></li>
                             <li><a href="@Url.Content("~/FootballTrip/Index")"> ملاعب كرة القدم </a></li>
                             <li><a href="@Url.Content("~/Trip/Index")"> المسابح </a></li>
                             <li><a href="@Url.Content("~/EntertainmentPlaceTrip/Index")"> منتجعات سياحية </a></li>
-                            <li><a href="@Url.Content("~/RentCarTripProfile/Index")"> شركات تاجير السيارات </a></li>*@
-                            @*<li><a href="@Url.Content("~/TripProfile/Index")"> الشركات </a></li>
-                            <li><a href="@Url.Content("~/TripGeneral/Index")">  الانشطة </a></li>*@
+                            <li><a href="@Url.Content("~/RentCarTripProfile/Index")"> شركات تاجير السيارات </a></li>
+                            <li><a href="@Url.Content("~/TripProfile/Index")"> الشركات </a></li>
+                            <li><a href="@Url.Content("~/TripGeneral/Index")">  الانشطة </a></li>-->
                             </ul>
                         </li>
-                        @* <li><a href="@Url.Content("~/account/SignOut")"><i class="zmdi zmdi-power-off"></i><span> تسجيل خروج </span></a></li> *@
-                    </ul>
+                        <!-- <li><a href="@Url.Content("~/account/SignOut")"><i class="zmdi zmdi-power-off"></i><span> تسجيل خروج </span></a></li> -->
+                    </ul> *@
+
+
+                    <div class="menu">
+                        <ul class="list menu-list" style="height:100vh !important">
+                            <!-- user-info section (ثابت) -->
+                            <li>
+                                <div class="user-info">
+                                    <br />
+                                    <div class="image">لوحة التحكم</div>
+                                    <div class="detail">
+                                        <small>اهلا وسهلا</small>
+                                        <h4>مدير النظام</h4>
+                                        <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; cursor: pointer;" id="adminName">
+                                            <div class="avatar" style="order: 2;">
+                                                <i class="zmdi zmdi-account-circle" style="font-size: 32px; color: #007500;"></i>
+                                            </div>
+                                            <div style="order: 1; display: flex; align-items: center; gap: 8px; flex: 1; justify-content: center;">
+                                                <i class="zmdi zmdi-chevron-down" id="arrowIcon" style="font-size: 18px; color: #007500; transition: transform 0.3s ease;"></i>
+                                                @if (userId != null)
+                                                {
+                                                    <h5 style="font-size: 14px; font-weight: 500; color: #007500; margin: 0;">@fullName</h5>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="logout-item" style="display: none; margin-top: 10px;">
+                                        <a href="@Url.Content("~/account/SignOut")" style="display: block; padding: 8px; background: #f8f9fa; color: #d33; text-decoration: none; border-radius: 5px;">
+                                            <i class="zmdi zmdi-power-off"></i> تسجيل خروج
+                                        </a>
+                                    </div>
+                                </div>
+                            </li>
+
+                            <!-- ===== الصفحة الرئيسية ===== -->
+                            <li class="@(IsActive("Home", "Index") ? "active" : "")">
+                                <a href="@Url.Content("~/Home/Index")">
+                                    <i class="zmdi zmdi-home"></i>
+                                    <span>الصفحة الرئيسية</span>
+                                </a>
+                            </li>
+
+                            <!-- ===== المستخدمين / العملاء ===== -->
+                            @{
+                                var isUsersActive = IsActive("AppUser") || IsActive("Customer");
+                            }
+                            <li class="@(isUsersActive ? "active open" : "")">
+                                <a href="javascript:void(0);" class="menu-toggle @(isUsersActive ? "toggled" : "")">
+                                    <i class="zmdi zmdi-accounts"></i>
+                                    <span>المستخدمين / العملاء</span>
+                                </a>
+                                <ul class="ml-menu" style="@(isUsersActive ? "display:block;" : "display:none;")">
+                                    <li class="@(IsActive("AppUser") ? "active" : "")">
+                                        <a href="@Url.Content("~/AppUser/Index")">
+                                            <i class="zmdi zmdi-accounts-alt"></i>
+                                            <span>المستخدمين (أصحاب المزارع)</span>
+                                        </a>
+                                    </li>
+                                    <li class="@(IsActive("Customer") ? "active" : "")">
+                                        <a href="@Url.Content("~/Customer/Index")">
+                                            <i class="zmdi zmdi-account"></i>
+                                            <span>العملاء</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+
+                            <!-- ===== الحجوزات ===== -->
+                            @{
+                                var isReservationsActive = IsActive("FarmerReservation") || IsActive("SportReservations") || IsActive("CottageReservations");
+                            }
+                            <li class="@(isReservationsActive ? "active open" : "")">
+                                <a href="javascript:void(0);" class="menu-toggle @(isReservationsActive ? "toggled" : "")">
+                                    <i class="zmdi zmdi-calendar-check"></i>
+                                    <span>الحجوزات</span>
+                                </a>
+                                <ul class="ml-menu" style="@(isReservationsActive ? "display:block;" : "display:none;")">
+                                    <li class="@(IsActive("FarmerReservation") ? "active" : "")">
+                                        <a href="@Url.Content("~/FarmerReservation/index")">
+                                            <i class="zmdi zmdi-calendar-check"></i>حجوزات الشاليهات
+                                        </a>
+                                    </li>
+                                    <li class="@(IsActive("SportReservations") ? "active" : "")">
+                                        <a href="@Url.Action("Index", "SportReservations")">
+                                            <i class="zmdi zmdi-calendar-check"></i>
+                                            <span>الحجوزات الرياضية</span>
+                                        </a>
+                                    </li>
+                                    <li class="@(IsActive("CottageReservations") ? "active" : "")">
+                                        <a href="@Url.Content("~/CottageReservations/Index")">
+                                            <i class="zmdi zmdi-calendar-check"></i>حجوزات الأكواخ
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+
+                            <!-- ===== نقاط الولاء ===== -->
+                            @{
+                                var isLoyaltyActive = IsActive("LoyaltyRedeemRules") || IsActive("LoyaltyPointRules") || IsActive("LoyaltyTiers") || IsActive("LoyaltyTransactions") || IsActive("CustomerLoyaltyAccounts");
+                            }
+                            <li class="@(isLoyaltyActive ? "active open" : "")">
+                                <a href="javascript:void(0);" class="menu-toggle @(isLoyaltyActive ? "toggled" : "")">
+                                    <i class="zmdi zmdi-calendar-check"></i>
+                                    <span>نقاط الولاء</span>
+                                </a>
+                                <ul class="ml-menu" style="@(isLoyaltyActive ? "display:block;" : "display:none;")">
+                                    <li class="@(IsActive("LoyaltyRedeemRules") ? "active" : "")">
+                                        <a href="@Url.Content("~/LoyaltyRedeemRules/index")">
+                                            <i class="fa-solid fa-gavel"></i>قواعد صرف النقاط
+                                        </a>
+                                    </li>
+                                    <li class="@(IsActive("LoyaltyPointRules") ? "active" : "")">
+                                        <a href="@Url.Content("~/LoyaltyPointRules/index")">
+                                            <i class="fa-solid fa-clipboard-list"></i>الأنشطة
+                                        </a>
+                                    </li>
+                                    <li class="@(IsActive("LoyaltyTiers") ? "active" : "")">
+                                        <a href="@Url.Content("~/LoyaltyTiers/index")">
+                                            <i class="fa-solid fa-sitemap"></i>المستويات
+                                        </a>
+                                    </li>
+                                    <li class="@(IsActive("LoyaltyTransactions") ? "active" : "")">
+                                        <a href="@Url.Content("~/LoyaltyTransactions/index")">
+                                            <i class="fa fa-history"></i>الحركات على الحجوزات
+                                        </a>
+                                    </li>
+                                    <li class="@(IsActive("CustomerLoyaltyAccounts") ? "active" : "")">
+                                        <a href="@Url.Action("Index", "CustomerLoyaltyAccounts")">
+                                            <i class="fa fa-users"></i>
+                                            <span>حسابات العملاء</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+
+                            <!-- ===== المدن (بدون أب) ===== -->
+                            <li class="@(IsActive("Country") ? "active" : "")">
+                                <a href="@Url.Content("~/Country/Index")">
+                                    <i class="zmdi zmdi-pin"></i>
+                                    <span>المدن</span>
+                                </a>
+                            </li>
+
+                            <!-- ===== بنود شروط العقد (بدون أب) ===== -->
+                            <li class="@(IsActive("terms") ? "active" : "")">
+                                <a href="@Url.Content("~/terms/Index")">
+                                    <i class="zmdi zmdi-file-text"></i>
+                                    <span>بنود شروط العقد</span>
+                                </a>
+                            </li>
+
+                            <!-- ===== المحافظات (بدون أب) ===== -->
+                            <li class="@(IsActive("City") ? "active" : "")">
+                                <a href="@Url.Content("~/City/Index")">
+                                    <i class="zmdi zmdi-city"></i>
+                                    <span>المحافظات</span>
+                                </a>
+                            </li>
+
+                            <!-- ===== مزايا اضافية للمزارع (بدون أب) ===== -->
+                            <li class="@(IsActive("ExtraFeature") ? "active" : "")">
+                                <a href="@Url.Content("~/ExtraFeature/Index")">
+                                    <i class="zmdi zmdi-star-outline"></i>
+                                    <span>مزايا اضافية للمزارع والخدمات الاخرى</span>
+                                </a>
+                            </li>
+
+                            <!-- ===== جداول النظام ===== -->
+                            @{
+                                var isSystemActive = IsActive("Account") || IsActive("setting") || IsActive("Notification");
+                            }
+                            <li class="@(isSystemActive ? "active open" : "")">
+                                <a href="javascript:void(0);" class="menu-toggle @(isSystemActive ? "toggled" : "")">
+                                    <i class="zmdi zmdi-settings"></i>
+                                    <span>جداول النظام</span>
+                                </a>
+                                <ul class="ml-menu" style="@(isSystemActive ? "display:block;" : "display:none;")">
+                                    @if (User.Identity.IsAuthenticated && User.IsInRole("SuperAdmin"))
+                                    {
+                                        <li class="@(IsActive("Account") ? "active" : "")">
+                                            <a href="@Url.Content("~/Account/Index")">
+                                                <i class="zmdi zmdi-shield-security"></i>
+                                                <span>مسؤول النظام</span>
+                                            </a>
+                                        </li>
+                                    }
+                                    <li class="@(IsActive("setting") ? "active" : "")">
+                                        <a href="@Url.Content("~/setting/index")">
+                                            <i class="zmdi zmdi-tune"></i>متغيرات النظام
+                                        </a>
+                                    </li>
+                                    <li class="@(IsActive("Notification") ? "active" : "")">
+                                        <a href="@Url.Content("~/Notification/Send_Notification")">
+                                            <i class="zmdi zmdi-notifications" style="color:yellow"></i>إرسال الإشعارات
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+
+                            <!-- ===== Onboarding شاشة (بدون أب) ===== -->
+                            <li class="@(IsActive("Onboarding") ? "active" : "")">
+                                <a href="@Url.Content("~/Onboarding/Index")">
+                                    <i class="zmdi zmdi-layers"></i>
+                                    <span>Onboarding شاشة</span>
+                                </a>
+                            </li>
+
+                            <!-- ===== صور الاعلانات (بدون أب) ===== -->
+                            <li class="@(IsActive("ImageSlider") ? "active" : "")">
+                                <a href="@Url.Content("~/ImageSlider/Index")">
+                                    <i class="zmdi zmdi-image"></i>
+                                    <span>صور الاعلانات</span>
+                                </a>
+                            </li>
+
+                            <!-- ===== مزارع - الاردن ===== -->
+                            @{
+                                var isFarmersActive = IsActive("Farmers");
+                            }
+                            <li class="@(isFarmersActive ? "active open" : "")">
+                                <a href="javascript:void(0);" class="menu-toggle @(isFarmersActive ? "toggled" : "")">
+                                    <i class="zmdi zmdi-landscape"></i>
+                                    <span>مزارع - الاردن</span>
+                                </a>
+                                <ul class="ml-menu" style="@(isFarmersActive ? "display:block;" : "display:none;")">
+                                    <li class="@(IsActive("Farmers", "Index") ? "active" : "")">
+                                        <a href="@Url.Content("~/Farmers/Index")">
+                                            <i class="zmdi zmdi-view-list"></i>جميع المزارع
+                                        </a>
+                                    </li>
+                                    <li class="@(IsActive("Farmers", "FarmerPending") ? "active" : "")">
+                                        <a href="@Url.Content("~/Farmers/FarmerPending")">
+                                            <i class="zmdi zmdi-time"></i>المزارع غير الموافق عليها
+                                        </a>
+                                    </li>
+                                    <li class="@(IsActive("Farmers", "FarmerNotCompletedInfo") ? "active" : "")">
+                                        <a href="@Url.Content("~/Farmers/FarmerNotCompletedInfo")">
+                                            <i class="zmdi zmdi-alert-circle"></i>المزارع غير مكتمله المعلومات
+                                        </a>
+                                    </li>
+                                    <li class="@(IsActive("Farmers", "Farmer_IsApprove") ? "active" : "")">
+                                        <a href="@Url.Content("~/Farmers/Farmer_IsApprove")">
+                                            <i class="zmdi zmdi-favorite"></i>المزارع الموافق عليها
+                                        </a>
+                                    </li>
+                                    <li class="@(IsActive("Farmers", "Farmer_Vip") ? "active" : "")">
+                                        <a href="@Url.Content("~/Farmers/Farmer_Vip")">
+                                            <i class="zmdi zmdi-star" style="color: gold;"></i>المزارع ال VIP
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+
+                            <!-- ===== الأقسام الرياضية ===== -->
+                            @* @await Component.InvokeAsync("SportTypesMenu") *@
+                           
+
+                            <!-- في الـ Sidebar -->
+                            <!-- ===== الأقسام الرياضية ===== -->
+                            @{
+                                int? sportTypeId = null;
+                                var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+
+                                // بس لو احنا في Controller الـ Sports
+                                if (string.Equals(currentController, "Sports", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    // جيب الـ sportTypeId من الـ ViewBag (اللي جاي من الـ Controller)
+                                    if (ViewBag.SportTypeId != null)
+                                    {
+                                        sportTypeId = ViewBag.SportTypeId as int?;
+                                    }
+
+                                    // لو مش موجود في الـ ViewBag، جيب من الـ Query String
+                                    if (!sportTypeId.HasValue && Context.Request.Query.ContainsKey("sportTypeId"))
+                                    {
+                                        var value = Context.Request.Query["sportTypeId"].ToString();
+                                        if (int.TryParse(value, out int id))
+                                        {
+                                            sportTypeId = id;
+                                        }
+                                    }
+                                }
+                            }
+
+                            @await Component.InvokeAsync("SportTypesMenu", new { currentSportTypeId = sportTypeId })
+
+                            <!-- ===== مرافق و مزايا و خدمات القسم الرياضي ===== -->
+                            @{
+                                var isSportActive = IsActive("SportTypes") || IsActive("SportPropertyTemplates") || IsActive("GeneralFacilities") || IsActive("SportFeatures") || IsActive("AdditionalServices") || IsActive("SafetyFeatures");
+                            }
+                            <li class="@(isSportActive ? "active open" : "")">
+                                <a href="javascript:void(0);" class="menu-toggle @(isSportActive ? "toggled" : "")">
+                                    <i class="zmdi zmdi-landscape"></i>
+                                    <span>مرافق و مزايا و خدمات القسم الرياضي</span>
+                                </a>
+                                <ul class="ml-menu" style="@(isSportActive ? "display:block;" : "display:none;")">
+                                    <li class="@(IsActive("SportTypes") ? "active" : "")">
+                                        <a href="@Url.Action("Index", "SportTypes")">
+                                            <i class="zmdi zmdi-tag"></i>
+                                            <span>أنواع الرياضات</span>
+                                        </a>
+                                    </li>
+                                    <li class="@(IsActive("SportPropertyTemplates") ? "active" : "")">
+                                        <a href="@Url.Action("Index", "SportPropertyTemplates")">
+                                            <i class="zmdi zmdi-building"></i>
+                                            <span>إعدادات تفاصيل العقار</span>
+                                        </a>
+                                    </li>
+                                    <li class="@(IsActive("GeneralFacilities") ? "active" : "")">
+                                        <a href="@Url.Action("Index", "GeneralFacilities")">
+                                            <i class="zmdi zmdi-building"></i>
+                                            <span>المرافق العامة للقسم الرياضى</span>
+                                        </a>
+                                    </li>
+                                    <li class="@(IsActive("SportFeatures") ? "active" : "")">
+                                        <a href="@Url.Action("Index", "SportFeatures")">
+                                            <i class="zmdi zmdi-building"></i>
+                                            <span>المرافق الخاصة للقسم الرياضى</span>
+                                        </a>
+                                    </li>
+                                    <li class="@(IsActive("AdditionalServices") ? "active" : "")">
+                                        <a href="@Url.Action("Index", "AdditionalServices")">
+                                            <i class="zmdi zmdi-cogs"></i>
+                                            <span>الخدمات الإضافية</span>
+                                        </a>
+                                    </li>
+                                    <li class="@(IsActive("SafetyFeatures") ? "active" : "")">
+                                        <a href="@Url.Action("Index", "SafetyFeatures")">
+                                            <i class="zmdi zmdi-shield-security"></i>
+                                            <span>ميزات الأمان</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+
+                            <!-- ===== قسم الأكواخ ===== -->
+                            @{
+                                var isCottageActive = IsActive("Cottage") || IsActive("CottagePropertyTemplates") || IsActive("CottageGeneralFacilities");
+                            }
+                            <li class="@(isCottageActive ? "active open" : "")">
+                                <a href="javascript:void(0);" class="menu-toggle @(isCottageActive ? "toggled" : "")">
+                                    <i class="zmdi zmdi-landscape"></i>
+                                    <span>قسم الأكواخ</span>
+                                </a>
+                                <ul class="ml-menu" style="@(isCottageActive ? "display:block;" : "display:none;")">
+                                    <li class="@(IsActive("Cottage") ? "active" : "")">
+                                        <a href="@Url.Content("~/Cottage/Index")">
+                                            <i class="zmdi zmdi-view-list"></i>الأكواخ
+                                        </a>
+                                    </li>
+                                    <li class="@(IsActive("CottagePropertyTemplates") ? "active" : "")">
+                                        <a href="@Url.Content("~/CottagePropertyTemplates/Index")">
+                                            <i class="zmdi zmdi-time"></i>تفاصيل العقار
+                                        </a>
+                                    </li>
+                                    <li class="@(IsActive("CottageGeneralFacilities") ? "active" : "")">
+                                        <a href="@Url.Content("~/CottageGeneralFacilities/Index")">
+                                            <i class="zmdi zmdi-alert-circle"></i>المرافق العامة
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+
+                            @* 
+                              <li>
+                                    <a href="javascript:void(0);" class="menu-toggle"><i class="zmdi zmdi-landscape"></i><span>مزارع - سوريا</span> </a>
+                                    <ul class="ml-menu">
+                                        <li><a href="@Url.Content("~/FarmersSyria/Index")"><i class="zmdi zmdi-view-list"></i>جميع المزارع</a></li>
+                                        <li><a href="@Url.Content("~/FarmersSyria/FarmerPending")"><i class="zmdi zmdi-time"></i>المزارع غير الموافق عليها</a></li>
+                                        <li><a href="@Url.Content("~/FarmersSyria/FarmerNotCompletedInfo")"><i class="zmdi zmdi-alert-circle"></i>المزارع غير مكتمله المعلومات</a></li>
+                                    </ul>
+                              </li> 
+                            *@
+
+                            <!-- ===== قائمة المحظوريين ===== -->
+                            @{
+                                var isBlackListActive = IsActive("CustomerBlackList") || IsActive("AppUserBlackList") || IsActive("FarmerBlackList");
+                            }
+                            <li class="@(isBlackListActive ? "active open" : "")">
+                                <a href="javascript:void(0);" class="menu-toggle @(isBlackListActive ? "toggled" : "")">
+                                    <i class="zmdi zmdi-block"></i>
+                                    <span>قائمة المحظوريين</span>
+                                </a>
+                                <ul class="ml-menu" style="@(isBlackListActive ? "display:block;" : "display:none;")">
+                                    <li class="@(IsActive("CustomerBlackList") ? "active" : "")">
+                                        <a href="@Url.Content("~/CustomerBlackList/Index")">
+                                            <i class="zmdi zmdi-account-alert"></i>العملاء المحظوريين
+                                        </a>
+                                    </li>
+                                    <li class="@(IsActive("AppUserBlackList") ? "active" : "")">
+                                        <a href="@Url.Content("~/AppUserBlackList/Index")">
+                                            <i class="zmdi zmdi-account-alert"></i>العملاء (المستخدمين ملاك المزارع) المحظوريين
+                                        </a>
+                                    </li>
+                                    <li class="@(IsActive("FarmerBlackList") ? "active" : "")">
+                                        <a href="@Url.Content("~/FarmerBlackList/Index")">
+                                            <i class="zmdi zmdi-alert-polygon"></i>المزارع المحظوريين
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+
+                            <!-- ===== خدمات اخرى ===== -->
+                            @{
+                                var isOtherServicesActive = IsActive("TripSection") || IsActive("CommonQuestions") || IsActive("CommonQuestionsVisitors");
+                            }
+                            <li class="@(isOtherServicesActive ? "active open" : "")">
+                                <a href="javascript:void(0);" class="menu-toggle @(isOtherServicesActive ? "toggled" : "")">
+                                    <i class="zmdi zmdi-collection-item"></i>
+                                    <span>خدمات اخرى</span>
+                                </a>
+                                <ul class="ml-menu" style="@(isOtherServicesActive ? "display:block;" : "display:none;")">
+                                    <li class="@(IsActive("TripSection") ? "active" : "")">
+                                        <a href="@Url.Content("~/TripSection/Index")">انواع الخدمات الاخرى</a>
+                                    </li>
+                                    <li class="@(IsActive("CommonQuestions") ? "active" : "")">
+                                        <a href="@Url.Content("~/CommonQuestions/Index")">
+                                            <i class="zmdi zmdi-help-outline"></i>
+                                            <span>الأسئلة الشائعة لأصحاب المزارع</span>
+                                        </a>
+                                    </li>
+                                    <li class="@(IsActive("CommonQuestionsVisitors") ? "active" : "")">
+                                        <a href="@Url.Content("~/CommonQuestionsVisitors/Index")">
+                                            <i class="zmdi zmdi-help-outline"></i>
+                                            <span>الأسئلة الشائعة للزوار</span>
+                                        </a>
+                                    </li>
+                                    @*<li><a href="@Url.Content("~/OrginizeTripProfile/Index")">منظمي حفلات المزارع</a></li>
+                                    <li><a href="@Url.Content("~/InternalExternalTripProfile/Index")">الشركات السياحية</a></li>
+                                    <li><a href="@Url.Content("~/OrginizeTwoTripProfile/Index")">منظمي الرحلات</a></li>
+                                    <li><a href="@Url.Content("~/FootballTrip/Index")"> ملاعب كرة القدم </a></li>
+                                    <li><a href="@Url.Content("~/Trip/Index")"> المسابح </a></li>
+                                    <li><a href="@Url.Content("~/EntertainmentPlaceTrip/Index")"> منتجعات سياحية </a></li>
+                                    <li><a href="@Url.Content("~/RentCarTripProfile/Index")"> شركات تاجير السيارات </a></li>*@
+                                     @*<li><a href="@Url.Content("~/TripProfile/Index")"> الشركات </a></li>
+                                    <li><a href="@Url.Content("~/TripGeneral/Index")">  الانشطة </a></li>*@
+                                </ul>
+                            </li>
+                            @* <li><a href="@Url.Content("~/account/SignOut")"><i class="zmdi zmdi-power-off"></i><span> تسجيل خروج </span></a></li> *@
+                        </ul>
+                    </div>
+
+
+
+
                 </div>
             </div>
         </div>
@@ -303,29 +759,29 @@
                          لوحة التحكم
                     </h2>
 
-                    <!--<div style="position: relative; display: inline-block;">
-                        <button id="notificationIcon" onclick="toggleNotifications()" style="position: relative; font-size: 24px; border: none; background: none; cursor: pointer;">
-                            🔔
-                            <span id="notificationCount" style="position:absolute; top:-5px; right:-10px; background:red; color:white; border-radius:50%; padding:2px 6px; font-size:12px; display:none;">0</span>
-                        </button>
-
-                        <div id="notificationList" style="display:none; position:absolute; right:0; top:35px; width:450px; max-height:300px; overflow-y:auto; border:1px solid #ccc; background:white; box-shadow:0px 2px 8px rgba(0,0,0,0.1); padding:10px; z-index:100;">
-                            <p><i>لا توجد إشعارات</i></p>
-                        </div>
-                    </div>-->
                     <div class="notification-wrapper">
                         <button id="notificationIcon" onclick="toggleNotifications()" class="noti-btn">
-                            <i class="zmdi zmdi-notifications"></i>
+                            <i class="fas fa-bell"></i>
                             <span id="notificationCount" class="noti-count">0</span>
                         </button>
 
-                        <div id="notificationList" class="noti-dropdown ">
-                            <div class="noti-header">🔔 الإشعارات</div>
+                        <div id="notificationList" class="noti-dropdown">
+                            <div class="noti-header">
+                                🔔 الإشعارات
+                                <span style="font-size: 12px; color: #6c757d; margin-right: 10px;">
+                                    <a href="/MazraeatiBackOffice/Notification/Index" target="_blank" style="color: #2196F3; text-decoration: none;">
+                                        عرض الكل
+                                    </a>
+                                </span>
+                            </div>
                             <ul id="notiItems">
-                                <li class="noti-empty">لا توجد إشعارات</li>
+                                <li class="noti-empty">جار التحميل...</li>
                             </ul>
                         </div>
                     </div>
+
+
+
                 </div>
                 <div class="col-lg-7 col-md-7 col-sm-12 text-right">
                     @*<div class="inlineblock text-center m-r-15 m-l-15 hidden-md-down">
@@ -374,6 +830,67 @@
 <script src="~/assets/js/signalr.min.js"></script>
 <script src="~/assets/js/signalr_notification.js"></script>    
     <script>
+
+
+        // ===== تحديد الصفحة النشطة =====
+        // 1. الحصول على اسم الصفحة الحالية من الـ URL
+
+
+
+          $(document).ready(function () {
+        // ===== 1. فتح القوائم النشطة =====
+        function openActiveMenus() {
+            $('.menu-list li.open').each(function () {
+                var $this = $(this);
+                var $toggle = $this.find('> a.menu-toggle');
+                var $submenu = $this.find('> ul.ml-menu');
+
+                if ($toggle.length && $submenu.length) {
+                    $toggle.addClass('toggled');
+                    $submenu.css('display', 'block');
+                }
+            });
+        }
+        openActiveMenus();
+
+        // ===== 2. Toggle القوائم =====
+        $(".menu-toggle").click(function (e) {
+            e.preventDefault();
+
+            var $this = $(this);
+            var $parentLi = $this.closest('li');
+            var $submenu = $this.next();
+
+            if ($submenu.is(':visible')) {
+                $this.removeClass('toggled');
+                $submenu.slideUp();
+                $parentLi.removeClass('open');
+            } else {
+                // قفل كل القوائم المفتوحة
+                $(".menu-list > li.open").each(function () {
+                    var $li = $(this);
+                    var $toggle = $li.find('> a.menu-toggle');
+                    var $sub = $li.find('> ul.ml-menu');
+                    $toggle.removeClass('toggled');
+                    $sub.slideUp();
+                    $li.removeClass('open');
+                });
+
+                // فتح القائمة الحالية
+                $this.addClass('toggled');
+                $submenu.slideDown();
+                $parentLi.addClass('open');
+            }
+        });
+
+        // ===== 3. عند الضغط على أي رابط =====
+        $('.menu-list li a:not(.menu-toggle)').on('click', function () {
+            // خلاص، الـ HTML هي اللي تحدد الـ active classes
+            // مش بنضيف ولا بنشيل حاجة عشان الـ Reload هيحدد
+        });
+    });
+
+
         ///Side Bar
     const toggleBtn = document.getElementById("menu-toggle");
     const sidebar = document.getElementById("leftsidebar");
@@ -389,6 +906,9 @@
             : '<i class="zmdi zmdi-menu"></i>';
     });
 
+
+
+
     // قفل عند الضغط خارجه
     overlay.addEventListener("click", function () {
         sidebar.classList.remove("active");
@@ -397,18 +917,43 @@
     });
 
     ///Side Bar
-    $(".menu-toggle").click(function (e) {
-        e.preventDefault();
+    // $(".menu-toggle").click(function (e) {
+    //     e.preventDefault();
 
-        var $this = $(this);
-        var $submenu = $this.next();
+    //     var $this = $(this);
+    //     var $submenu = $this.next();
 
-        $(".menu-toggle").not($this).removeClass("toggled");
-        $(".menu-toggle").not($this).next().slideUp();
+    //     $(".menu-toggle").not($this).removeClass("toggled");
+    //     $(".menu-toggle").not($this).next().slideUp();
 
-        $this.toggleClass("toggled");
-        $submenu.slideToggle();
-    });
+    //     $this.toggleClass("toggled");
+    //     $submenu.slideToggle();
+    //     // var $this = $(this);
+    //     // var $parentLi = $this.parent('li');
+    //     // var $subMenu = $parentLi.find('ul.ml-menu'); // نمسك القائمة الفرعية
+
+    //     // // 3. التحقق: هل القائمة التي ضغطت عليها مفتوحة حالياً؟
+    //     // if ($subMenu.is(':visible')) {
+    //     //     // إذا كانت مفتوحة، أغلقها بحركة
+    //     //     $subMenu.slideUp(200);
+    //     //     $parentLi.removeClass('open active');
+    //     // } else {
+    //     //     // إذا كانت مغلقة، أغلق كل القوائم الفرعية الأخرى أولاً (مهم جداً)
+    //     //     $('.menu-list li ul.ml-menu').slideUp(200);
+    //     //     $('.menu-list li').removeClass('open active');
+
+    //     //     // ثم افتح القائمة المطلوبة بحركة
+    //     //     $subMenu.slideDown(200);
+    //     //     $parentLi.addClass('open active');
+    //     // }
+
+
+    // });
+
+
+
+
+
     $(document).ready(function () {
         $('.select2').select2({
             placeholder: "اختر من القائمة",
@@ -424,7 +969,7 @@
 
                 // slideToggle للـ logout
                 $('.logout-item').slideToggle(300, function() {
-                    // بعد ما يخلص الـ slide، نقلب السهم
+                    //arrow inverse to top or down
                     if ($('.logout-item').is(':visible')) {
                         $('#arrowIcon').addClass('rotated');
                     } else {
@@ -433,7 +978,10 @@
                 });
             });
 
-            // يختفي اللوغاوت لو ضغطت في أي مكان تاني
+
+
+
+            // Logout is hidden if press in any else space ...
             $(document).on('click', function() {
                 if ($('.logout-item').is(':visible')) {
                     $('.logout-item').slideUp(300);
@@ -441,7 +989,7 @@
                 }
             });
 
-            // منع اختفائه لو ضغطت على اللوغاوت نفسه
+            // if press on logout do not disapear
             $('.logout-item').on('click', function(e) {
                 e.stopPropagation();
             });

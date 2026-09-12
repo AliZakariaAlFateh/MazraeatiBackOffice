@@ -1,4 +1,5 @@
-﻿@model LookupValueModel
+﻿@using MazraeatiBackOffice.Models.SystemModel
+@model LookupValueModel
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="~/assets/js/jquery-3.2.1.min.js"></script>
 <link href="~/assets/css/ImagForrAllFarmsUserApp_mahjoz.css" rel="stylesheet" />
@@ -18,6 +19,19 @@
                 <div class="header">
                     <h2><strong>معالجة </strong> السجل</h2>
                     <ul class="header-dropdown">
+                        @if (Model.Id > 0)
+                        {
+                            <li>
+                                <a href="@Url.Action("Create")" class="btn btn-primary btn-round">
+                                    <i class="fa fa-plus"></i> إضافة / جديد
+                                </a>
+                            </li>
+                        }
+                        <li>
+                            <a href="@Url.Action("Index")" class="btn btn-default btn-round">
+                                <i class="fa fa-arrow-right"></i> العودة للقائمة
+                            </a>
+                        </li>
                     </ul>
                 </div>
                 <div class="body">

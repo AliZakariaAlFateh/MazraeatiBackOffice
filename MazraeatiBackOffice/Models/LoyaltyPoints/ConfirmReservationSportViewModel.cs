@@ -13,7 +13,7 @@ namespace MazraeatiBackOffice.Models.LoyaltyPoints
         public DateTime ReservationDate { get; set; }
         public TimeSpan StartTime { get; set; }
         public TimeSpan EndTime { get; set; }
-        public int TotalHours { get; set; }
+        public decimal TotalHours { get; set; }
         public decimal OriginalAmount { get; set; }
         public decimal NetProfit { get; set; }
 

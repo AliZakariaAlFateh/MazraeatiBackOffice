@@ -1,4 +1,9 @@
-﻿@model ImageSliderModel
+﻿@using MazraeatiBackOffice.Models.FarmModel
+@model ImageSliderModel
+@{
+    ViewBag.Title = " إضافة صور";
+    ViewBag.activePage = "إضافة صور";
+}
 @using (Html.BeginForm("Create", "ImageSlider", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.Partial("_CreateOrUpdate",Model)

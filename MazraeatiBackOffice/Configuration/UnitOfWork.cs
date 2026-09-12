@@ -1,5 +1,10 @@
-﻿using MazraeatiBackOffice.Core;
+﻿using MazraeatiBackOffice.Core.CottageCore;
+using MazraeatiBackOffice.Core.FarmCore;
 using MazraeatiBackOffice.Core.LoyaltyPoints;
+using MazraeatiBackOffice.Core.SportCore;
+using MazraeatiBackOffice.Core.SystemCore;
+using MazraeatiBackOffice.Core.UserManagementCore;
+using MazraeatiBackOffice.SportCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using System.Data;
@@ -42,6 +47,19 @@ namespace MazraeatiBackOffice.Configuration
         public IRepository<CommonQuestions> CommonQuestionsRepository { get; }
         public IRepository<CommonQuestionsVisitors> CommonQuestionsVisitorsRepository { get; }
         public IRepository<Customer> CustomerRepository { get; }
+        public IRepository<FarmerViewes> FarmerViewesRepository { get; }
+        public IRepository<DeviceToken> DeviceTokenRepository { get; }
+
+
+        #region For Rules and Permessions ...
+        public IRepository<AdminUser> AdminUserRepository { get; }
+        public IRepository<Role> RoleRepository { get; }
+        public IRepository<UserRole> UserRoleRepository { get; }
+        public IRepository<Screen> ScreenRepository { get; }
+        public IRepository<UserPermission> UserPermissionRepository { get; }
+        public IRepository<UserLog> UserLogRepository { get; }
+        public IRepository<SystemSetting> SystemSettingRepository { get; }
+        #endregion
 
         #region Sport Deparments
         public IRepository<SportType> SportTypeRepository { get; }
@@ -65,6 +83,23 @@ namespace MazraeatiBackOffice.Configuration
         public IRepository<SportPropertyTemplate> SportPropertyTemplateRepository { get; }
 
         #endregion
+
+        #region Cottage Departments ...
+        public IRepository<Cottage> CottageRepository { get; }
+        public IRepository<CottageCottageGeneralFacility> CottageCottageGeneralFacilityRepository { get; }
+        public IRepository<CottageGeneralFacility> CottageGeneralFacilityRepository { get; }
+        public IRepository<CottageImage> CottageImageRepository { get; }
+        public IRepository<CottagePriceList> CottagePriceListRepository { get; }
+        public IRepository<CottageReservation> CottageReservationRepository { get; }
+        public IRepository<CottageVideo> CottageVideoRepository { get; }
+        public IRepository<CottagePropertyValue> CottagePropertyValueRepository { get; }
+        public IRepository<CottagePropertyOption> CottagePropertyOptionRepository { get; }
+        public IRepository<CottagePropertyTemplate> CottagePropertyTemplateRepository { get; }
+
+
+        #endregion
+
+
         #region LoyaltyPoints
         public IRepository<CustomerLoyaltyAccount> CustomerLoyaltyAccountRepository { get; set; }
         public IRepository<LoyaltyActivityType> LoyaltyActivityTypeRepository { get; set; }
@@ -141,7 +176,26 @@ namespace MazraeatiBackOffice.Configuration
             IRepository<LoyaltyTransaction> loyaltyTransactionRepository,
             IRepository<ReservationLoyaltyDiscount> reservationLoyaltyDiscountRepository,
             IRepository<LoyaltyPointRule> loyaltyPointRuleRepository,
-            IRepository<LoyaltyRedeemRule> loyaltyRedeemRuleRepository
+            IRepository<LoyaltyRedeemRule> loyaltyRedeemRuleRepository,
+            IRepository<FarmerViewes> farmerViewesRepository,
+            IRepository<DeviceToken> deviceTokenRepository,
+            IRepository<Cottage> cottageRepository ,
+            IRepository<CottageCottageGeneralFacility> cottageCottageGeneralFacilityRepository ,
+            IRepository<CottageGeneralFacility> cottageGeneralFacilityRepository ,
+            IRepository<CottageImage> cottageImageRepository ,
+            IRepository<CottagePriceList> cottagePriceListRepository ,
+            IRepository<CottageReservation> cottageReservationRepository ,
+            IRepository<CottageVideo> cottageVideoRepository,
+            IRepository<CottagePropertyValue> cottagePropertyValueRepository,
+            IRepository<CottagePropertyOption> cottagePropertyOptionRepository,
+            IRepository<CottagePropertyTemplate> cottagePropertyTemplateRepository,
+            IRepository<AdminUser> adminUserRepository,
+            IRepository<Role> roleRepository,
+            IRepository<UserRole> userRoleRepository,
+            IRepository<Screen> screenRepository,
+            IRepository<UserPermission> userPermissionRepository,
+            IRepository<UserLog> userLogRepository,
+            IRepository<SystemSetting> systemSettingRepository
 
             )
         {
@@ -205,6 +259,25 @@ namespace MazraeatiBackOffice.Configuration
             ReservationLoyaltyDiscountRepository = reservationLoyaltyDiscountRepository;
             LoyaltyPointRuleRepository = loyaltyPointRuleRepository;
             LoyaltyRedeemRuleRepository = loyaltyRedeemRuleRepository;
+            FarmerViewesRepository = farmerViewesRepository;
+            DeviceTokenRepository = deviceTokenRepository;
+            CottageRepository = cottageRepository;
+            CottageCottageGeneralFacilityRepository = cottageCottageGeneralFacilityRepository;
+            CottageGeneralFacilityRepository = cottageGeneralFacilityRepository;
+            CottageImageRepository = cottageImageRepository;
+            CottagePriceListRepository =  cottagePriceListRepository;
+            CottageReservationRepository = cottageReservationRepository;
+            CottageVideoRepository = cottageVideoRepository;
+            CottagePropertyValueRepository = cottagePropertyValueRepository;
+            CottagePropertyOptionRepository = cottagePropertyOptionRepository;
+            CottagePropertyTemplateRepository = cottagePropertyTemplateRepository;
+            AdminUserRepository= adminUserRepository;
+            RoleRepository= roleRepository;
+            UserRoleRepository= userRoleRepository;
+            ScreenRepository= screenRepository;
+            UserPermissionRepository= userPermissionRepository;
+            UserLogRepository= userLogRepository;
+            SystemSettingRepository = systemSettingRepository;
         }
 
         public void Dispose()

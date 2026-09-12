@@ -1,0 +1,389 @@
+﻿@model ConfirmReservationCottageViewModel
+
+<!-- ===== Modal ===== -->
+<div class="modal fade" id="confirmReservationCottageModal" tabindex="-1" role="dialog" aria-labelledby="confirmReservationCottageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background: #28a745; color: white;">
+                <h5 class="modal-title" id="confirmReservationCottageModalLabel">
+                    <i class="fa fa-check-circle"></i> تأكيد الحجز
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: white;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- ===== بيانات الحجز ===== -->
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label><strong>العميل:</strong></label>
+                            <p>@(Model.CustomerName ?? "غير محدد")</p>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label><strong>رقم الجوال:</strong></label>
+                            <p>@(Model.CustomerPhone ?? "غير محدد")</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label><strong>الكوخ:</strong></label>
+                            <p>@(Model.CottageName ?? "غير محدد")</p>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label><strong>نوع الحجز:</strong></label>
+                            <p>@(Model.ReservationTypeName ?? "غير محدد")</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label><strong>التاريخ:</strong></label>
+                            <p>@Model.ReservationDate.ToString("yyyy-MM-dd")</p>
+                        </div>
+                    </div>
+                </div>
+
+                <hr />
+
+                <!-- ===== نظام النقاط ===== -->
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h5 style="text-decoration:underline; color:#28a745;">
+                            <i class="fa fa-star" style="color:#ffc107;"></i> نظام النقاط
+                        </h5>
+                    </div>
+                </div>
+
+                <!-- نقاط العميل -->
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="points-box" style="background: #f8f9fa; padding: 10px 15px; border-radius: 5px; border: 1px solid #ffc107; margin: 10px 0;">
+                            <i class="fa fa-star" style="color:#ffc107;"></i>
+                            <strong>نقاط العميل المتاحة:</strong>
+                            <span class="points-number" id="popupCottageCustomerPoints" style="font-size: 24px; font-weight: bold; color: #28a745;">@Model.CustomerAvailablePoints</span>
+                            نقطة
+                            <span id="popupCottagePointsStatusBadge" class="badge @(Model.CustomerAvailablePoints > 0 ? "badge-success" : "badge-secondary")">
+                                @(Model.CustomerAvailablePoints > 0 ? "متاحة للخصم" : "لا توجد نقاط")
+                            </span>
+                            <br />
+                            <strong>المستوى الحالي:</strong>
+                            <span class="badge badge-info" style="font-size: 14px; padding: 5px 15px;">
+                                <i class="fa fa-trophy"></i> @(Model.CurrentTierName ?? "برونز")
+                            </span>
+                            @if (!string.IsNullOrEmpty(Model.TierIcon))
+                            {
+                                <span style="font-size: 20px;">@Model.TierIcon</span>
+                            }
+                            <br />
+                            <!-- ✅ النقاط المستحقة بعد التأكيد -->
+                            <strong>نقاط الحجز المستحقة:</strong>
+                            <span class="badge badge-success" style="font-size: 16px; padding: 5px 15px;">
+                                <i class="fa fa-plus-circle"></i> +@Model.EarnedPoints نقطة
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- استخدام النقاط -->
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="popupCottageUsePoints" value="true" />
+                                استخدام نقاط الولاء
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-4" id="popupCottagePointsRedeemSection" style="display:none;">
+                        <div class="form-group">
+                            <label>عدد النقاط للخصم</label>
+                            <input type="number" id="popupCottageRedeemPoints"
+                                   class="form-control" min="0" max="@Model.CustomerAvailablePoints" value="0" />
+                            <small class="text-muted">الحد الأقصى: <strong id="popupCottageMaxPoints">@Model.CustomerAvailablePoints</strong></small>
+                            <div id="popupCottagePointsValidationMessage" style="display:none;color:red;font-size:12px;margin-top:5px;"></div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-4" id="popupCottageDiscountResults" style="display:none;">
+                        <div class="discount-result" style="background: #e8f4fd; padding: 10px 15px; border-radius: 5px; border: 1px solid #b8daff;">
+                            <div><strong>قيمة الخصم:</strong> <span class="discount-amount" id="popupCottageDiscountAmount" style="color: #dc3545; font-weight: bold; font-size: 18px;">0.00 دينار</span></div>
+                            <div><strong>المبلغ الجديد:</strong> <span class="new-total" id="popupCottageNewTotal" style="color: #28a745; font-weight: bold; font-size: 18px;">0.00 دينار</span></div>
+                            <div><strong>النقاط المتبقية:</strong> <span id="popupCottageRemainingPoints">0</span> نقطة</div>
+                            <small class="text-muted" id="popupCottageDiscountRule"></small>
+                        </div>
+                    </div>
+                </div>
+
+                <hr />
+
+                <!-- ===== ملخص المبلغ ===== -->
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label><strong>المبلغ الكلي المطلوب:</strong></label>
+                            <p id="popupCottageOriginalAmount">@Model.OriginalAmount.ToString("N2") دينار</p>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label><strong>المبلغ بعد الخصم:</strong></label>
+                            <p id="popupCottageFinalAmount" style="color: #28a745; font-weight: bold;">@Model.OriginalAmount.ToString("N2") دينار</p>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label><strong>الربح (العمولة):</strong></label>
+                            <p id="popupCottageNetProfit" style="color: #007bff; font-weight: bold;">@Model.NetProfit.ToString("N2") دينار</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== رسوم إضافية ===== -->
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="popupCottageIsReceiveCommission" value="true" />
+                                استلام العمولة
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== حقول مخفية ===== -->
+                <input type="hidden" id="popupCottageReservationId" value="@Model.ReservationId" />
+                <input type="hidden" id="popupCottageCustomerId" value="@Model.CustomerId" />
+                <input type="hidden" id="popupCottageOriginalAmountHidden" value="@Model.OriginalAmount" />
+                <input type="hidden" id="popupCottageDiscountAmountHidden" value="0" />
+                <input type="hidden" id="popupCottageNewTotalHidden" value="@Model.OriginalAmount" />
+                <input type="hidden" id="popupCottagePointsUsedHidden" value="0" />
+                <input type="hidden" id="popupCottageNetProfitHidden" value="@Model.NetProfit" />
+
+                <!-- ===== حقول مخفية لنقل البيانات للـ JS ===== -->
+                <input type="hidden" id="popupCottageCustomerPointsData" value="@Model.CustomerAvailablePoints" />
+                <input type="hidden" id="popupCottageOriginalAmountData" value="@Model.OriginalAmount" />
+                <input type="hidden" id="popupCottageNetProfitData" value="@Model.NetProfit" />
+                <input type="hidden" id="popupCottageEarnedPointsData" value="@Model.EarnedPoints" />
+                <input type="hidden" id="popupCottageRedeemRulesData" value='@Html.Raw(Json.Serialize(ViewBag.RedeemRules))' />
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    <i class="fa fa-times"></i> إلغاء
+                </button>
+                <button type="button" class="btn btn-success" id="popupCottageConfirmBtn">
+                    <i class="fa fa-check"></i> تأكيد الحجز نهائياً
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================
+     JavaScript للـ Popup
+     ============================================================ -->
+<script>
+    $(document).ready(function() {
+        var popupCottageCustomerPoints = @Model.CustomerAvailablePoints;
+        var popupCottageOriginalAmount = parseFloat(@Model.OriginalAmount) || 0;
+        var popupCottageNetProfit = parseFloat(@Model.NetProfit) || 0;
+        var popupCottageRedeemRules = @Html.Raw(Json.Serialize(ViewBag.RedeemRules));
+        var popupCottageIsUpdating = false;
+
+        // ===== حساب الخصم =====
+        function calculateCottagePopupDiscount(points) {
+            if (!popupCottageRedeemRules || popupCottageRedeemRules.length === 0) {
+                return { discount: 0, rule: null, canRedeem: false };
+            }
+
+            var sortedRules = popupCottageRedeemRules.slice().sort(function(a, b) {
+                return b.points - a.points;
+            });
+
+            for (var i = 0; i < sortedRules.length; i++) {
+                if (points >= sortedRules[i].points) {
+                    var ratio = points / sortedRules[i].points;
+                    var discount = ratio * sortedRules[i].discountAmount;
+                    discount = Math.round(discount * 1000) / 1000;
+                    return {
+                        discount: discount,
+                        rule: sortedRules[i],
+                        canRedeem: true
+                    };
+                }
+            }
+            return { discount: 0, rule: null, canRedeem: false };
+        }
+
+        // ===== تحديث الحسابات في الـ Popup =====
+        function updateCottagePopupCalculations(pointsToRedeem) {
+            if (popupCottageIsUpdating) return;
+            popupCottageIsUpdating = true;
+
+            var usePoints = $('#popupCottageUsePoints').is(':checked');
+            var points = pointsToRedeem || parseInt($('#popupCottageRedeemPoints').val()) || 0;
+
+            if (!usePoints || points <= 0) {
+                $('#popupCottageDiscountResults').hide();
+                $('#popupCottageFinalAmount').text(popupCottageOriginalAmount.toFixed(2) + ' دينار');
+                $('#popupCottageNetProfit').text(popupCottageNetProfit.toFixed(2) + ' دينار');
+                $('#popupCottageDiscountAmountHidden').val(0);
+                $('#popupCottageNewTotalHidden').val(popupCottageOriginalAmount);
+                $('#popupCottagePointsUsedHidden').val(0);
+                $('#popupCottageNetProfitHidden').val(popupCottageNetProfit);
+                popupCottageIsUpdating = false;
+                return;
+            }
+
+            if (points > popupCottageCustomerPoints) {
+                points = popupCottageCustomerPoints;
+                $('#popupCottageRedeemPoints').val(points);
+            }
+
+            var result = calculateCottagePopupDiscount(points);
+            var discount = result.discount;
+            var newTotal = popupCottageOriginalAmount - discount;
+            var remainingPoints = popupCottageCustomerPoints - points;
+            var newNetProfit = popupCottageNetProfit - discount;
+
+            if (result.canRedeem && discount > 0) {
+                $('#popupCottageDiscountResults').show();
+                $('#popupCottageDiscountAmount').text(discount.toFixed(3) + ' دينار');
+                $('#popupCottageRemainingPoints').text(remainingPoints + ' نقطة');
+                $('#popupCottageNewTotal').text(newTotal.toFixed(3) + ' دينار');
+                $('#popupCottageFinalAmount').text(newTotal.toFixed(3) + ' دينار');
+                $('#popupCottageNetProfit').text(newNetProfit.toFixed(3) + ' دينار');
+                if (result.rule) {
+                    $('#popupCottageDiscountRule').text(result.rule.points + ' نقطة = ' + result.rule.discountAmount + ' دينار');
+                }
+                $('#popupCottageDiscountAmountHidden').val(discount);
+                $('#popupCottageNewTotalHidden').val(newTotal);
+                $('#popupCottagePointsUsedHidden').val(points);
+                $('#popupCottageNetProfitHidden').val(newNetProfit);
+                $('#popupCottagePointsValidationMessage').hide();
+            } else {
+                $('#popupCottageDiscountResults').hide();
+                $('#popupCottageFinalAmount').text(popupCottageOriginalAmount.toFixed(2) + ' دينار');
+                $('#popupCottageNetProfit').text(popupCottageNetProfit.toFixed(2) + ' دينار');
+                $('#popupCottageDiscountAmountHidden').val(0);
+                $('#popupCottageNewTotalHidden').val(popupCottageOriginalAmount);
+                $('#popupCottagePointsUsedHidden').val(0);
+                $('#popupCottageNetProfitHidden').val(popupCottageNetProfit);
+            }
+
+            popupCottageIsUpdating = false;
+        }
+
+        // ===== أحداث الـ Popup =====
+        $('#popupCottageUsePoints').change(function() {
+            if ($(this).is(':checked')) {
+                $('#popupCottagePointsRedeemSection').show();
+                $('#popupCottageRedeemPoints').val(0);
+                updateCottagePopupCalculations(0);
+            } else {
+                $('#popupCottagePointsRedeemSection').hide();
+                $('#popupCottageRedeemPoints').val(0);
+                $('#popupCottageDiscountResults').hide();
+                $('#popupCottagePointsValidationMessage').hide();
+                updateCottagePopupCalculations(0);
+            }
+        });
+
+        $('#popupCottageRedeemPoints').on('input', function() {
+            var points = parseInt($(this).val()) || 0;
+            if (points > popupCottageCustomerPoints) {
+                $(this).val(popupCottageCustomerPoints);
+            }
+            updateCottagePopupCalculations(points);
+        });
+
+        // ===== تأكيد الحجز نهائياً =====
+        $('#popupCottageConfirmBtn').on('click', function() {
+            var reservationId = $('#popupCottageReservationId').val();
+            var customerId = $('#popupCottageCustomerId').val();
+            var pointsUsed = parseInt($('#popupCottagePointsUsedHidden').val()) || 0;
+            var discountAmount = parseFloat($('#popupCottageDiscountAmountHidden').val()) || 0;
+            var newTotal = parseFloat($('#popupCottageNewTotalHidden').val()) || 0;
+            var netProfit = parseFloat($('#popupCottageNetProfitHidden').val()) || 0;
+            var isReceiveCommission = $('#popupCottageIsReceiveCommission').is(':checked');
+
+            // ===== التحقق من صحة البيانات =====
+            if (!reservationId || reservationId <= 0) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'معرف الحجز غير صحيح'
+                });
+                return;
+            }
+
+            // ===== إظهار مؤشر التحميل =====
+            Swal.fire({
+                title: 'جاري تأكيد الحجز...',
+                text: 'الرجاء الانتظار',
+                allowOutsideClick: false,
+                didOpen: function() {
+                    Swal.showLoading();
+                }
+            });
+
+            // ===== إرسال طلب التأكيد =====
+            $.ajax({
+                url: '@Url.Action("ConfirmCottageReservation", "CottageReservations")',
+                type: 'POST',
+                data: {
+                    reservationId: reservationId,
+                    customerId: customerId,
+                    pointsUsed: pointsUsed,
+                    discountAmount: discountAmount,
+                    newTotal: newTotal,
+                    netProfit: netProfit,
+                    isReceiveCommission: isReceiveCommission
+                },
+                success: function(data) {
+                    Swal.close();
+                    if (data.success) {
+                        // ✅ استخدام Swal.fire بدلاً من Toast
+                        // Swal.fire({
+                        //     icon: 'success',
+                        //     title: 'تم!',
+                        //     text: data.message || 'تم تأكيد الحجز بنجاح'
+                        Toast.fire({
+                            icon: 'success',
+                            title: data.message || 'تم تأكيد الحجز بنجاح'
+                        }).then(function() {
+                            $('#confirmReservationCottageModal').modal('hide');
+                            // ===== تحديث الصفحة =====
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'خطأ',
+                            text: data.message || 'حدث خطأ أثناء تأكيد الحجز'
+                        });
+                    }
+                },
+                error: function(xhr) {
+                    Swal.close();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'خطأ',
+                        text: xhr.responseJSON?.message || 'حدث خطأ في الاتصال بالخادم'
+                    });
+                }
+            });
+        });
+    });
+</script>
